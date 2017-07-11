@@ -4,7 +4,7 @@ CMS for shopping cart like catalogs
 
 # Requirement
 
-php, composer and sqlite3
+apache with php, composer and sqlite3
 
 
 # Installation
