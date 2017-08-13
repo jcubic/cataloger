@@ -1,0 +1,8 @@
+msgid "categories"
+msgstr "kategorie"
+
+msgid "pages"
+msgstr "strony"
+
+msgid "products"
+msgstr "produkty"
