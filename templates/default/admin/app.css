@@ -1,0 +1,96 @@
+
+body {
+    margin: 0;
+    height: 100vh;
+}
+header, nav.left, footer {
+    font-family: sans-serif;
+}
+header {
+    background-color: #3c8dbc;
+    color: #fff;
+}
+header h1 {
+    height: 50px;
+    display: table;
+    margin: 0;
+}
+header .logo {
+    display: table-cell;
+    vertical-align: middle;
+    background-color: #367fa9;
+    text-align: center;
+    font-family: sans-serif;
+    font-weight: normal;
+    font-size: 20px;
+}
+header .logo, nav.left {
+    width: 230px;
+    color: white;
+}
+nav.left {
+    background-color: #222d32;
+    font-size: 14px;
+}
+nav.left, main {
+    height: calc(100% - 50px - 20px);
+}
+nav.left ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+nav.left li {
+    display: table;
+    height: 30px;
+    width: 100%;
+}
+nav.left a {
+    width: 100%;
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 20px;
+}
+nav.left li a, nav.left li a:visited {
+    color: white;
+}
+nav.left li.selected a {
+    border-left: 4px solid #367fa9;
+}
+nav.left li.selected a {
+    padding-left: 16px;
+}
+footer a, footer a:visited, nav.left li a, nav.left li a:visited {
+    text-decoration: none;
+    cursor: pointer;
+}
+nav.left li:hover a {
+    background: #1e282c;
+}
+main {
+    position: absolute;
+    left: 230px;
+    width: calc(100% - 230px);
+    top: 50px;
+    overflow: auto;
+}
+footer {
+    height: 20px;
+    box-sizing: border-box;
+    margin: 0;
+    font-size: 12px;
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 3px 0;
+}
+footer p {
+    margin: 0;
+}
+footer a, footer a:visited {
+    color: white;
+}
+footer a:hover {
+    text-decoration: underline;
+}

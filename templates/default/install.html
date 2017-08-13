@@ -1,0 +1,11 @@
+{% if completed %}
+<p>Installation complete <a href="{{root}}/login">login</a></p>
+{% else %}
+<form method="POST">
+  <label for="username">username</label>
+  <input id="username" name="username"/>
+  <label for="password">password</label>
+  <input type="password" id="password" name="password"/>
+  <input type="submit" value="configure"/>
+</form>
+{% endif %}

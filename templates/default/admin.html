@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <base href="/"/>
+    <title>Cataloger - Admin panel</title>
+    <!--[if IE]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <style>
+
+    </style>
+    <script src="{{path}}/dist/vendor.js"></script>
+    <script src="{{path}}/dist/app.js"></script>
+    {% for component in components %}
+    <script src="{{root}}{{component.file}}"></script>
+    {% endfor %}
+    
+    <script src="{{path}}/lib/route.js"></script>
+    <script>
+     var root = '{{root}}';
+    </script>
+    <script src="{{path}}/lib/tinymce/tinymce.min.js"></script>
+    <script src="{{path}}/lib/tinymce/jquery.tinymce.min.js"></script>
+    <!-- <script src="{{path}}/admin.js"></script> -->
+    <!--
+    <script>
+     $(function() {
+         $("textarea.edit").tinymce({
+             baseURL: '{{path}}/lib/tinymce',
+             theme: "modern",
+             plugins: [
+                 "advlist code"
+             ],
+             skin: 'lightgray',
+             menubar:false,
+             statusbar: false,
+             toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | preview fullpage | forecolor backcolor table | code"
+         });
+     });
+     $(window).on('hashchange', function() {
+         view(location.hash.replace(/^#/, ''));
+     });
+     function view(page) {
+         $('.panel').removeClass('selected');
+         $('.panel.' + page).addClass('selected');
+         $('nav.left [href="#' + page + '"]').parent().addClass('selected')
+                                             .siblings().removeClass('selected');
+     }
+     $(function() {
+         view($('nav.left li:eq(0) a').attr('href').replace(/^#/, ''));
+     });
+    </script>
+    -->
+  </head>
+  <body ng-app="app" ng-controller="main as main">
+    <header>
+      <h1>
+        <span class="logo">Cataloger</span>
+      </h1>
+    </header>
+    <nav class="left">
+      <ul>
+        <li><a href="#categories">{{ _("categories") }}</a></li>
+        <li><a href="#pages">{{ _("pages") }}</a></li>
+        <li><a href="#products">{{ _("products") }}</a></li>
+        {% for item in components %}
+        <li><a href="#{{item.name}}">{{item.name}}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <main>
+      <product-panel></product-panel>
+      {% for item in components %}
+      <{{item.component}}></{{item.component}}>
+      {% endfor %}
+    </main>
+    <footer>
+      <p>Copyright &copy; 2017 <a href="http://jcubic.pl/me">Jakub Jankiewicz</a></p>
+    </footer>
+  </body>
+</html>

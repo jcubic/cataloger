@@ -1,0 +1,32 @@
+{
+  "name": "cataloger-admin",
+  "version": "0.1.0",
+  "description": "Cataloger Admin Panel",
+  "main": "index.js",
+  "scripts": {
+      "webpack": "webpack",
+      "watch": "webpack --watch"
+  },
+  "author": "Jakub Jankiewicz <jcubic@onet.pl> (http://jcubic.pl/me/)",
+  "license": "MIT",
+  "devDependencies": {
+    "@uirouter/angularjs": "^1.0.5",
+    "angular": "^1.6.5",
+    "angular-ui-router": "^1.0.3",
+    "babel": "^6.23.0",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "css-loader": "^0.28.4",
+    "expose-loader": "^0.7.3",
+    "file-loader": "^0.11.2",
+    "html-loader": "^0.5.1",
+    "hyperapp": "^0.10.0",
+    "jquery": "^3.2.1",
+    "promise-polyfill": "^6.0.2",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.3.0",
+    "whatwg-fetch": "^2.0.3"
+  }
+}

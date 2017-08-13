@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cataloger - Admin panel</title>
+    <!--[if IE]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <style>
+
+    </style>
+    <script src="{{path}}/lib/jquery-3.2.1.min.js"></script>
+    <script src="{{path}}/node_modules/hyperapp/dist/hyperapp.js"></script>
+    <script>
+     var root = '{{root}}';
+    </script>
+    <script src="{{path}}/lib/tinymce/tinymce.min.js"></script>
+    <script src="{{path}}/lib/tinymce/jquery.tinymce.min.js"></script>
+    <!-- <script src="{{path}}/admin.js"></script>-->
+    <script>
+     $(function() {
+         $("textarea.edit").tinymce({
+             baseURL: '{{path}}/lib/tinymce',
+             theme: "modern",
+             plugins: [
+                 "advlist code"
+             ],
+             skin: 'lightgray',
+             menubar:false,
+             statusbar: false,
+             toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | preview fullpage | forecolor backcolor table | code"
+         });
+         var $pages = $('#pages');
+         var pages;
+         function get_pages() {
+             $.get(root + '/api/page/list', function(data) {
+                 pages = {};
+                 $pages.empty();
+                 data.forEach(function(page) {
+                     pages[page.id] = page;
+                     $('<li><a data-id="' + page.id + '">' + page.title + '</a></li>').appendTo($pages);
+                 });
+             }, 'json');
+         }
+         $pages.on('click', 'li a', function() {
+             var page = pages[$(this).data('id')];
+             if (page) {
+                 $('#title').val(page.title);
+             }
+             $('textarea.edit').tinymce().setContent(page.content, {format: 'raw'});
+         });
+         get_pages();
+         $('#save').click(function() {
+             var payload = {
+                 title: $('#title').val(),
+                 content: $('textarea.edit').tinymce().getContent()
+             };
+             $.post(root + '/api/page/new', payload, function() {
+                 get_pages();
+             });
+         });
+     });
+
+    </script>
+  </head>
+  <body>
+    <ul id="pages"></ul>
+    <div>
+      <label for="title">Tytuł</label>
+      <input id="title"/>
+    </div>
+    <textarea class="edit"></textarea>
+    <button id="save">save</button>
+
+    <!--
+    <dl>
+      <dt>Address</dt>
+      <dd>
+        ul. Powstańców Warszawy 7<br/>
+        26-110 Skarżysko-Kamienna<br/>
+      </dd>
+      <dt>let/fax</dt>
+      <dd>(41) 2521026</dd>
+      <dt>email</dt>
+      <dd>sklepmedica [małpa] gmail [kropka] com</dd>
+    </dl>
+    <p>Dojazd:</p>
+    <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDNrSJ769FzaSZ3bDglEfv9jhbzzTNtHDo&q=Medica+Powstańców+Warszawy+7,Skarżysko-Kamienna" style="width:100%;height:450px;border:none"></iframe>
+    -->
+  </body>
+</html>
