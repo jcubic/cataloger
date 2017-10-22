@@ -160,6 +160,7 @@ function write($fname, $text) {
 function tidy($html) {
     $config = array(
         'indent' => true,
+        'input-xml' => true,
         'output-xhtml' => true,
         'wrap' => 200,
         'merge-spans' => false

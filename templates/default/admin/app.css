@@ -101,6 +101,11 @@ main {
     top: 50px;
     overflow: auto;
 }
+main .panel {
+    display: block;
+    height: calc(100vh - 50px - 20px);
+    margin: 0;
+}
 footer {
     height: 20px;
     box-sizing: border-box;

@@ -1,3 +1,5 @@
+/* global root */
+
 function controller($http) {
     this.products = [];
     let get = (url, variable) => {
@@ -27,6 +29,7 @@ function controller($http) {
         });
     };
     this.get_products();
+    this.get_categories();
 };
 
 controller.$inject = ['$http'];

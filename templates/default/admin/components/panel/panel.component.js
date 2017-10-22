@@ -3,6 +3,7 @@ import controller from './panel.controller';
 import './panel.css';
 
 export default {
+    replace: true,
     bindings: {
         name: '@'
     },

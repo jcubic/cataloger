@@ -17,7 +17,7 @@
 
     <script src="{{path}}/lib/route.js"></script>
     <script src="{{path}}/translations.js"></script>
-    <script>
+    <script type="text/javascript" >
      var root = '{{root}}';
     </script>
     <script src="{{path}}/lib/tinymce/tinymce.min.js"></script>
@@ -76,6 +76,8 @@
       </ul>
     </nav>
     <main>
+      <category-panel></category-panel>
+      <page-panel></page-panel>
       <product-panel></product-panel>
       <settings-panel></settings-panel>
       {% for item in components %}

@@ -251,7 +251,7 @@ function register_admin_plugin($name, $component) {
 register_admin_plugin('sitemap', 'panelSitemap');
 
 $app->get('/products', function($request, $response) {
-    
+
 });
 
 
@@ -320,6 +320,64 @@ function convert($string) {
     }
 }
 
+function page_id($slug) {
+    $rows = query("SELECT id FROM pages WHERE slug = ?", array($slug));
+    if (count($rows) == 1) {
+        return $rows[0]['id'];
+    } else {
+        return null;
+    }
+}
+
+function new_page($request, $response) {
+    $body = $response->getBody();
+    if (isset($_POST['title']) && isset($_POST['content'])) {
+        $slug = slug($_POST['title']);
+        if (page_id($slug) != null) {
+            $body->write(json_encode(array("result" => false, "error" => "slug exists")));
+        } else {
+            $result = query("INSERT INTO pages(slug, title, content) VALUES(?, ?, ?)", array(
+                $slug,
+                $_POST['title'],
+                $_POST['content']
+            ));
+            if ($result == 1) {
+                $id = page_id($slug);
+                $body->write(json_encode(array(
+                    'result' => array($id, $slug, query("SELECT id FROM pages WHERE slug = ?", array($slug)))
+                )));
+            } else {
+                $body->write('{"result": false}');
+            }
+        }
+    } else {
+        $body->write('{"result": false}');
+    }
+}
+function update_page($request, $response) {
+    $body = $response->getBody();
+    if (isset($_POST['title']) && isset($_POST['content']) && isset($_POST['id'])) {
+        $slug = slug($_POST['title']);
+        if (page_id($slug) != null) {
+            $body->write(json_encode(array("result" => false, "error" => "slug exists")));
+        } else {
+            $result = query("UPDATE pages SET slug = ?, title = ?, content = ? WHERE id = ?", array(
+                $slug,
+                $_POST['title'],
+                $_POST['content'],
+                $_POST["id"]
+            ));
+            if ($result == 1) {
+                $body->write('{"result": true}');
+            } else {
+                $body->write('{"result": false}');
+            }
+        }
+    } else {
+        $body->write('{"result": false}');
+    }
+}
+
 $app->group('/api', function() {
     $this->get('/config', function($request, $response) {
         global $app;
@@ -364,21 +422,26 @@ $app->group('/api', function() {
         return $body->write(json_encode($result));
     });
     $this->group('/page', function() {
-        $this->post('/new', function($request, $response) {
+        $this->post('/', function($request, $response) {
+            if (isset($_POST['id'])) {
+                update_page($request, $response);
+            } else {
+                new_page($request, $response);
+            }
+            return $response;
+        });
+        $this->delete('/{id}', function($request, $response) {
+            $id = $request->getAttribute('id');
             $body = $response->getBody();
-            if (isset($_POST['title']) && isset($_POST['content'])) {
-                $result = query("INSERT INTO pages(slug, title, content) VALUES(?, ?, ?)", array(
-                    slug($_POST['title']),
-                    $_POST['title'],
-                    $_POST['content']
-                ));
-                if ($result == 1) {
-                    $body->write('true');
+            if (is_numeric($id)) {
+                $result = query("DELETE FROM pages WHERE id = ?", array($id));
+                if ($result == 0) {
+                    $body->write('{"result": false}');
                 } else {
-                    $body->write('false');
+                    $body->write('{"result": true}');
                 }
             } else {
-                $body->write('[false]');
+                $body->write('{"result": false}');
             }
             return $response;
         });

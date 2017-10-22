@@ -1,8 +1,7 @@
-/* global location, $ */
+/* global location, $, root */
 
 import $ from 'jquery';
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs';
 import components from './components';
 import directives from './directives';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,7 +10,6 @@ import './app.css';
 
 let app = angular.module('app', [
     gettext,
-    uiRouter,
     components.name,
     directives.name
 ]);

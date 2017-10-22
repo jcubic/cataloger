@@ -1,3 +1,5 @@
+/* global angular */
+
 import validateMatch from './validateMatch';
 
 

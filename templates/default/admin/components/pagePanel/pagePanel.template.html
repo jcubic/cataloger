@@ -1,0 +1,25 @@
+<panel name="pages">
+  <nav>
+    <ul>
+      <li><a ng-click="ctrl.new_page()" translate>new page</a></li>
+      <li ng-repeat="page in ctrl.pages track by $index">
+        <a ng-click="ctrl.view(page)" ng-class="{selected: page == ctrl.page}" >{{page.title}}</a>
+        <a ng-click="ctrl.delete_page(page.id)">x</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="right" ng-if="ctrl.page">
+    <form name="page">
+      <div class="input-group">
+        <label class="input-group-addon" for="title" translate>title</label>
+        <input class="form-control" id="title" ng-model="ctrl.page.title"/>
+      </div>
+      <div class="input-group editor">
+        <textarea ui-tinymce="ctrl.tinymce_options" class="form-control" ng-model="ctrl.page.content"></textarea>
+      </div>
+      <div class="right input-group">
+        <input class="btn btn-default" type="button" ng-value="'save' | translate" ng-click="ctrl.save()" />
+      </div>
+    </form>
+  </div>
+</panel>

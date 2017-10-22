@@ -1,6 +1,7 @@
 /* global process, require, module, __dirname */
 
 var webpack = require('webpack');
+var copyWebpackPlugin = require('copy-webpack-plugin');
 var path = require('path');
 const ENV = process.env.NODE_ENV || 'development';
 
@@ -23,7 +24,12 @@ module.exports = {
         }),
         new webpack.DefinePlugin({
             PRODUCTION: process.env.NODE_ENV == 'production'
-        })
+        }),
+        new copyWebpackPlugin([
+            { from: './node_modules/tinymce/plugins', to: './plugins' },
+            { from: './node_modules/tinymce/themes', to: './themes' },
+            { from: './node_modules/tinymce/skins', to: './skins' }
+        ])
     ]).concat(ENV==='production' ? [
         new webpack.optimize.UglifyJsPlugin({
             output: {

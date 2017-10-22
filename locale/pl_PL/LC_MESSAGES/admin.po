@@ -43,4 +43,8 @@ msgstr "ustawienia"
 msgid "passwords do not match"
 msgstr "hasła nie pasują do siebie"
 
+msgid "title"
+msgstr "tytuł"
 
+msgid "new page"
+msgstr "nowa strona"
