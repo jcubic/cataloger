@@ -8,15 +8,15 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <style>
-
     </style>
     <script src="{{path}}/dist/vendor.js"></script>
     <script src="{{path}}/dist/app.js"></script>
     {% for component in components %}
     <script src="{{root}}{{component.file}}"></script>
     {% endfor %}
-    
+
     <script src="{{path}}/lib/route.js"></script>
+    <script src="{{path}}/translations.js"></script>
     <script>
      var root = '{{root}}';
     </script>
@@ -54,9 +54,15 @@
     -->
   </head>
   <body ng-app="app" ng-controller="main as main">
-    <header>
+    <header class="main">
       <h1>
         <span class="logo">Cataloger</span>
+        <span class="right">
+          <ul>
+            <li><a href="#settings">{{ _("settings") }}</a></li>
+            <li><a href="{{root}}/logout" ng-click="$event.stopPropagation()">{{ _("logout") }}</a></li>
+          </ul>
+        </span>
       </h1>
     </header>
     <nav class="left">
@@ -71,6 +77,7 @@
     </nav>
     <main>
       <product-panel></product-panel>
+      <settings-panel></settings-panel>
       {% for item in components %}
       <{{item.component}}></{{item.component}}>
       {% endfor %}

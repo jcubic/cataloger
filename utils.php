@@ -150,4 +150,23 @@ function session_timeout($time) {
     session_set_cookie_params($time, "/");
 }
 
+function write($fname, $text) {
+    $file = fopen($fname, 'w');
+    $ret = fwrite($file, $text);
+    fclose($file);
+    return $ret;
+}
+
+function tidy($html) {
+    $config = array(
+        'indent' => true,
+        'output-xhtml' => true,
+        'wrap' => 200,
+        'merge-spans' => false
+    );
+    $tidy = tidy_parse_string($html, $config, 'utf8');
+    $tidy->cleanRepair();
+    return $tidy;
+}
+
 ?>

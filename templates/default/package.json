@@ -4,20 +4,24 @@
   "description": "Cataloger Admin Panel",
   "main": "index.js",
   "scripts": {
-      "webpack": "webpack",
-      "watch": "webpack --watch"
+    "webpack": "webpack",
+    "watch": "webpack --watch",
+    "po": "angular-gettext-cli --compile --files '../../locale/**/*.po' --dest 'translations.js' --format javascript --module app"
   },
   "author": "Jakub Jankiewicz <jcubic@onet.pl> (http://jcubic.pl/me/)",
   "license": "MIT",
   "devDependencies": {
     "@uirouter/angularjs": "^1.0.5",
     "angular": "^1.6.5",
+    "angular-gettext": "^2.3.10",
+    "angular-gettext-cli": "^1.2.0",
     "angular-ui-router": "^1.0.3",
     "babel": "^6.23.0",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
+    "bootstrap": "^3.3.7",
     "css-loader": "^0.28.4",
     "expose-loader": "^0.7.3",
     "file-loader": "^0.11.2",

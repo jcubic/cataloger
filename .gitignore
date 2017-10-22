@@ -5,5 +5,6 @@ composer.lock
 .\#*
 \#*\#
 config.json
+cataloger.sqlite
 templates/*
 !templates/default

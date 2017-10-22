@@ -1,3 +1,9 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl_PL\n"
+
 msgid "categories"
 msgstr "kategorie"
 
@@ -6,3 +12,35 @@ msgstr "strony"
 
 msgid "products"
 msgstr "produkty"
+
+msgid "logout"
+msgstr "wyloguj"
+
+msgid "username"
+msgstr "użytkownik"
+
+msgid "password"
+msgstr "hasło"
+
+msgid "login"
+msgstr "zaloguj"
+
+msgid "save"
+msgstr "zapisz"
+
+msgid "old password"
+msgstr "stare hasło"
+
+msgid "new password"
+msgstr "nowe hasło"
+
+msgid "confirm password"
+msgstr "potwierdź hasło"
+
+msgid "settings"
+msgstr "ustawienia"
+
+msgid "passwords do not match"
+msgstr "hasła nie pasują do siebie"
+
+

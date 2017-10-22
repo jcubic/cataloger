@@ -1,19 +1,45 @@
-
 body {
     margin: 0;
     height: 100vh;
 }
-header, nav.left, footer {
+.error {
+    color: #a94442; /* same as boostrap */
+}
+header.main, nav.left, footer {
     font-family: sans-serif;
 }
-header {
+header.main {
     background-color: #3c8dbc;
     color: #fff;
 }
-header h1 {
+header.main h1 {
     height: 50px;
+    width: 100%;
     display: table;
     margin: 0;
+}
+header.main .right {
+    display: table-cell;
+    width: calc(100% - 230px);
+    font-size: 14px;
+    font-weight: normal;
+    vertical-align: middle;
+}
+header.main ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+header.main li {
+    float: right;
+    margin: 10px;
+}
+header.main li a, header li a:visited {
+    color: white;
+    text-decoration: none;
+}
+header li a:hover {
+    text-decoration: underline;
 }
 header .logo {
     display: table-cell;

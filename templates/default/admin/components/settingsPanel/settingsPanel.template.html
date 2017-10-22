@@ -1,0 +1,23 @@
+<panel name="settings">
+  <div>
+    <header><h2 translate>password</h2></header>
+    <form id="password" name="password">
+      <div class="form-group">
+        <label class="control-label" for="old_password" translate>old password</label>
+        <input class="form-control" id="old_password" type="password" ng-model="ctrl.password.old" />
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="new_password" translate>new password</label>
+        <input class="form-control" id="new_password" type="password" name="new_password"
+               ng-model="ctrl.password.new" />
+      </div>
+      <div class="form-group" ng-class="{'has-error': password.confirm_password.$error.notMatch}">
+        <label class="control-label" for="confirm_password" type="password" translate>confirm password</label>
+        <input class="form-control" id="confirm_password" name="confirm_password" type="password"
+               ng-model="ctrl.password.confirm" validate-match="ctrl.password.new" />
+        <p ng-show="password.confirm_password.$error.notMatch" class="error" translate>passwords do not match</span>
+      </div>
+    </form>
+  </div>
+  <button class="btn btn-default" ng-click="ctrl.save()" translate>save</button>
+</panel>

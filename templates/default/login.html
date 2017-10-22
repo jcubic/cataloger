@@ -1,8 +1,67 @@
-<form method="POST">
-  <label for="username">username</label>
-  <input id="username" name="username" />
-  <label for="password">password</label>
-  <input id="password" name="password" type="password" />
-  <input type="submit" value="login"/>
-  <p class="error">{{ error }}</p>
-</form>
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <base href="/"/>
+    <title>Cataloger - Admin panel</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{path}}/favicon/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{path}}/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{path}}/favicon/favicon-16x16.png" />
+    <link rel="manifest" href="{{path}}/favicon/manifest.json" />
+    <link rel="mask-icon" href="{{path}}/favicon/safari-pinned-tab.svg" color="#5bbad5" />
+    <link rel="shortcut icon" href="{{path}}/favicon/favicon.ico" />
+    <meta name="msapplication-config" content="{{path}}/favicon/browserconfig.xml" />
+    <meta name="theme-color" content="#ffffff" />
+    <!--[if IE]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <style type="text/css">
+     form[name="login"] {
+         max-width: 300px;
+         margin: 40px auto;
+     }
+     form[name="login"] label.input-group-addon {
+         width: 100px;
+     }
+     .input-group {
+         width: 100%;
+         margin-bottom: 10px;
+     }
+     label.input-group-addon {
+         text-align: right;
+     }
+     label.input-group-addon:after {
+         content: ":"
+     }
+     form .right {
+         float: right;
+     }
+    </style>
+    <script src="{{path}}/dist/vendor.js"></script>
+    <script src="{{path}}/dist/app.js"></script>
+  </head>
+  <body>
+    <header class="main">
+      <h1>
+        <span class="logo">Cataloger</span>
+        <span class="right">&nbsp;</span>
+      </h1>
+    </header>
+
+    <form method="POST" name="login">
+      <div class="input-group">
+        <label class="input-group-addon" for="username">{{ _("username") }}</label>
+        <input id="username" class="form-control" name="username" />
+      </div>
+      <div class="input-group">
+        <label class="input-group-addon" for="password">{{ _("password") }}</label>
+        <input id="password" class="form-control" name="password" type="password" />
+      </div>
+      <div class="right">
+        <input class="btn btn-default" type="submit" value="{{ _("login") }}"/>
+      </div>
+      <p class="error">{{ error }}</p>
+    </form>
+
+  </body>
+</html>

@@ -6,11 +6,12 @@ ini_set('display_errors', 'On');
 require_once('vendor/autoload.php');
 
 class Cataloger {
-    function __construct($lang = 'en') {
+    function __construct($lang = NULL) {
         $this->db = new PDO('sqlite:cataloger.sqlite');
         $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        if (file_exists('config.json')) {
-            $this->config = json_decode(file_get_contents('config.json'));
+        $this->config_name = 'config.json';
+        if (file_exists($this->config_name)) {
+            $this->config = json_decode(file_get_contents($this->config_name));
             if (!isset($this->config->session_timeout)) {
                 $this->config->session_timeout = 3600; // one hour
             }
@@ -19,6 +20,13 @@ class Cataloger {
         }
         $this->root = __DIR__ . DIRECTORY_SEPARATOR;
         $templates_dir = $this->root . 'templates' . DIRECTORY_SEPARATOR;
+        if (!$lang) {
+            $lang = $this->config->default_locale;
+        }
+        $this->config->locale = $lang;
+        if (!preg_match("/utf-?8$/", $lang)) {
+            $lang .= ".utf8";
+        }
         if (isset($this->config->template) && $this->config->template != 'default') {
             $template = array(
                 $templates_dir . $this->config->template,
@@ -85,6 +93,12 @@ class Cataloger {
         $container['settings']['displayErrorDetails'] = true;
         $this->app = new \Slim\App($container);
     }
+    function save_config() {
+        if (file_exists($this->config_name)) {
+            //unlink($this->config_name);
+        }
+        write($this->config_name, json_encode($this->config));
+    }
     function install() {
         $filename = 'config.json';
         if (!file_exists($filename)) {
@@ -119,11 +133,17 @@ class Cataloger {
             $this->loader->getSourceContext($page)->getPath()
         );
         $path = preg_replace('%/' . $page . '$%', '', $path);
-        return $this->twig->render($page, array_merge(array(
+        $html = $this->twig->render($page, array_merge(array(
             "path" => $base . $path,
             "root" => $base,
-            "pages" => query("SELECT slug, title FROM pages")
+            "pages" => query("SELECT slug, title FROM pages"),
+            "categories" => query("select a.id, a.name, a.slug, a.parent, (select count(*) from categories " .
+                                  "b where a.id = b.parent) as children from categories a")
         ), $data));
+        if ($this->config->tidy) {
+            return tidy($html);
+        }
+        return $html;
     }
     function query($query, $data = null) {
         if ($data == null) {
@@ -153,14 +173,15 @@ class Cataloger {
     }
 }
 
-$lang = 'pl_PL.utf8';
-
 require_once("utils.php");
 
+if (isset($_GET['lang'])) {
+    $lang = $_GET['lang'];
+} else {
+    $lang = NULL;
+}
+
 $app = new Cataloger($lang);
-
-
-
 
 $app->add(function($request, $response, $next) {
     global $app;
@@ -169,7 +190,7 @@ $app->add(function($request, $response, $next) {
     if (!installed() && $path != 'install') {
         $response = redirect($request, $response, "/install");
     }
-    if (preg_match("/^(admin|api|login)/", $path)) {
+    if (preg_match("/^(admin|api|login|logout)/", $path)) {
         session_timeout($app->config->session_timeout);
         session_start();
     }
@@ -184,6 +205,7 @@ $app->get('/', function($request, $response) {
 
 $app->any('/login', function($request, $response, $args) {
     global $app;
+    textdomain("admin");
     $body = $response->getBody();
     if (isset($_POST['username']) && isset($_POST['password'])) {
         if ($_POST['username'] != $app->config->username) {
@@ -209,7 +231,8 @@ $app->any('/login', function($request, $response, $args) {
 
 $app->get('/logout', function($request, $response) {
     unset($_SESSION['logged']);
-    return redirect($request, $response, '/');
+    session_destroy();
+    return redirect($request, $response, '/login');
 });
 
 
@@ -226,6 +249,10 @@ function register_admin_plugin($name, $component) {
 }
 
 register_admin_plugin('sitemap', 'panelSitemap');
+
+$app->get('/products', function($request, $response) {
+    
+});
 
 
 $app->get('/admin', function($request, $response) {
@@ -285,8 +312,57 @@ function make_new_entry($table, $keys) {
     };
 }
 
+function convert($string) {
+    if (is_numeric($string)) {
+        return $string + 0;
+    } else {
+        return $string;
+    }
+}
 
 $app->group('/api', function() {
+    $this->get('/config', function($request, $response) {
+        global $app;
+        $config = clone $app->config;
+        unset($config->password);
+        $body = $response->getBody();
+        $body->write(json_encode($config));
+        return $response;
+    });
+    $this->post('/config', function($request, $response) {
+        $body = $response->getBody();
+        if (isset($_POST['name']) && isset($_POST['value'])) {
+            $name = $_POST['name'];
+            $app->config->$name = convert($_POST['value']);
+            if ($app->save_config() == FALSE) {
+                $result = array('error' => 'save fail', 'success' => false);
+            } else {
+                $result = array('error' => null, 'success' => true);
+            }
+        } else {
+            $result = array('error' => 'POST variables not set', 'success' => false);
+        }
+        return $body->write(json_encode($result));
+    });
+    $this->post('/password', function($request, $response) {
+        global $app;
+        $body = $response->getBody();
+        if (isset($_POST['new']) && isset($_POST['old'])) {
+            if ($_POST['old'] != $app->config->password) {
+                $result = array('error' => "password don't match", 'success' => false);
+            } else {
+                $app->config->password = $_POST['new'];
+                if ($app->save_config() == FALSE) {
+                    $result = array('error' => 'save fail', 'success' => false);
+                } else {
+                    $result = array('error' => null, 'success' => true);
+                }
+            }
+        } else {
+            $result = array('error' => 'POST variables not set', 'success' => false);
+        }
+        return $body->write(json_encode($result));
+    });
     $this->group('/page', function() {
         $this->post('/new', function($request, $response) {
             $body = $response->getBody();
