@@ -321,7 +321,9 @@ function convert($string) {
 }
 
 function page_id($slug) {
-    $rows = query("SELECT id FROM pages WHERE slug = ?", array($slug));
+    if ($d == null) {
+        $rows = query("SELECT id FROM pages WHERE slug = ?", array($slug));
+    }
     if (count($rows) == 1) {
         return $rows[0]['id'];
     } else {
@@ -358,7 +360,8 @@ function update_page($request, $response) {
     $body = $response->getBody();
     if (isset($_POST['title']) && isset($_POST['content']) && isset($_POST['id'])) {
         $slug = slug($_POST['title']);
-        if (page_id($slug) != null) {
+        $rows = query("SELECT id FROM pages WHERE slug = ? AND id <> ?", array($slug, $_POST['id']));
+        if (count($rows) != 0) {
             $body->write(json_encode(array("result" => false, "error" => "slug exists")));
         } else {
             $result = query("UPDATE pages SET slug = ?, title = ?, content = ? WHERE id = ?", array(
