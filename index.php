@@ -204,6 +204,14 @@ $app->add(function($request, $response, $next) use ($app) {
         session_timeout($app->config->session_timeout);
         session_start();
     }
+    if (preg_match("/api/", $path)) {
+        $response = $response->withAddedHeader('Content-Type', 'application/json');
+        if (!$request->isGet() && !isset($_SESSION['logged'])) {
+            $response = $response->withJson(array(
+                "error" => "You need to be logged in to use this method"
+            ), 403);
+        }
+    }
     return $next($request, $response);
 });
 
@@ -474,9 +482,10 @@ $app->group('/api', function() {
             $body = $response->getBody();
             if (isset($_POST['name'])) {
                 $name = $_POST['name'];
+                $content = isset($_POST['content']) ? $_POST['content'] : null;
                 $parent = isset($_POST['parent']) ? intval($_POST['parent']) : null;
-                $query = "INSERT INTO categories(name, parent) VALUES (?, ?)";
-                if (query($query, array($name, $parent)) == 1) {
+                $query = "INSERT INTO categories(name, parent, content) VALUES (?, ?, ?)";
+                if (query($query, array($name, $parent, $content)) == 1) {
                     $body->write('true');
                 } else {
                     $body->write('false');
