@@ -2,9 +2,10 @@
   <nav>
     <ul>
       <li><a ng-click="ctrl.new_page()" translate>new page</a></li>
-      <li ng-repeat="page in ctrl.pages track by $index">
-        <a ng-click="ctrl.view(page)" ng-class="{selected: page == ctrl.page}" >{{page.title}}</a>
-        <a ng-click="ctrl.delete_page(page.id)">x</a>
+      <li ng-repeat="page in ctrl.pages track by $index"
+          ng-class="{selected: page == ctrl.page}">
+        <a ng-click="ctrl.view(page)">{{page.title}}</a>
+        <a ng-click="ctrl.delete_page($index)">x</a>
       </li>
     </ul>
   </nav>

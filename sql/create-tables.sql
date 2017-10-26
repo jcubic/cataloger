@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS categories (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
        name VARCHAR(255),
+       content TEXT,
        slug VARCHAR(255),
        parent INTEGER DEFAULT null
 );

@@ -64,17 +64,24 @@ function controller($http) {
             }
         });
     };
-    this.delete_page = (id) => {
-        $http({
-            method: 'DELETE',
-            url: root + '/api/page/' + id
-        }).then((response) => {
-            if (response.data.result) {
-                this.pages = this.pages.filter((page) => {
-                    return page.id != id;
-                });
-            }
-        });
+    this.delete_page = (index) => {
+        var page = this.pages[index];
+        var id = page.id;
+        if (typeof id === 'undefined') {
+            var title = page.title;
+            this.pages = this.pages.filter((page) => page.title != title);
+        } else {
+            $http({
+                method: 'DELETE',
+                url: root + '/api/page/' + id
+            }).then((response) => {
+                if (response.data.result) {
+                    this.pages = this.pages.filter((page) => {
+                        return page.id != id;
+                    });
+                }
+            });
+        }
     };
     this.save = () => {
         if (!this.page.id) {
@@ -83,9 +90,11 @@ function controller($http) {
             update();
         }
     };
+    
     this.new_page = () => {
+        var untitled = this.pages.filter((page) => page.title.match(/^untitled/));
         this.pages.push({
-            title: 'untitled',
+            title: 'untitled ' + (untitled.length + 1),
             content: ''
         });
     };

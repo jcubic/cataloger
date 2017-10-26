@@ -133,12 +133,23 @@ class Cataloger {
             $this->loader->getSourceContext($page)->getPath()
         );
         $path = preg_replace('%/' . $page . '$%', '', $path);
+        try {
+            $pages = query("SELECT slug, title FROM pages");
+        } catch (Exception $e) {
+            $pages = array();
+        }
+        try {
+            $categories = query("select a.id, a.name, a.slug, a.parent, (select count(*) " .
+                                "from categories b where a.id = b.parent) as children " .
+                                "from categories a");
+        } catch (Exception $e) {
+            $categories = array();
+        }
         $html = $this->twig->render($page, array_merge(array(
             "path" => $base . $path,
             "root" => $base,
-            "pages" => query("SELECT slug, title FROM pages"),
-            "categories" => query("select a.id, a.name, a.slug, a.parent, (select count(*) from categories " .
-                                  "b where a.id = b.parent) as children from categories a")
+            "pages" => $pages,
+            "categories" => $categories
         ), $data));
         if ($this->config->tidy) {
             return tidy($html);
@@ -183,12 +194,11 @@ if (isset($_GET['lang'])) {
 
 $app = new Cataloger($lang);
 
-$app->add(function($request, $response, $next) {
-    global $app;
+$app->add(function($request, $response, $next) use ($app) {
     $uri = $request->getUri();
     $path = $uri->getPath();
-    if (!installed() && $path != 'install') {
-        $response = redirect($request, $response, "/install");
+    if (!installed() && !preg_match("/install/", $path)) {
+        return redirect($request, $response, "/install");
     }
     if (preg_match("/^(admin|api|login|logout)/", $path)) {
         session_timeout($app->config->session_timeout);
@@ -203,8 +213,7 @@ $app->get('/', function($request, $response) {
     return $response;
 });
 
-$app->any('/login', function($request, $response, $args) {
-    global $app;
+$app->any('/login', function($request, $response, $args) use ($app) {
     textdomain("admin");
     $body = $response->getBody();
     if (isset($_POST['username']) && isset($_POST['password'])) {

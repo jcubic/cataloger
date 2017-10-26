@@ -10,7 +10,7 @@ panel[name="pages"] nav ul {
     padding: 0;
     margin: 0;
 }
-panel[name="pages"] nav .selected {
+panel[name="pages"] nav .selected a {
     background-color: #222d32;
     color: white;
 }
@@ -28,7 +28,10 @@ panel[name="pages"] nav a {
 panel[name="pages"] nav a:nth-child(2) {
     position: absolute;
     right: 6px;
-    top: 2px;
+    top: 0;
+}
+panel[name="pages"] nav .selected a:nth-child(2) {
+    color: white;
 }
 panel[name="pages"] .right, panel[name="pages"] .right.input-group > input {
     float: right;

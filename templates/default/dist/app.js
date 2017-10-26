@@ -98,6 +98,10 @@ var _pagePanel = __webpack_require__(16);
 
 var _pagePanel2 = _interopRequireDefault(_pagePanel);
 
+var _categoryPanel = __webpack_require__(40);
+
+var _categoryPanel2 = _interopRequireDefault(_categoryPanel);
+
 var _panel = __webpack_require__(22);
 
 var _panel2 = _interopRequireDefault(_panel);
@@ -106,7 +110,7 @@ __webpack_require__(27);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _angular2.default.module('components', ['ui.tinymce']).component('productPanel', _productPanel2.default).component('settingsPanel', _settingsPanel2.default).component('pagePanel', _pagePanel2.default).component('panel', _panel2.default);
+exports.default = _angular2.default.module('components', ['ui.tinymce']).component('productPanel', _productPanel2.default).component('settingsPanel', _settingsPanel2.default).component('pagePanel', _pagePanel2.default).component('categoryPanel', _categoryPanel2.default).component('panel', _panel2.default);
 
 /***/ }),
 /* 10 */
@@ -284,7 +288,7 @@ exports.default = {
 /* 17 */
 /***/ (function(module, exports) {
 
-module.exports = "<panel name=\"pages\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_page()\" translate>new page</a></li>\n      <li ng-repeat=\"page in ctrl.pages track by $index\">\n        <a ng-click=\"ctrl.view(page)\" ng-class=\"{selected: page == ctrl.page}\" >{{page.title}}</a>\n        <a ng-click=\"ctrl.delete_page(page.id)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.page\">\n    <form name=\"page\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"title\" translate>title</label>\n        <input class=\"form-control\" id=\"title\" ng-model=\"ctrl.page.title\"/>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.page.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
+module.exports = "<panel name=\"pages\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_page()\" translate>new page</a></li>\n      <li ng-repeat=\"page in ctrl.pages track by $index\"\n          ng-class=\"{selected: page == ctrl.page}\">\n        <a ng-click=\"ctrl.view(page)\">{{page.title}}</a>\n        <a ng-click=\"ctrl.delete_page($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.page\">\n    <form name=\"page\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"title\" translate>title</label>\n        <input class=\"form-control\" id=\"title\" ng-model=\"ctrl.page.title\"/>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.page.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
 /* 18 */
@@ -369,17 +373,26 @@ function controller($http) {
             }
         });
     };
-    this.delete_page = function (id) {
-        $http({
-            method: 'DELETE',
-            url: root + '/api/page/' + id
-        }).then(function (response) {
-            if (response.data.result) {
-                _this.pages = _this.pages.filter(function (page) {
-                    return page.id != id;
-                });
-            }
-        });
+    this.delete_page = function (index) {
+        var page = _this.pages[index];
+        var id = page.id;
+        if (typeof id === 'undefined') {
+            var title = page.title;
+            _this.pages = _this.pages.filter(function (page) {
+                return page.title != title;
+            });
+        } else {
+            $http({
+                method: 'DELETE',
+                url: root + '/api/page/' + id
+            }).then(function (response) {
+                if (response.data.result) {
+                    _this.pages = _this.pages.filter(function (page) {
+                        return page.id != id;
+                    });
+                }
+            });
+        }
     };
     this.save = function () {
         if (!_this.page.id) {
@@ -388,9 +401,13 @@ function controller($http) {
             update();
         }
     };
+
     this.new_page = function () {
+        var untitled = _this.pages.filter(function (page) {
+            return page.title.match(/^untitled/);
+        });
         _this.pages.push({
-            title: 'untitled',
+            title: 'untitled ' + (untitled.length + 1),
             content: ''
         });
     };
@@ -446,7 +463,7 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 
 // module
-exports.push([module.i, "panel[name=\"pages\"] nav {\n    float: left;\n    width: 200px;\n    height: 100%;\n    overflow: auto;\n    marin-right: 10px;\n}\npanel[name=\"pages\"] nav ul {\n    list-style: none;\n    padding: 0;\n    margin: 0;\n}\npanel[name=\"pages\"] nav .selected {\n    background-color: #222d32;\n    color: white;\n}\n\npanel[name=\"pages\"] nav li {\n    position: relative;\n}\npanel[name=\"pages\"] nav a:first-child {\n    display: block;\n}\npanel[name=\"pages\"] nav a {\n    padding: 2px 6px;\n    cursor: pointer;\n}\npanel[name=\"pages\"] nav a:nth-child(2) {\n    position: absolute;\n    right: 6px;\n    top: 2px;\n}\npanel[name=\"pages\"] .right, panel[name=\"pages\"] .right.input-group > input {\n    float: right;\n}\npanel[name=\"pages\"] .panel > .right {\n    width: calc(100% - 200px);\n}\npanel[name=\"pages\"] .panel > .right, panel[name=\"pages\"] .panel form, panel[name=\"pages\"] .mce-tinymce {\n    height: 100%;\n}\npanel[name=\"pages\"] .panel .editor.input-group {\n    height: calc(100% - 54px - 54px);\n}\npanel[name=\"pages\"] .input-group {\n    padding: 10px;\n    width: 100%;\n}\n", ""]);
+exports.push([module.i, "panel[name=\"pages\"] nav {\n    float: left;\n    width: 200px;\n    height: 100%;\n    overflow: auto;\n    marin-right: 10px;\n}\npanel[name=\"pages\"] nav ul {\n    list-style: none;\n    padding: 0;\n    margin: 0;\n}\npanel[name=\"pages\"] nav .selected a {\n    background-color: #222d32;\n    color: white;\n}\n\npanel[name=\"pages\"] nav li {\n    position: relative;\n}\npanel[name=\"pages\"] nav a:first-child {\n    display: block;\n}\npanel[name=\"pages\"] nav a {\n    padding: 2px 6px;\n    cursor: pointer;\n}\npanel[name=\"pages\"] nav a:nth-child(2) {\n    position: absolute;\n    right: 6px;\n    top: 0;\n}\npanel[name=\"pages\"] nav .selected a:nth-child(2) {\n    color: white;\n}\npanel[name=\"pages\"] .right, panel[name=\"pages\"] .right.input-group > input {\n    float: right;\n}\npanel[name=\"pages\"] .panel > .right {\n    width: calc(100% - 200px);\n}\npanel[name=\"pages\"] .panel > .right, panel[name=\"pages\"] .panel form, panel[name=\"pages\"] .mce-tinymce {\n    height: 100%;\n}\npanel[name=\"pages\"] .panel .editor.input-group {\n    height: calc(100% - 54px - 54px);\n}\npanel[name=\"pages\"] .input-group {\n    padding: 10px;\n    width: 100%;\n}\n", ""]);
 
 // exports
 
@@ -663,6 +680,219 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 // module
 exports.push([module.i, "body {\n    margin: 0;\n    height: 100vh;\n}\n.error {\n    color: #a94442; /* same as boostrap */\n}\nheader.main, nav.left, footer {\n    font-family: sans-serif;\n}\nheader.main {\n    background-color: #3c8dbc;\n    color: #fff;\n}\nheader.main h1 {\n    height: 50px;\n    width: 100%;\n    display: table;\n    margin: 0;\n}\nheader.main .right {\n    display: table-cell;\n    width: calc(100% - 230px);\n    font-size: 14px;\n    font-weight: normal;\n    vertical-align: middle;\n}\nheader.main ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nheader.main li {\n    float: right;\n    margin: 10px;\n}\nheader.main li a, header li a:visited {\n    color: white;\n    text-decoration: none;\n}\nheader li a:hover {\n    text-decoration: underline;\n}\nheader .logo {\n    display: table-cell;\n    vertical-align: middle;\n    background-color: #367fa9;\n    text-align: center;\n    font-family: sans-serif;\n    font-weight: normal;\n    font-size: 20px;\n}\nheader .logo, nav.left {\n    width: 230px;\n    color: white;\n}\nnav.left {\n    background-color: #222d32;\n    font-size: 14px;\n}\nnav.left, main {\n    height: calc(100% - 50px - 20px);\n}\nnav.left ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nnav.left li {\n    display: table;\n    height: 30px;\n    width: 100%;\n}\nnav.left a {\n    width: 100%;\n    height: 100%;\n    display: table-cell;\n    vertical-align: middle;\n    padding-left: 20px;\n}\nnav.left li a, nav.left li a:visited {\n    color: white;\n}\nnav.left li.selected a {\n    border-left: 4px solid #367fa9;\n}\nnav.left li.selected a {\n    padding-left: 16px;\n}\nfooter a, footer a:visited, nav.left li a, nav.left li a:visited {\n    text-decoration: none;\n    cursor: pointer;\n}\nnav.left li:hover a {\n    background: #1e282c;\n}\nmain {\n    position: absolute;\n    left: 230px;\n    width: calc(100% - 230px);\n    top: 50px;\n    overflow: auto;\n}\nmain .panel {\n    display: block;\n    height: calc(100vh - 50px - 20px);\n    margin: 0;\n}\nfooter {\n    height: 20px;\n    box-sizing: border-box;\n    margin: 0;\n    font-size: 12px;\n    background: black;\n    color: white;\n    text-align: center;\n    padding: 3px 0;\n}\nfooter p {\n    margin: 0;\n}\nfooter a, footer a:visited {\n    color: white;\n}\nfooter a:hover {\n    text-decoration: underline;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _categoryPanelTemplate = __webpack_require__(41);
+
+var _categoryPanelTemplate2 = _interopRequireDefault(_categoryPanelTemplate);
+
+var _categoryPanel = __webpack_require__(42);
+
+var _categoryPanel2 = _interopRequireDefault(_categoryPanel);
+
+__webpack_require__(43);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    template: _categoryPanelTemplate2.default,
+    controller: _categoryPanel2.default,
+    controllerAs: 'ctrl'
+};
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports) {
+
+module.exports = "<panel name=\"pages\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_page()\" translate>new page</a></li>\n      <li ng-repeat=\"page in ctrl.pages track by $index\"\n          ng-class=\"{selected: page == ctrl.page}\">\n        <a ng-click=\"ctrl.view(page)\">{{page.title}}</a>\n        <a ng-click=\"ctrl.delete_page($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.page\">\n    <form name=\"page\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"title\" translate>title</label>\n        <input class=\"form-control\" id=\"title\" ng-model=\"ctrl.page.title\"/>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.page.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function controller($http) {
+    var _this = this;
+
+    this.tinymce_options = {
+        theme: 'modern',
+        skin: 'lightgray',
+        menubar: false,
+        statusbar: false,
+        height: '100%',
+        plugins: ["advlist code"],
+        toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | preview fullpage | forecolor backcolor table | code"
+    };
+    this.products = [];
+    var get = function get(url, variable) {
+        $http({ method: 'GET', url: root + url }).then(function (response) {
+            _this[variable] = response.data;
+        });
+    };
+    var post = function post(options) {
+        return $http({
+            method: 'POST',
+            url: root + options.url,
+            data: _jquery2.default.param(options.data),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            }
+        }).then(function (response) {
+            return response.data;
+        });
+    };
+    this.get_pages = function () {
+        get('/api/page/list', 'pages');
+    };
+    var new_page = function new_page() {
+        var title = _this.page.title;
+        post({
+            url: '/api/page/',
+            data: {
+                title: title,
+                content: _this.page.content
+            }
+        }).then(function (data) {
+            if (data.result !== false) {
+                _this.pages.forEach(function (page) {
+                    if (page.title == title) {
+                        page.id = data.result[0];
+                    }
+                });
+            }
+        });
+    };
+    var update = function update() {
+        post({
+            url: '/api/page/',
+            data: {
+                id: _this.page.id,
+                title: _this.page.title,
+                content: _this.page.content
+            }
+        }).then(function (data) {
+            if (data.result) {
+                alert('saved');
+                // toaster
+            }
+        });
+    };
+    this.delete_page = function (index) {
+        var page = _this.pages[index];
+        var id = page.id;
+        if (typeof id === 'undefined') {
+            var title = page.title;
+            _this.pages = _this.pages.filter(function (page) {
+                return page.title != title;
+            });
+        } else {
+            $http({
+                method: 'DELETE',
+                url: root + '/api/page/' + id
+            }).then(function (response) {
+                if (response.data.result) {
+                    _this.pages = _this.pages.filter(function (page) {
+                        return page.id != id;
+                    });
+                }
+            });
+        }
+    };
+    this.save = function () {
+        if (!_this.page.id) {
+            new_page();
+        } else {
+            update();
+        }
+    };
+
+    this.new_page = function () {
+        var untitled = _this.pages.filter(function (page) {
+            return page.title.match(/^untitled/);
+        });
+        _this.pages.push({
+            title: 'untitled ' + (untitled.length + 1),
+            content: ''
+        });
+    };
+    this.view = function (page) {
+        _this.page = page;
+    };
+    this.get_pages();
+} /* global root */
+
+;
+
+controller.$inject = ['$http'];
+
+exports.default = controller;
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(44);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../node_modules/css-loader/index.js!./categoryPanel.css", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js!./categoryPanel.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(0)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "panel[name=\"pages\"] nav {\n    float: left;\n    width: 200px;\n    height: 100%;\n    overflow: auto;\n    marin-right: 10px;\n}\npanel[name=\"pages\"] nav ul {\n    list-style: none;\n    padding: 0;\n    margin: 0;\n}\npanel[name=\"pages\"] nav .selected a {\n    background-color: #222d32;\n    color: white;\n}\n\npanel[name=\"pages\"] nav li {\n    position: relative;\n}\npanel[name=\"pages\"] nav a:first-child {\n    display: block;\n}\npanel[name=\"pages\"] nav a {\n    padding: 2px 6px;\n    cursor: pointer;\n}\npanel[name=\"pages\"] nav a:nth-child(2) {\n    position: absolute;\n    right: 6px;\n    top: 0;\n}\npanel[name=\"pages\"] nav .selected a:nth-child(2) {\n    color: white;\n}\npanel[name=\"pages\"] .right, panel[name=\"pages\"] .right.input-group > input {\n    float: right;\n}\npanel[name=\"pages\"] .panel > .right {\n    width: calc(100% - 200px);\n}\npanel[name=\"pages\"] .panel > .right, panel[name=\"pages\"] .panel form, panel[name=\"pages\"] .mce-tinymce {\n    height: 100%;\n}\npanel[name=\"pages\"] .panel .editor.input-group {\n    height: calc(100% - 54px - 54px);\n}\npanel[name=\"pages\"] .input-group {\n    padding: 10px;\n    width: 100%;\n}\n", ""]);
 
 // exports
 
