@@ -1,7 +1,34 @@
 .panel {
     padding: 10px;
 }
-
+panel.split nav {
+    float: left;
+    width: 200px;
+    height: 100%;
+    overflow: auto;
+    marin-right: 10px;
+}
+panel.split nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+panel.split nav li {
+    position: relative;
+}
+panel.split .right, panel.split .right.input-group > input {
+    float: right;
+}
+panel.split .panel > .right {
+    width: calc(100% - 200px);
+}
+panel.split .panel > .right, panel.split .panel form, panel.split .mce-tinymce {
+    height: 100%;
+}
+panel.split .input-group {
+    padding: 10px;
+    width: 100%;
+}
 /*Container, container body, iframe*/
 .mce-tinymce, .mce-container-body, #code_ifr {
     min-height: 100% !important;

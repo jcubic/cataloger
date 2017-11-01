@@ -28,7 +28,9 @@ module.exports = {
         new copyWebpackPlugin([
             { from: './node_modules/tinymce/plugins', to: './plugins' },
             { from: './node_modules/tinymce/themes', to: './themes' },
-            { from: './node_modules/tinymce/skins', to: './skins' }
+            { from: './node_modules/tinymce/skins', to: './skins' },
+            { from: './node_modules/font-awesome/css/font-awesome.min.css', to: './css/font-awesome.min.css' },
+            { from: './node_modules/font-awesome/fonts', to: './fonts' }
         ])
     ]).concat(ENV==='production' ? [
         new webpack.optimize.UglifyJsPlugin({

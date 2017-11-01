@@ -1,0 +1,26 @@
+<panel name="categories" class="split">
+  <nav>
+    <a ng-click="ctrl.new_category()" translate>new category</a>
+    <tree-view ng-model="ctrl.tree" click="ctrl.view(node)" delete="ctrl.delete(node)"></tree-view>
+  </nav>
+  <div class="right" ng-if="ctrl.category">
+    <form name="category">
+      <div class="input-group">
+        <label class="input-group-addon" for="name" translate>name</label>
+        <input class="form-control" id="name" ng-model="ctrl.category.data.name"/>
+      </div>
+      <div class="input-group" ng-if="ctrl.parents.length" >
+        <label class="input-group-addon" for="parent" translate>parent category</label>
+        <select ng-options="item as item.name for item in ctrl.parents track by item.id"
+                ng-model="ctrl.category.parent" class="form-control"></select>
+      </div>
+      <div class="input-group editor">
+        <textarea ui-tinymce="ctrl.tinymce_options" class="form-control" ng-model="ctrl.category.data.content">
+        </textarea>
+      </div>
+      <div class="right input-group">
+        <input class="btn btn-default" type="button" ng-value="'save' | translate" ng-click="ctrl.save()" />
+      </div>
+    </form>
+  </div>
+</panel>

@@ -22,21 +22,21 @@ var _components = __webpack_require__(9);
 
 var _components2 = _interopRequireDefault(_components);
 
-var _directives = __webpack_require__(33);
+var _directives = __webpack_require__(35);
 
 var _directives2 = _interopRequireDefault(_directives);
 
-__webpack_require__(35);
+__webpack_require__(37);
 
-var _angularGettext = __webpack_require__(41);
+var _angularGettext = __webpack_require__(43);
 
 var _angularGettext2 = _interopRequireDefault(_angularGettext);
 
-__webpack_require__(43);
+__webpack_require__(45);
 
 __webpack_require__(46);
 
-__webpack_require__(44);
+__webpack_require__(48);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -112,11 +112,15 @@ var _panel = __webpack_require__(27);
 
 var _panel2 = _interopRequireDefault(_panel);
 
-__webpack_require__(32);
+var _treeView = __webpack_require__(32);
+
+var _treeView2 = _interopRequireDefault(_treeView);
+
+__webpack_require__(34);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _angular2.default.module('components', ['ui.tinymce']).component('productPanel', _productPanel2.default).component('settingsPanel', _settingsPanel2.default).component('pagePanel', _pagePanel2.default).component('categoryPanel', _categoryPanel2.default).component('panel', _panel2.default);
+exports.default = _angular2.default.module('components', ['ui.tinymce']).component('productPanel', _productPanel2.default).component('settingsPanel', _settingsPanel2.default).component('pagePanel', _pagePanel2.default).component('categoryPanel', _categoryPanel2.default).component('treeView', _treeView2.default).component('panel', _panel2.default);
 
 /***/ }),
 /* 10 */
@@ -294,7 +298,7 @@ exports.default = {
 /* 17 */
 /***/ (function(module, exports) {
 
-module.exports = "<panel name=\"pages\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_page()\" translate>new page</a></li>\n      <li ng-repeat=\"page in ctrl.pages track by $index\"\n          ng-class=\"{selected: page == ctrl.page}\">\n        <a ng-click=\"ctrl.view(page)\">{{page.title}}</a>\n        <a ng-click=\"ctrl.delete_page($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.page\">\n    <form name=\"page\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"title\" translate>title</label>\n        <input class=\"form-control\" id=\"title\" ng-model=\"ctrl.page.title\"/>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.page.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
+module.exports = "<panel name=\"pages\" class=\"split\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_page()\" translate>new page</a></li>\n      <li ng-repeat=\"page in ctrl.pages track by $index\"\n          ng-class=\"{selected: page == ctrl.page}\">\n        <a ng-click=\"ctrl.view(page)\">{{page.title}}</a>\n        <a ng-click=\"ctrl.delete_page($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.page\">\n    <form name=\"page\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"title\" translate>title</label>\n        <input class=\"form-control\" id=\"title\" ng-model=\"ctrl.page.title\"/>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.page.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
 /* 18 */
@@ -473,7 +477,7 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 
 // module
-exports.push([module.i, "panel[name=\"pages\"] nav {\n    float: left;\n    width: 200px;\n    height: 100%;\n    overflow: auto;\n    marin-right: 10px;\n}\npanel[name=\"pages\"] nav ul {\n    list-style: none;\n    padding: 0;\n    margin: 0;\n}\npanel[name=\"pages\"] nav .selected a {\n    background-color: #222d32;\n    color: white;\n}\n\npanel[name=\"pages\"] nav li {\n    position: relative;\n}\npanel[name=\"pages\"] nav a:first-child {\n    display: block;\n}\npanel[name=\"pages\"] nav a {\n    padding: 2px 6px;\n    cursor: pointer;\n}\npanel[name=\"pages\"] nav a:nth-child(2) {\n    position: absolute;\n    right: 6px;\n    top: 0;\n}\npanel[name=\"pages\"] nav .selected a:nth-child(2) {\n    color: white;\n}\npanel[name=\"pages\"] .right, panel[name=\"pages\"] .right.input-group > input {\n    float: right;\n}\npanel[name=\"pages\"] .panel > .right {\n    width: calc(100% - 200px);\n}\npanel[name=\"pages\"] .panel > .right, panel[name=\"pages\"] .panel form, panel[name=\"pages\"] .mce-tinymce {\n    height: 100%;\n}\npanel[name=\"pages\"] .panel .editor.input-group {\n    height: calc(100% - 54px - 54px);\n}\npanel[name=\"pages\"] .input-group {\n    padding: 10px;\n    width: 100%;\n}\n", ""]);
+exports.push([module.i, "panel[name=\"pages\"] nav .selected a {\n    background-color: #222d32;\n    color: white;\n}\npanel[name=\"pages\"] nav a:first-child {\n    display: block;\n}\npanel[name=\"pages\"] nav a {\n    padding: 2px 6px;\n    cursor: pointer;\n}\npanel[name=\"pages\"] nav a:nth-child(2) {\n    position: absolute;\n    right: 6px;\n    top: 0;\n}\npanel[name=\"pages\"] nav .selected a:nth-child(2) {\n    color: white;\n}\npanel[name=\"pages\"] .panel .editor.input-group {\n    height: calc(100% - 54px - 54px);\n}\n", ""]);
 
 // exports
 
@@ -512,7 +516,7 @@ exports.default = {
 /* 23 */
 /***/ (function(module, exports) {
 
-module.exports = "<panel name=\"categories\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_page()\" translate>new page</a></li>\n      <li ng-repeat=\"page in ctrl.pages track by $index\"\n          ng-class=\"{selected: page == ctrl.page}\">\n        <a ng-click=\"ctrl.view(page)\">{{page.title}}</a>\n        <a ng-click=\"ctrl.delete_page($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.page\">\n    <form name=\"page\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"title\" translate>title</label>\n        <input class=\"form-control\" id=\"title\" ng-model=\"ctrl.page.title\"/>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.page.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
+module.exports = "<panel name=\"categories\" class=\"split\">\n  <nav>\n    <a ng-click=\"ctrl.new_category()\" translate>new category</a>\n    <tree-view ng-model=\"ctrl.tree\" click=\"ctrl.view(node)\" delete=\"ctrl.delete(node)\"></tree-view>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.category\">\n    <form name=\"category\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.category.data.name\"/>\n      </div>\n      <div class=\"input-group\" ng-if=\"ctrl.parents.length\" >\n        <label class=\"input-group-addon\" for=\"parent\" translate>parent category</label>\n        <select ng-options=\"item as item.name for item in ctrl.parents track by item.id\"\n                ng-model=\"ctrl.category.parent\" class=\"form-control\"></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.category.data.content\">\n        </textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
 /* 24 */
@@ -531,7 +535,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function controller($http) {
+function controller($scope, $http, notifications, gettextCatalog) {
     var _this = this;
 
     this.tinymce_options = {
@@ -543,9 +547,10 @@ function controller($http) {
         plugins: ["advlist code"],
         toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | preview fullpage | forecolor backcolor table | code"
     };
-    this.products = [];
+    this.categories = [];
+    this.tree = [];
     var get = function get(url, variable) {
-        $http({ method: 'GET', url: root + url }).then(function (response) {
+        return $http({ method: 'GET', url: root + url }).then(function (response) {
             _this[variable] = response.data;
         });
     };
@@ -561,49 +566,81 @@ function controller($http) {
             return response.data;
         });
     };
-    this.get_pages = function () {
-        get('/api/page/list', 'pages');
+    function make_tree(array, fn, filter) {
+        if (!filter) {
+            filter = array.filter(function (item) {
+                return !item.parent || item.parent == "0";
+            });
+        }
+        if (!filter.length) {
+            return [];
+        }
+        return filter.map(function (item) {
+            return _jquery2.default.extend({
+                nodes: make_tree(array, fn, array.filter(function (node) {
+                    return node.parent == item.id;
+                }))
+            }, fn(item));
+        });
+    }
+    var treefy = function treefy() {
+        _this.tree = make_tree(_this.categories, function (node) {
+            return {
+                name: node.name,
+                data: node
+            };
+        });
     };
-    var new_page = function new_page() {
-        var title = _this.page.title;
+    this.get_categories = function () {
+        get('/api/category/list', 'categories').then(treefy);
+    };
+    var new_category = function new_category() {
+        var name = _this.category.data.name;
         post({
-            url: '/api/page/',
+            url: '/api/category/',
             data: {
-                title: title,
-                content: _this.page.content
+                name: name,
+                content: _this.category.data.content,
+                parent: _this.category.parent ? _this.category.parent.id : null
             }
         }).then(function (data) {
             if (data.result !== false) {
-                _this.pages.forEach(function (page) {
-                    if (page.title == title) {
-                        page.id = data.result[0];
+                _this.categories.forEach(function (category) {
+                    if (category.name == name) {
+                        category.id = data.result[0];
+                        delete category.new_item;
                     }
+                });
+                notifications.showSuccess({
+                    message: gettextCatalog.getString('Save successfull')
                 });
             }
         });
     };
     var update = function update() {
         post({
-            url: '/api/page/',
+            url: '/api/category/',
             data: {
-                id: _this.page.id,
-                title: _this.page.title,
-                content: _this.page.content
+                id: _this.category.data.id,
+                name: _this.category.data.name,
+                content: _this.category.data.content,
+                parent: _this.category.parent.id
             }
         }).then(function (data) {
             if (data.result) {
-                alert('saved');
-                // toaster
+                notifications.showSuccess({
+                    message: gettextCatalog.getString('Save successfull')
+                });
             }
         });
     };
-    this.delete_page = function (index) {
-        var page = _this.pages[index];
-        var id = page.id;
-        if (typeof id === 'undefined') {
-            var title = page.title;
-            _this.pages = _this.pages.filter(function (page) {
-                return page.title != title;
+    this.delete_category = function (index) {
+        var category = _this.categories[index];
+        var id = category.id;
+        if (typeof id === 'undefined' || typeof id == 'string' && id.match(/^new [0-9]+$/)) {
+            var name = category.name;
+            _this.categories = _this.categories.filter(function (category) {
+                return category.name != name;
             });
         } else {
             $http({
@@ -611,39 +648,65 @@ function controller($http) {
                 url: root + '/api/page/' + id
             }).then(function (response) {
                 if (response.data.result) {
-                    _this.pages = _this.pages.filter(function (page) {
-                        return page.id != id;
+                    _this.categories = _this.categories.filter(function (category) {
+                        return category.id != id;
                     });
                 }
             });
         }
     };
     this.save = function () {
-        if (!_this.page.id) {
-            new_page();
+        if (_this.category.data.new_item) {
+            new_category();
         } else {
             update();
         }
     };
+    this.new_category = function () {
+        var new_items = _this.categories.filter(function (category) {
+            return category.new_item;
+        });
+        var name = 'new ' + (new_items.length + 1);
+        _this.categories.push({
+            name: name,
+            id: name,
+            content: '',
+            new_item: true
+        });
+        treefy();
+    };
+    var listener = void 0;
+    this.view = function (category) {
+        if (_this.category) {
+            delete _this.category.class;
+        }
+        _this.category = category;
+        _this.category.class = 'selected';
+        _this.category.parent = _this.categories.filter(function (category) {
+            return _this.category.data.parent == category.id;
+        })[0];
+        if (listener) {
+            listener();
+        }
+        listener = $scope.$watch(function () {
+            return _this.category.parent;
+        }, function (oldValue, newValue) {
+            if (oldValue != newValue) {
+                _this.category.data.parent = _this.category.parent.id;
+                treefy();
+            }
+        });
+        _this.parents = _this.categories.filter(function (category) {
+            return !category.new_item && category.id != _this.category.data.id;
+        });
+    };
 
-    this.new_page = function () {
-        var untitled = _this.pages.filter(function (page) {
-            return page.title.match(/^untitled/);
-        });
-        _this.pages.push({
-            title: 'untitled ' + (untitled.length + 1),
-            content: ''
-        });
-    };
-    this.view = function (page) {
-        _this.page = page;
-    };
-    this.get_pages();
+    this.get_categories();
 } /* global root */
 
 ;
 
-controller.$inject = ['$http'];
+controller.$inject = ['$scope', '$http', 'notifications', 'gettextCatalog'];
 
 exports.default = controller;
 
@@ -687,7 +750,7 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 
 // module
-exports.push([module.i, "panel[name=\"pages\"] nav {\n    float: left;\n    width: 200px;\n    height: 100%;\n    overflow: auto;\n    marin-right: 10px;\n}\npanel[name=\"pages\"] nav ul {\n    list-style: none;\n    padding: 0;\n    margin: 0;\n}\npanel[name=\"pages\"] nav .selected a {\n    background-color: #222d32;\n    color: white;\n}\n\npanel[name=\"pages\"] nav li {\n    position: relative;\n}\npanel[name=\"pages\"] nav a:first-child {\n    display: block;\n}\npanel[name=\"pages\"] nav a {\n    padding: 2px 6px;\n    cursor: pointer;\n}\npanel[name=\"pages\"] nav a:nth-child(2) {\n    position: absolute;\n    right: 6px;\n    top: 0;\n}\npanel[name=\"pages\"] nav .selected a:nth-child(2) {\n    color: white;\n}\npanel[name=\"pages\"] .right, panel[name=\"pages\"] .right.input-group > input {\n    float: right;\n}\npanel[name=\"pages\"] .panel > .right {\n    width: calc(100% - 200px);\n}\npanel[name=\"pages\"] .panel > .right, panel[name=\"pages\"] .panel form, panel[name=\"pages\"] .mce-tinymce {\n    height: 100%;\n}\npanel[name=\"pages\"] .panel .editor.input-group {\n    height: calc(100% - 54px - 54px);\n}\npanel[name=\"pages\"] .input-group {\n    padding: 10px;\n    width: 100%;\n}\n", ""]);
+exports.push([module.i, "panel[name=\"categories\"] .panel .editor.input-group {\n    height: calc(100% - 54px - 54px - 54px);\n}\n\npanel[name=\"categories\"] nav li > span {\n    padding: 3px 4px;\n    display: block;\n}\npanel[name=\"categories\"] nav li.selected > span {\n    background-color: #222d32;\n    color: white;\n}\npanel[name=\"categories\"] nav li.selected > i,\npanel[name=\"categories\"] nav li.selected > .wrapper a {\n    color: white;\n}\npanel[name=\"categories\"] nav li ul {\n    margin-left: 20px;\n    width: calc(100% - 20px);\n}\npanel[name=\"categories\"] nav i::before {\n    content: \"\\F147\";\n}\npanel[name=\"categories\"] nav i.collapsed::before {\n    content: \"\\F196\";\n}\npanel[name=\"categories\"] nav i.collapsed ~ ul {\n    display: none;\n}\npanel[name=\"categories\"] nav i {\n    float: left;\n    margin: 6px;\n    position: relative;\n    z-index: 100;\n}\npanel[name=\"categories\"] .wrapper {\n    position: relative;\n}\npanel[name=\"categories\"] .wrapper > a {\n    position: absolute;\n    right: 8px;\n}\n", ""]);
 
 // exports
 
@@ -790,14 +853,13 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 
 // module
-exports.push([module.i, ".panel {\n    padding: 10px;\n}\n\n/*Container, container body, iframe*/\n.mce-tinymce, .mce-container-body, #code_ifr {\n    min-height: 100% !important;\n}\n/*Container body*/\n.mce-container-body {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n/*Editing area*/\n.mce-container-body .mce-edit-area {\n    position: absolute;\n    top: 69px;\n    bottom: 37px;\n    left: 0;\n    right: 0;\n}\n/*Footer*/\n.mce-tinymce .mce-statusbar {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n", ""]);
+exports.push([module.i, ".panel {\n    padding: 10px;\n}\npanel.split nav {\n    float: left;\n    width: 200px;\n    height: 100%;\n    overflow: auto;\n    marin-right: 10px;\n}\npanel.split nav ul {\n    list-style: none;\n    padding: 0;\n    margin: 0;\n}\npanel.split nav li {\n    position: relative;\n}\npanel.split .right, panel.split .right.input-group > input {\n    float: right;\n}\npanel.split .panel > .right {\n    width: calc(100% - 200px);\n}\npanel.split .panel > .right, panel.split .panel form, panel.split .mce-tinymce {\n    height: 100%;\n}\npanel.split .input-group {\n    padding: 10px;\n    width: 100%;\n}\n/*Container, container body, iframe*/\n.mce-tinymce, .mce-container-body, #code_ifr {\n    min-height: 100% !important;\n}\n/*Container body*/\n.mce-container-body {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n/*Editing area*/\n.mce-container-body .mce-edit-area {\n    position: absolute;\n    top: 69px;\n    bottom: 37px;\n    left: 0;\n    right: 0;\n}\n/*Footer*/\n.mce-tinymce .mce-statusbar {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 32 */,
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -807,7 +869,52 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _validateMatch = __webpack_require__(34);
+var _treeViewTemplate = __webpack_require__(33);
+
+var _treeViewTemplate2 = _interopRequireDefault(_treeViewTemplate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    bindings: {
+        'click_item': '&click',
+        'delete_item': '&delete'
+    },
+    require: {
+        ngModel: '^ngModel'
+    },
+    controller: function controller() {
+        var _this = this;
+
+        this.$onInit = function () {
+            _this.ngModel.$render = function () {
+                _this.tree = _this.ngModel.$viewValue;
+            };
+        };
+    },
+    controllerAs: 'ctrl',
+    template: _treeViewTemplate2.default
+};
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports) {
+
+module.exports = "<script type=\"text/ng-template\"  id=\"tree_partial.html\">\n  <i ng-click=\"node.collapsed = !node.collapsed\" ng-show=\"node.nodes.length\"\n     class=\"fa\" ng-class=\"{collapsed: node.collapsed}\"></i>\n  <span class=\"wrapper\">\n    <span ng-click=\"ctrl.click_item({node})\">{{node.data.name}}</span>\n    <a ng-click=\"ctrl.delete_item({node})\">x</a>\n  </span>\n  <ul>\n    <li ng-repeat=\"node in node.nodes\" ng-include=\"'tree_partial.html'\" ng-class=\"node.class\"></li>\n  </ul>\n</script>\n<ul>\n  <li ng-repeat=\"node in ctrl.tree\" ng-include=\"'tree_partial.html'\" ng-class=\"node.class\"></li>\n</ul>\n";
+
+/***/ }),
+/* 34 */,
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _validateMatch = __webpack_require__(36);
 
 var _validateMatch2 = _interopRequireDefault(_validateMatch);
 
@@ -816,7 +923,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = angular.module('directives', []).directive('validateMatch', _validateMatch2.default); /* global angular */
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -855,8 +962,6 @@ function validateMatch() {
 };
 
 /***/ }),
-/* 35 */,
-/* 36 */,
 /* 37 */,
 /* 38 */,
 /* 39 */,
@@ -864,13 +969,17 @@ function validateMatch() {
 /* 41 */,
 /* 42 */,
 /* 43 */,
-/* 44 */
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(45);
+var content = __webpack_require__(49);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -895,7 +1004,7 @@ if(false) {
 }
 
 /***/ }),
-/* 45 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(undefined);

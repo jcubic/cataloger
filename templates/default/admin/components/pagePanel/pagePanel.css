@@ -1,22 +1,6 @@
-panel[name="pages"] nav {
-    float: left;
-    width: 200px;
-    height: 100%;
-    overflow: auto;
-    marin-right: 10px;
-}
-panel[name="pages"] nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
 panel[name="pages"] nav .selected a {
     background-color: #222d32;
     color: white;
-}
-
-panel[name="pages"] nav li {
-    position: relative;
 }
 panel[name="pages"] nav a:first-child {
     display: block;
@@ -33,19 +17,6 @@ panel[name="pages"] nav a:nth-child(2) {
 panel[name="pages"] nav .selected a:nth-child(2) {
     color: white;
 }
-panel[name="pages"] .right, panel[name="pages"] .right.input-group > input {
-    float: right;
-}
-panel[name="pages"] .panel > .right {
-    width: calc(100% - 200px);
-}
-panel[name="pages"] .panel > .right, panel[name="pages"] .panel form, panel[name="pages"] .mce-tinymce {
-    height: 100%;
-}
 panel[name="pages"] .panel .editor.input-group {
     height: calc(100% - 54px - 54px);
-}
-panel[name="pages"] .input-group {
-    padding: 10px;
-    width: 100%;
 }

@@ -1,0 +1,42 @@
+panel[name="categories"] .panel .editor.input-group {
+    height: calc(100% - 54px - 54px - 54px);
+}
+
+panel[name="categories"] nav li > span {
+    padding: 3px 4px;
+    display: block;
+}
+panel[name="categories"] nav li.selected > span {
+    background-color: #222d32;
+    color: white;
+}
+panel[name="categories"] nav li.selected > i,
+panel[name="categories"] nav li.selected > .wrapper a {
+    color: white;
+}
+panel[name="categories"] nav li ul {
+    margin-left: 20px;
+    width: calc(100% - 20px);
+}
+panel[name="categories"] nav i::before {
+    content: "\f147";
+}
+panel[name="categories"] nav i.collapsed::before {
+    content: "\f196";
+}
+panel[name="categories"] nav i.collapsed ~ ul {
+    display: none;
+}
+panel[name="categories"] nav i {
+    float: left;
+    margin: 6px;
+    position: relative;
+    z-index: 100;
+}
+panel[name="categories"] .wrapper {
+    position: relative;
+}
+panel[name="categories"] .wrapper > a {
+    position: absolute;
+    right: 8px;
+}

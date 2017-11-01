@@ -338,10 +338,8 @@ function convert($string) {
     }
 }
 
-function page_id($slug) {
-    if ($d == null) {
-        $rows = query("SELECT id FROM pages WHERE slug = ?", array($slug));
-    }
+function id($table, $slug) {
+    $rows = query("SELECT id FROM $table WHERE slug = ?", array($slug));
     if (count($rows) == 1) {
         return $rows[0]['id'];
     } else {
@@ -362,7 +360,7 @@ function new_page($request, $response) {
                 $_POST['content']
             ));
             if ($result == 1) {
-                $id = page_id($slug);
+                $id = id('pages', $slug);
                 $body->write(json_encode(array(
                     'result' => array($id, $slug, query("SELECT id FROM pages WHERE slug = ?", array($slug)))
                 )));
@@ -397,6 +395,23 @@ function update_page($request, $response) {
     } else {
         $body->write('{"result": false}');
     }
+}
+function make_delete_entry($table) {
+    return function($request, $response) use ($table) {
+        $id = $request->getAttribute('id');
+        $body = $response->getBody();
+        if (is_numeric($id)) {
+            $result = query("DELETE FROM $table WHERE id = ?", array($id));
+            if ($result == 0) {
+                $body->write('{"result": false}');
+            } else {
+                $body->write('{"result": true}');
+            }
+        } else {
+            $body->write('{"result": false}');
+        }
+        return $response;
+    };
 }
 
 $app->group('/api', function() {
@@ -451,21 +466,7 @@ $app->group('/api', function() {
             }
             return $response;
         });
-        $this->delete('/{id}', function($request, $response) {
-            $id = $request->getAttribute('id');
-            $body = $response->getBody();
-            if (is_numeric($id)) {
-                $result = query("DELETE FROM pages WHERE id = ?", array($id));
-                if ($result == 0) {
-                    $body->write('{"result": false}');
-                } else {
-                    $body->write('{"result": true}');
-                }
-            } else {
-                $body->write('{"result": false}');
-            }
-            return $response;
-        });
+        $this->delete('/{id}', make_delete_entry("pages"));
         $this->get('/list', make_query_result("SELECT * FROM pages"));
     });
 
@@ -479,23 +480,42 @@ $app->group('/api', function() {
     });
 
     $this->group('/category', function() {
-        $this->post('/new', function($request, $response) {
+        $this->post('/', function($request, $response) {
             $body = $response->getBody();
             if (isset($_POST['name'])) {
                 $name = $_POST['name'];
+                $slug = slug($name);
                 $content = isset($_POST['content']) ? $_POST['content'] : null;
                 $parent = isset($_POST['parent']) ? intval($_POST['parent']) : null;
-                $query = "INSERT INTO categories(name, parent, content) VALUES (?, ?, ?)";
-                if (query($query, array($name, $parent, $content)) == 1) {
-                    $body->write('true');
+                $data = array($name, $parent, $content, $slug);
+                if (isset($_POST['id'])) {
+                    $data[] = $_POST['id'];
+                    $query = "UPDATE categories SET name = ?, parent = ?, content = ?, slug = ? WHERE id = ?";
                 } else {
-                    $body->write('false');
+                    $query = "INSERT INTO categories(name, parent, content, slug) VALUES (?, ?, ?, ?)";
                 }
-            } else {
-                $body->write('false');
+                $result = query($query, $data);
+                if ($result == 1) {
+                    $id = id('categories', $slug);
+                    $body->write(json_encode(
+                        array(
+                            'result' => array(
+                                $id,
+                                $slug,
+                                query("SELECT id FROM pages WHERE slug = ?", array($slug))
+                            )
+                        )
+                    ));
+                } else {
+                    $body->write(json_encode(array(
+                        "result" => false,
+                        "data" => $result
+                    )));
+                }
             }
             return $response;
         });
+        $this->delete('/{id}', make_delete_entry("categories"));
         $this->get('/list', make_query_result("SELECT * FROM categories"));
     });
 });

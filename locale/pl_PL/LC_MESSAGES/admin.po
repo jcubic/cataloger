@@ -51,3 +51,12 @@ msgstr "nowa strona"
 
 msgid "Save successfull"
 msgstr "Zapisanie powiodło się"
+
+msgid "new category"
+msgstr "nowa kategoria"
+
+msgid "parent category"
+msgstr "kategoria nadrzędna"
+
+msgid "name"
+msgstr "nazwa"

@@ -1,0 +1,14 @@
+<script type="text/ng-template"  id="tree_partial.html">
+  <i ng-click="node.collapsed = !node.collapsed" ng-show="node.nodes.length"
+     class="fa" ng-class="{collapsed: node.collapsed}"></i>
+  <span class="wrapper">
+    <span ng-click="ctrl.click_item({node})">{{node.data.name}}</span>
+    <a ng-click="ctrl.delete_item({node})">x</a>
+  </span>
+  <ul>
+    <li ng-repeat="node in node.nodes" ng-include="'tree_partial.html'" ng-class="node.class"></li>
+  </ul>
+</script>
+<ul>
+  <li ng-repeat="node in ctrl.tree" ng-include="'tree_partial.html'" ng-class="node.class"></li>
+</ul>
