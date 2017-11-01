@@ -48,3 +48,6 @@ msgstr "tytuł"
 
 msgid "new page"
 msgstr "nowa strona"
+
+msgid "Save successfull"
+msgstr "Zapisanie powiodło się"

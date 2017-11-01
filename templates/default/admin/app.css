@@ -50,6 +50,10 @@ header .logo {
     font-weight: normal;
     font-size: 20px;
 }
+.notifications .close-click {
+    position: relative;
+    top: -2px;
+}
 header .logo, nav.left {
     width: 230px;
     color: white;
@@ -105,6 +109,9 @@ main .panel {
     display: block;
     height: calc(100vh - 50px - 20px);
     margin: 0;
+}
+.mce-container-body .mce-edit-area {
+    top: 40px;
 }
 footer {
     height: 20px;

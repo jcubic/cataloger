@@ -148,6 +148,7 @@ class Cataloger {
         $html = $this->twig->render($page, array_merge(array(
             "path" => $base . $path,
             "root" => $base,
+            "now" => date("Y-m-d H:i:s"),
             "pages" => $pages,
             "categories" => $categories
         ), $data));

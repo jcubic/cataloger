@@ -2,7 +2,7 @@
 
 import $ from 'jquery';
 
-function controller($http) {
+function controller($http, notifications, gettextCatalog) {
     this.tinymce_options = {
         theme: 'modern',
         skin: 'lightgray',
@@ -46,6 +46,9 @@ function controller($http) {
                         page.id = data.result[0];
                     }
                 });
+                notifications.showSuccess({
+                    message: gettextCatalog.getString('Save successfull')
+                });
             }
         });
     };
@@ -59,8 +62,9 @@ function controller($http) {
             }
         }).then((data) => {
             if (data.result) {
-                alert('saved');
-                // toaster
+                notifications.showSuccess({
+                    message: gettextCatalog.getString('Save successfull')
+                });
             }
         });
     };
@@ -104,6 +108,6 @@ function controller($http) {
     this.get_pages();
 };
 
-controller.$inject = ['$http'];
+controller.$inject = ['$http', 'notifications', 'gettextCatalog'];
 
 export default controller;

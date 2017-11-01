@@ -9,6 +9,8 @@
     <![endif]-->
     <style>
     </style>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+          rel="stylesheet"/>
     <script src="{{path}}/dist/vendor.js"></script>
     <script src="{{path}}/dist/app.js"></script>
     {% for component in components %}
@@ -17,7 +19,7 @@
 
     <script src="{{path}}/lib/route.js"></script>
     <script src="{{path}}/translations.js"></script>
-    <script type="text/javascript" >
+    <script type="text/javascript">
      var root = '{{root}}';
     </script>
     <script src="{{path}}/lib/tinymce/tinymce.min.js"></script>
@@ -64,6 +66,7 @@
           </ul>
         </span>
       </h1>
+      <notifications-bar class="notifications" closeIcon="fa fa-times"></notifications-bar>
     </header>
     <nav class="left">
       <ul>
