@@ -60,3 +60,12 @@ msgstr "kategoria nadrzędna"
 
 msgid "name"
 msgstr "nazwa"
+
+msgid "price"
+msgstr "cena"
+
+msgid "category"
+msgstr "kategoria"
+
+msgid "new product"
+msgstr "nowy przedmiot"

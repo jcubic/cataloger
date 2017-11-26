@@ -2,18 +2,8 @@
 
 import $ from 'jquery';
 
-function controller($http, notifications, gettextCatalog) {
-    this.tinymce_options = {
-        theme: 'modern',
-        skin: 'lightgray',
-        menubar: false,
-        statusbar: false,
-        height: '100%',
-        plugins: [
-            "advlist code"
-        ],
-        toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | preview fullpage | forecolor backcolor table | code"
-    };
+function controller($http, notifications, gettextCatalog, editorOptions) {
+    this.tinymce_options = editorOptions;
     this.products = [];
     let get = (url, variable) => {
         $http({method: 'GET', url: root + url}).then((response) => {
@@ -108,6 +98,6 @@ function controller($http, notifications, gettextCatalog) {
     this.get_pages();
 };
 
-controller.$inject = ['$http', 'notifications', 'gettextCatalog'];
+controller.$inject = ['$http', 'notifications', 'gettextCatalog', 'editorOptions'];
 
 export default controller;

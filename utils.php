@@ -229,4 +229,29 @@ function resize($img, $w, $h, $newfilename) {
     return $newfilename;
 }
 
+function is_image($name) {
+    return preg_match("/^[^.]+\.(jpe?g|gif|png)$/i", $name);
+}
+
+
+
+function missing_image_path() {
+    global $app;
+    $templates_dir = $app->root . 'templates' . DIRECTORY_SEPARATOR;
+    if (isset($app->config->template) && $app->config->template != 'default') {
+        $fname = $templates_dir . $app->config->template . DIRECTORY_SEPARATOR .
+                 "images" . DIRECTORY_SEPARATOR .
+                 "image-missing.png";
+        if (file_exists($fname)) {
+            return $fname;
+        }
+    }
+    $fname = $templates_dir . "default" . DIRECTORY_SEPARATOR .
+             "images" . DIRECTORY_SEPARATOR .
+             "image-missing.png";
+    if (file_exists($fname)) {
+        return $fname;
+    }
+}
+
 ?>

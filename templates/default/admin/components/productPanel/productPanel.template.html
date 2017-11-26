@@ -1,9 +1,32 @@
-<panel name="products">
+<panel name="products" class="split">
   <nav>
     <ul>
-      <li ng-repeat="product in ctrl.products track by $index">{{product.name}}</li>
+      <li><a ng-click="ctrl.new_product()" translate>new product</a></li>
+      <li ng-repeat="product in ctrl.products track by $index"
+          ng-click="ctrl.view(product)">{{product.name}}</li>
     </ul>
   </nav>
-  <div class="left">
+  <div class="right" ng-if="ctrl.product">
+    <form name="procuct">
+      <div class="input-group">
+        <label class="input-group-addon" for="name" translate>name</label>
+        <input class="form-control" id="name" ng-model="ctrl.product.name"/>
+      </div>
+      <div class="input-group">
+        <label class="input-group-addon" for="price" translate>price</label>
+        <input class="form-control" id="price" ng-model="ctrl.product.price"/>
+      </div>
+      <div class="input-group">
+        <label class="input-group-addon" for="category" translate>category</label>
+        <select ng-options="item as item.name for item in ctrl.categories track by item.id"
+                ng-model="ctrl.product.category" class="form-control" ng-required></select>
+      </div>
+      <div class="input-group editor">
+        <textarea ui-tinymce="ctrl.tinymce_options" class="form-control" ng-model="ctrl.product.content"></textarea>
+      </div>
+      <div class="right input-group">
+        <input class="btn btn-default" type="button" ng-value="'save' | translate" ng-click="ctrl.save()" />
+      </div>
+    </form>
   </div>
 </panel>

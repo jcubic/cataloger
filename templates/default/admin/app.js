@@ -4,6 +4,7 @@ import $ from 'jquery';
 import angular from 'angular';
 import components from './components';
 import directives from './directives';
+import services from './services';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import gettext from 'angular-gettext';
 import 'ng-notifications-bar';
@@ -14,7 +15,8 @@ let app = angular.module('app', [
     'ngNotificationsBar',
     gettext,
     components.name,
-    directives.name
+    directives.name,
+    services.name
 ]);
 
 app.factory('config', ['$http', '$location', function($http, $location) {
@@ -22,6 +24,18 @@ app.factory('config', ['$http', '$location', function($http, $location) {
     var query = lang ? '?lang=' +  lang : '';
     return $http.get(root + '/api/config' + query).then((response) => response.data);
 }]);
+
+app.constant('editorOptions', {
+    theme: 'modern',
+    skin: 'lightgray',
+    menubar: false,
+    statusbar: false,
+    height: '100%',
+    plugins: [
+        "advlist code"
+    ],
+    toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | preview fullpage | forecolor backcolor table | code"
+});
 
 app.config([
     '$locationProvider', 'notificationsConfigProvider',
@@ -37,13 +51,13 @@ app.config([
     gettextCatalog.debug = true;
 }]);
 
-
-
-
-
-app.controller('main', function($scope) {
+app.controller('main', function($scope, $rootScope) {
     let set = () => {
-        this.panel = location.hash.replace(/^#/, '');
+        var hash = location.hash.replace(/^#/, '');
+        if (hash.match(/^[a-z]+$/)) {
+            this.panel = hash;
+            $rootScope.$broadcast('view:' + hash);
+        }
     };
 
     $(window).on('hashchange', () => {

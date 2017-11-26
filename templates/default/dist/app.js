@@ -10,11 +10,11 @@ webpackJsonp([0],[
 "use strict";
 
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _angular = __webpack_require__(3);
+var _angular = __webpack_require__(2);
 
 var _angular2 = _interopRequireDefault(_angular);
 
@@ -26,21 +26,27 @@ var _directives = __webpack_require__(35);
 
 var _directives2 = _interopRequireDefault(_directives);
 
-__webpack_require__(37);
+var _services = __webpack_require__(37);
 
-var _angularGettext = __webpack_require__(43);
+var _services2 = _interopRequireDefault(_services);
+
+__webpack_require__(39);
+
+var _angularGettext = __webpack_require__(45);
 
 var _angularGettext2 = _interopRequireDefault(_angularGettext);
 
-__webpack_require__(45);
-
-__webpack_require__(46);
+__webpack_require__(47);
 
 __webpack_require__(48);
 
+__webpack_require__(50);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var app = _angular2.default.module('app', ['ngNotificationsBar', _angularGettext2.default, _components2.default.name, _directives2.default.name]); /* global location, $, root */
+/* global location, $, root */
+
+var app = _angular2.default.module('app', ['ngNotificationsBar', _angularGettext2.default, _components2.default.name, _directives2.default.name, _services2.default.name]);
 
 app.factory('config', ['$http', '$location', function ($http, $location) {
     var lang = $location.search()['lang'];
@@ -49,6 +55,16 @@ app.factory('config', ['$http', '$location', function ($http, $location) {
         return response.data;
     });
 }]);
+
+app.constant('editorOptions', {
+    theme: 'modern',
+    skin: 'lightgray',
+    menubar: false,
+    statusbar: false,
+    height: '100%',
+    plugins: ["advlist code"],
+    toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | preview fullpage | forecolor backcolor table | code"
+});
 
 app.config(['$locationProvider', 'notificationsConfigProvider', function ($locationProvider, notificationsConfigProvider) {
     notificationsConfigProvider.setAutoHide(true);
@@ -61,11 +77,15 @@ app.config(['$locationProvider', 'notificationsConfigProvider', function ($locat
     gettextCatalog.debug = true;
 }]);
 
-app.controller('main', function ($scope) {
+app.controller('main', function ($scope, $rootScope) {
     var _this = this;
 
     var set = function set() {
-        _this.panel = location.hash.replace(/^#/, '');
+        var hash = location.hash.replace(/^#/, '');
+        if (hash.match(/^[a-z]+$/)) {
+            _this.panel = hash;
+            $rootScope.$broadcast('view:' + hash);
+        }
     };
 
     (0, _jquery2.default)(window).on('hashchange', function () {
@@ -88,7 +108,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _angular = __webpack_require__(3);
+var _angular = __webpack_require__(2);
 
 var _angular2 = _interopRequireDefault(_angular);
 
@@ -141,6 +161,8 @@ var _productPanel = __webpack_require__(12);
 
 var _productPanel2 = _interopRequireDefault(_productPanel);
 
+__webpack_require__(52);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
@@ -153,7 +175,7 @@ exports.default = {
 /* 11 */
 /***/ (function(module, exports) {
 
-module.exports = "<panel name=\"products\">\n  <nav>\n    <ul>\n      <li ng-repeat=\"product in ctrl.products track by $index\">{{product.name}}</li>\n    </ul>\n  </nav>\n  <div class=\"left\">\n  </div>\n</panel>\n";
+module.exports = "<panel name=\"products\" class=\"split\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_product()\" translate>new product</a></li>\n      <li ng-repeat=\"product in ctrl.products track by $index\"\n          ng-click=\"ctrl.view(product)\">{{product.name}}</li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.product\">\n    <form name=\"procuct\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.product.name\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"price\" translate>price</label>\n        <input class=\"form-control\" id=\"price\" ng-model=\"ctrl.product.price\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"category\" translate>category</label>\n        <select ng-options=\"item as item.name for item in ctrl.categories track by item.id\"\n                ng-model=\"ctrl.product.category\" class=\"form-control\" ng-required></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.product.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
 /* 12 */
@@ -167,41 +189,72 @@ Object.defineProperty(exports, "__esModule", {
 });
 /* global root */
 
-function controller($http) {
+function controller($http, $scope, api, editorOptions) {
     var _this = this;
 
+    this.tinymce_options = editorOptions;
     this.products = [];
-    var get = function get(url, variable) {
-        $http({ method: 'GET', url: root + url }).then(function (response) {
-            _this[variable] = response.data;
-        });
+    var make_setter = function make_setter(variable) {
+        return function (data) {
+            console.log(data);
+            return _this[variable] = data;
+        };
     };
     this.get_categories = function () {
-        get('/api/category/list', 'categories');
+        api.categories.list().then(make_setter('categories'));
     };
     this.get_products = function () {
-        get('/api/product/list', 'products');
+        api.products.list().then(make_setter('products'));
     };
-    this.new_product = function () {
-        $http({
-            method: 'POST',
-            url: root + '/api/product/new',
-            data: {
-                name: _this.name,
-                price: _this.price || null,
-                category: _this.category
-            }
-        }).then(function (response) {
-            if (response.result) {
-                _this.get_products();
-            }
+    var new_product = function new_product() {
+        api.products.post({
+            name: _this.product.name,
+            price: _this.product.price || null,
+            content: _this.product.content || null,
+            category: _this.product.category
+        }).then(function () {
+            return _this.get_products();
         });
     };
-    this.get_products();
-    this.get_categories();
+    var update = function update() {
+        api.products.post({
+            name: _this.product.name,
+            price: _this.product.price || null,
+            content: _this.product.content || null,
+            category: _this.product.category,
+            id: _this.product.id
+        }).then(function () {
+            return _this.get_products();
+        });
+    };
+    this.new_product = function () {
+        var untitled = _this.products.filter(function (product) {
+            return product.name.match(/^untitled/);
+        });
+        _this.products.push({
+            name: 'untitled ' + (untitled.length + 1)
+        });
+    };
+    this.save = function () {
+        if (!_this.product.id) {
+            update();
+        } else {
+            new_product();
+        }
+    };
+    this.view = function (product) {
+        _this.product = product;
+    };
+    var init = function init() {
+        _this.get_products();
+        _this.get_categories();
+        delete _this.product;
+    };
+    init();
+    $scope.$on('view:products', init);
 };
 
-controller.$inject = ['$http'];
+controller.$inject = ['$http', '$scope', 'api', 'editorOptions'];
 
 exports.default = controller;
 
@@ -311,24 +364,16 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function controller($http, notifications, gettextCatalog) {
+function controller($http, notifications, gettextCatalog, editorOptions) {
     var _this = this;
 
-    this.tinymce_options = {
-        theme: 'modern',
-        skin: 'lightgray',
-        menubar: false,
-        statusbar: false,
-        height: '100%',
-        plugins: ["advlist code"],
-        toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | preview fullpage | forecolor backcolor table | code"
-    };
+    this.tinymce_options = editorOptions;
     this.products = [];
     var get = function get(url, variable) {
         $http({ method: 'GET', url: root + url }).then(function (response) {
@@ -433,7 +478,7 @@ function controller($http, notifications, gettextCatalog) {
 
 ;
 
-controller.$inject = ['$http', 'notifications', 'gettextCatalog'];
+controller.$inject = ['$http', 'notifications', 'gettextCatalog', 'editorOptions'];
 
 exports.default = controller;
 
@@ -529,7 +574,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _jquery = __webpack_require__(2);
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -796,7 +841,7 @@ exports.default = {
 /* 28 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"panel\" ng-show=\"ctrl.main.panel == ctrl.name\" ng-transclude></div>\n";
+module.exports = "<div class=\"panel\" ng-if=\"ctrl.main.panel == ctrl.name\" ng-transclude></div>\n";
 
 /***/ }),
 /* 29 */
@@ -962,8 +1007,77 @@ function validateMatch() {
 };
 
 /***/ }),
-/* 37 */,
-/* 38 */,
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _angular = __webpack_require__(2);
+
+var _angular2 = _interopRequireDefault(_angular);
+
+var _api = __webpack_require__(38);
+
+var _api2 = _interopRequireDefault(_api);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _angular2.default.module('services', []).factory('api', _api2.default);
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function api($http, root) {
+    var data = function data(response) {
+        return response.data;
+    };
+    function make_post_fn(url) {
+        return function (data) {
+            return $http({
+                method: 'POST',
+                url: root + url,
+                data: data
+            }).then(data);
+        };
+    }
+    function make_get_fn(url) {
+        return function () {
+            return $http({
+                method: 'GET',
+                url: root + url
+            }).then(data);
+        };
+    }
+    return {
+        products: {
+            post: make_post_fn('/api/product/'),
+            list: make_get_fn('/api/product/list')
+        },
+        categories: {
+            post: make_post_fn('/api/category/'),
+            list: make_get_fn('/api/category/list')
+        }
+    };
+}
+
+api.$inject = ['$http', 'root'];
+
+exports.default = api;
+
+/***/ }),
 /* 39 */,
 /* 40 */,
 /* 41 */,
@@ -973,13 +1087,15 @@ function validateMatch() {
 /* 45 */,
 /* 46 */,
 /* 47 */,
-/* 48 */
+/* 48 */,
+/* 49 */,
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(49);
+var content = __webpack_require__(51);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -1004,7 +1120,7 @@ if(false) {
 }
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(undefined);
@@ -1013,6 +1129,51 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 // module
 exports.push([module.i, "body {\n    margin: 0;\n    height: 100vh;\n}\n.error {\n    color: #a94442; /* same as boostrap */\n}\nheader.main, nav.left, footer {\n    font-family: sans-serif;\n}\nheader.main {\n    background-color: #3c8dbc;\n    color: #fff;\n}\nheader.main h1 {\n    height: 50px;\n    width: 100%;\n    display: table;\n    margin: 0;\n}\nheader.main .right {\n    display: table-cell;\n    width: calc(100% - 230px);\n    font-size: 14px;\n    font-weight: normal;\n    vertical-align: middle;\n}\nheader.main ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nheader.main li {\n    float: right;\n    margin: 10px;\n}\nheader.main li a, header li a:visited {\n    color: white;\n    text-decoration: none;\n}\nheader li a:hover {\n    text-decoration: underline;\n}\nheader .logo {\n    display: table-cell;\n    vertical-align: middle;\n    background-color: #367fa9;\n    text-align: center;\n    font-family: sans-serif;\n    font-weight: normal;\n    font-size: 20px;\n}\n.notifications .close-click {\n    position: relative;\n    top: -2px;\n}\nheader .logo, nav.left {\n    width: 230px;\n    color: white;\n}\nnav.left {\n    background-color: #222d32;\n    font-size: 14px;\n}\nnav.left, main {\n    height: calc(100% - 50px - 20px);\n}\nnav.left ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nnav.left li {\n    display: table;\n    height: 30px;\n    width: 100%;\n}\nnav.left a {\n    width: 100%;\n    height: 100%;\n    display: table-cell;\n    vertical-align: middle;\n    padding-left: 20px;\n}\nnav.left li a, nav.left li a:visited {\n    color: white;\n}\nnav.left li.selected a {\n    border-left: 4px solid #367fa9;\n}\nnav.left li.selected a {\n    padding-left: 16px;\n}\nfooter a, footer a:visited, nav.left li a, nav.left li a:visited {\n    text-decoration: none;\n    cursor: pointer;\n}\nnav.left li:hover a {\n    background: #1e282c;\n}\nmain {\n    position: absolute;\n    left: 230px;\n    width: calc(100% - 230px);\n    top: 50px;\n    overflow: auto;\n}\nmain .panel {\n    display: block;\n    height: calc(100vh - 50px - 20px);\n    margin: 0;\n}\n.mce-container-body .mce-edit-area {\n    top: 40px;\n}\nfooter {\n    height: 20px;\n    box-sizing: border-box;\n    margin: 0;\n    font-size: 12px;\n    background: black;\n    color: white;\n    text-align: center;\n    padding: 3px 0;\n}\nfooter p {\n    margin: 0;\n}\nfooter a, footer a:visited {\n    color: white;\n}\nfooter a:hover {\n    text-decoration: underline;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(53);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../node_modules/css-loader/index.js!./productPanel.css", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js!./productPanel.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(0)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "panel[name=\"products\"] .editor {\n    height: 400px;\n}\n", ""]);
 
 // exports
 

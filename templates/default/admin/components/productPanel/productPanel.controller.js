@@ -1,37 +1,62 @@
 /* global root */
 
-function controller($http) {
+function controller($http, $scope, api, editorOptions) {
+    this.tinymce_options = editorOptions;
     this.products = [];
-    let get = (url, variable) => {
-        $http({method: 'GET', url: root + url}).then((response) => {
-            this[variable] = response.data;
-        });
+    let make_setter = variable => data => {
+        console.log(data);
+        return this[variable] = data;
     };
     this.get_categories = () => {
-        get('/api/category/list', 'categories');
+        api.categories.list().then(make_setter('categories'));
     };
     this.get_products = () => {
-        get('/api/product/list', 'products');
+        api.products.list().then(make_setter('products'));
+    };
+    let new_product = () => {
+        api.products.post({
+            name: this.product.name,
+            price: this.product.price || null,
+            content: this.product.content || null,
+            category: this.product.category
+        }).then(() => this.get_products());
+    };
+    let update = () => {
+        api.products.post({
+            name: this.product.name,
+            price: this.product.price || null,
+            content: this.product.content || null,
+            category: this.product.category,
+            id: this.product.id
+        }).then(() => this.get_products());
     };
     this.new_product = () => {
-        $http({
-            method: 'POST',
-            url: root + '/api/product/new',
-            data: {
-                name: this.name,
-                price: this.price || null,
-                category: this.category
-            }
-        }).then((response) => {
-            if (response.result) {
-                this.get_products();
-            }
+        var untitled = this.products.filter((product) => {
+            return product.name.match(/^untitled/);
+        });
+        this.products.push({
+            name: 'untitled ' + (untitled.length + 1)
         });
     };
-    this.get_products();
-    this.get_categories();
+    this.save = () => {
+        if (!this.product.id) {
+            update();
+        } else {
+            new_product();
+        }
+    };
+    this.view = (product) => {
+        this.product = product;
+    };
+    let init = () => {
+        this.get_products();
+        this.get_categories();
+        delete this.product;
+    };
+    init();
+    $scope.$on('view:products', init);
 };
 
-controller.$inject = ['$http'];
+controller.$inject = ['$http', '$scope', 'api', 'editorOptions'];
 
 export default controller;

@@ -479,11 +479,47 @@ $app->group('/api', function() {
     });
 
     $this->group('/product', function() {
-        $this->post('/new', make_new_entry("products", array(
-            "name",
-            "price",
-            "category"
-        )));
+        $this->post('/', function($request, $response) {
+            $body = $response->getBody();
+            if (isset($_POST['name'])) {
+                $name = $_POST['name'];
+                $slug = slug($name);
+                $content = isset($_POST['content']) ? $_POST['content'] : null;
+                if (isset($_POST['category'])) {
+                    $category = intval($_POST['category']);
+                } else {
+                    $category = null;
+                }
+                $price = isset($_POST['price']) ? $_POST['price'] : null;
+                $data = array($name, $category, $content, $slug, $price);
+                if (isset($_POST['id'])) {
+                    $data[] = $_POST['id'];
+                    $query = "UPDATE products SET name = ?, category = ?, content = ?, slug = ?, price = ? WHERE id = ?";
+                } else {
+                    $query = "INSERT INTO prodcuts(name, category, content, slug, price) VALUES (?, ?, ?, ?, ?)";
+                }
+                $result = query($query, $data);
+                if ($result == 1) {
+                    $id = id('products', $slug);
+                    // TODO: remove query
+                    $body->write(json_encode(
+                        array(
+                            'result' => array(
+                                $id,
+                                $slug,
+                                query("SELECT id FROM products WHERE slug = ?", array($slug))
+                            )
+                        )
+                    ));
+                } else {
+                    $body->write(json_encode(array(
+                        "result" => false,
+                        "data" => $result
+                    )));
+                }
+            }
+        });
+        $this->delete('/{id}', make_delete_entry("products"));
         $this->get('/list', make_query_result("SELECT * FROM products"));
     });
 
@@ -505,6 +541,7 @@ $app->group('/api', function() {
                 $result = query($query, $data);
                 if ($result == 1) {
                     $id = id('categories', $slug);
+                    // TODO: remove query
                     $body->write(json_encode(
                         array(
                             'result' => array(
@@ -525,6 +562,19 @@ $app->group('/api', function() {
         });
         $this->delete('/{id}', make_delete_entry("categories"));
         $this->get('/list', make_query_result("SELECT * FROM categories"));
+    });
+    $this->get('/images', function($request, $response) {
+        $body = $response->getBody();
+        $dir = opendir("uploads");
+        $files = array();
+        if ($dir) {
+            while (($file = readdir($dir)) !== false) {
+                if (is_image($file)) {
+                    $files[] = $file;
+                }
+            }
+        }
+        return $body->write(json_encode($files));
     });
 });
 
@@ -563,25 +613,6 @@ $app->get('/category/{slug}', function($request, $response, $args) {
     return $response;
 });
 
-function missing_image_path() {
-    global $app;
-    $templates_dir = $app->root . 'templates' . DIRECTORY_SEPARATOR;
-    if (isset($app->config->template) && $app->config->template != 'default') {
-        $fname = $templates_dir . $app->config->template . DIRECTORY_SEPARATOR .
-                 "images" . DIRECTORY_SEPARATOR .
-                 "image-missing.png";
-        if (file_exists($fname)) {
-            return $fname;
-        }
-    }
-    $fname = $templates_dir . "default" . DIRECTORY_SEPARATOR .
-             "images" . DIRECTORY_SEPARATOR .
-             "image-missing.png";
-    if (file_exists($fname)) {
-        return $fname;
-    }
-}
-
 $app->get('/image/{size}/{name}', function($request, $response) {
     $body = $response->getBody();
 
@@ -614,8 +645,7 @@ $app->post('/upload', function($request, $response) use ($app) {
         $file = $files['file'];
         $path = $app->root . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR;
         $fname = $file->getClientFilename();
-        if (preg_match("/^[^.]+\.(jpe?g|gif|png)$/", $fname) &&
-            !preg_match("/\.\./", $fname)) {
+        if (is_image($fname) && !preg_match("/\.\./", $fname)) {
             $file->moveTo($path . $fname);
         }
     } else {
