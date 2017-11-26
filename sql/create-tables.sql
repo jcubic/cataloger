@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 CREATE TABLE IF NOT EXISTS products (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
+       content TEXT,
+       slug VARCHAR(255),
        name VARCHAR(255),
        price VARCHAR(20),
        category INTEGER NOT NULL,

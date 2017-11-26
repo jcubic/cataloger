@@ -53,13 +53,12 @@ class Cataloger {
         $app = $this;
         $container['notFoundHandler'] = function ($c) use ($app) {
             return function ($request, $response) use ($c, $app) {
-                $uri = $request->getUri();
-                $page = $app->render($request, '404.html', array(
-                    'page' => "/" . $uri->getPath()
-                ));
-                return $c['response']->withStatus(404)
-                                     ->withHeader('Content-Type', 'text/html')
-                                     ->write($page);
+                return $app->error_page($request, $response, 404);
+            };
+        };
+        $container['notAllowedHandler'] = function ($c) use ($app) {
+            return function ($request, $response) use ($c, $app) {
+                return $app->error_page($request, $response, 405);
             };
         };
         $container['errorHandler'] = $container['phpErrorHandler'] = function ($c) use ($app) {
@@ -180,6 +179,15 @@ class Cataloger {
             throw new Exception("Coudn't open file");
         }
     }
+    function error_page($request, $response, $code) {
+        $uri = $request->getUri();
+        $page = $this->render($request, "$code.html", array(
+            'page' => "/" . $uri->getPath()
+        ));
+        return $response->withStatus($code)
+                        ->withHeader('Content-Type', 'text/html')
+                        ->write($page);
+    }
     function __call($name, $args) {
         return call_user_func_array(array($this->app, $name), $args);
     }
@@ -201,7 +209,7 @@ $app->add(function($request, $response, $next) use ($app) {
     if (!installed() && !preg_match("/install/", $path)) {
         return redirect($request, $response, "/install");
     }
-    if (preg_match("/^(admin|api|login|logout)/", $path)) {
+    if (preg_match("/^(admin|api|login|logout|upload)/", $path)) {
         session_timeout($app->config->session_timeout);
         session_start();
     }
@@ -534,7 +542,83 @@ $app->get('/page/{slug}', function($request, $response, $args) {
     }
     return $response;
 });
-//$files = $request->getUploadedFiles();
-//$files[0]->moveTo($targetPath);
+
+$app->get('/category/{slug}', function($request, $response, $args) {
+    $body = $response->getBody();
+    $data = query("SELECT * FROM categories WHERE slug = ?", array($args['slug']));
+    if (count($data) == 1) {
+        $data = $data[0];
+        $id = $data['id'];
+        $sub = query("select * from categories a where parent == ?", array($id));
+        $products = query("select * from products WHERE category = ?", array($id));
+        $body->write(render($request, 'category.html', array(
+            'description' => $data['content'],
+            'sub_categories' => $sub,
+            'products' => $products,
+            'title' => $data['name']
+        )));
+    } else {
+        throw new \Slim\Exception\NotFoundException($request, $response);
+    }
+    return $response;
+});
+
+function missing_image_path() {
+    global $app;
+    $templates_dir = $app->root . 'templates' . DIRECTORY_SEPARATOR;
+    if (isset($app->config->template) && $app->config->template != 'default') {
+        $fname = $templates_dir . $app->config->template . DIRECTORY_SEPARATOR .
+                 "images" . DIRECTORY_SEPARATOR .
+                 "image-missing.png";
+        if (file_exists($fname)) {
+            return $fname;
+        }
+    }
+    $fname = $templates_dir . "default" . DIRECTORY_SEPARATOR .
+             "images" . DIRECTORY_SEPARATOR .
+             "image-missing.png";
+    if (file_exists($fname)) {
+        return $fname;
+    }
+}
+
+$app->get('/image/{size}/{name}', function($request, $response) {
+    $body = $response->getBody();
+
+    $size = $request->getAttribute('size');
+    $name = $request->getAttribute('name');
+    $fname = "uploads/$name";
+    if (!file_exists($fname)) {
+        $fname = missing_image_path();
+    }
+    $ext = pathinfo($fname, PATHINFO_EXTENSION);
+    if ($ext == 'jpeg' || $ext == 'jpg') {
+        $response = $response->withAddedHeader("Content-Type", "image/jpeg");
+    } else if ($ext == 'png') {
+        $response = $response->withAddedHeader("Content-Type", "image/png");
+    } else if ($ext == 'gif') {
+        $response = $response->withAddedHeader("Content-Type", "image/gif");
+    } else {
+        throw new \Slim\Exception\NotFoundException($request, $response);
+    }
+    $tmp_fname = tempnam("/tmp", "image");
+    resize($fname, $size, $size, $tmp_fname);
+    $body->write(file_get_contents($tmp_fname));
+    unlink($tmp_fname);
+    return $response;
+});
+
+$app->post('/upload', function($request, $response) use ($app) {
+    if ($_SESSION['logged']) {
+        $files = $request->getUploadedFiles();
+        $file = $files['file'];
+        $path = $app->root . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR;
+        $fname = $file->getClientFilename();
+        if (preg_match("/^[^.]+\.(jpe?g|gif|png)$/", $fname) &&
+            !preg_match("/\.\./", $fname)) {
+            $file->moveTo($path . $fname);
+        }
+    }
+});
 
 $app->run();
