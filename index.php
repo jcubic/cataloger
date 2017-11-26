@@ -618,6 +618,8 @@ $app->post('/upload', function($request, $response) use ($app) {
             !preg_match("/\.\./", $fname)) {
             $file->moveTo($path . $fname);
         }
+    } else {
+        return redirect($request, $response, '/login');
     }
 });
 
