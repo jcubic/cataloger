@@ -7,10 +7,18 @@
     </ul>
   </nav>
   <div class="right" ng-if="ctrl.product">
-    <form name="procuct">
+    <form name="product">
       <div class="input-group">
         <label class="input-group-addon" for="name" translate>name</label>
         <input class="form-control" id="name" ng-model="ctrl.product.name"/>
+      </div>
+      <div class="input-group">
+        <label class="input-group-addon" for="image" translate>image</label>
+        <image-picker images="ctrl.images" path="uploads"
+                      upload="ctrl.upload(file, path)"
+                      ng-model="ctrl.product.image_name" size="50">
+          <input class="form-control" ng-model="ctrl.product.image_name" readonly/>
+        </image-picker>
       </div>
       <div class="input-group">
         <label class="input-group-addon" for="price" translate>price</label>

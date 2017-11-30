@@ -22,25 +22,25 @@ var _components = __webpack_require__(9);
 
 var _components2 = _interopRequireDefault(_components);
 
-var _directives = __webpack_require__(35);
+var _directives = __webpack_require__(37);
 
 var _directives2 = _interopRequireDefault(_directives);
 
-var _services = __webpack_require__(37);
+var _services = __webpack_require__(44);
 
 var _services2 = _interopRequireDefault(_services);
 
-__webpack_require__(39);
+__webpack_require__(48);
 
-var _angularGettext = __webpack_require__(45);
+var _angularGettext = __webpack_require__(54);
 
 var _angularGettext2 = _interopRequireDefault(_angularGettext);
 
-__webpack_require__(47);
+__webpack_require__(56);
 
-__webpack_require__(48);
+__webpack_require__(57);
 
-__webpack_require__(50);
+__webpack_require__(59);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -116,27 +116,27 @@ var _productPanel = __webpack_require__(10);
 
 var _productPanel2 = _interopRequireDefault(_productPanel);
 
-var _settingsPanel = __webpack_require__(13);
+var _settingsPanel = __webpack_require__(16);
 
 var _settingsPanel2 = _interopRequireDefault(_settingsPanel);
 
-var _pagePanel = __webpack_require__(16);
+var _pagePanel = __webpack_require__(19);
 
 var _pagePanel2 = _interopRequireDefault(_pagePanel);
 
-var _categoryPanel = __webpack_require__(22);
+var _categoryPanel = __webpack_require__(24);
 
 var _categoryPanel2 = _interopRequireDefault(_categoryPanel);
 
-var _panel = __webpack_require__(27);
+var _panel = __webpack_require__(29);
 
 var _panel2 = _interopRequireDefault(_panel);
 
-var _treeView = __webpack_require__(32);
+var _treeView = __webpack_require__(34);
 
 var _treeView2 = _interopRequireDefault(_treeView);
 
-__webpack_require__(34);
+__webpack_require__(36);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -161,7 +161,7 @@ var _productPanel = __webpack_require__(12);
 
 var _productPanel2 = _interopRequireDefault(_productPanel);
 
-__webpack_require__(52);
+__webpack_require__(13);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -175,7 +175,7 @@ exports.default = {
 /* 11 */
 /***/ (function(module, exports) {
 
-module.exports = "<panel name=\"products\" class=\"split\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_product()\" translate>new product</a></li>\n      <li ng-repeat=\"product in ctrl.products track by $index\"\n          ng-click=\"ctrl.view(product)\">{{product.name}}</li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.product\">\n    <form name=\"procuct\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.product.name\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"price\" translate>price</label>\n        <input class=\"form-control\" id=\"price\" ng-model=\"ctrl.product.price\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"category\" translate>category</label>\n        <select ng-options=\"item as item.name for item in ctrl.categories track by item.id\"\n                ng-model=\"ctrl.product.category\" class=\"form-control\" ng-required></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.product.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
+module.exports = "<panel name=\"products\" class=\"split\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_product()\" translate>new product</a></li>\n      <li ng-repeat=\"product in ctrl.products track by $index\"\n          ng-click=\"ctrl.view(product)\">{{product.name}}</li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.product\">\n    <form name=\"product\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.product.name\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"image\" translate>image</label>\n        <image-picker images=\"ctrl.images\" path=\"uploads\"\n                      upload=\"ctrl.upload(file, path)\"\n                      ng-model=\"ctrl.product.image_name\" size=\"50\">\n          <input class=\"form-control\" ng-model=\"ctrl.product.image_name\" readonly/>\n        </image-picker>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"price\" translate>price</label>\n        <input class=\"form-control\" id=\"price\" ng-model=\"ctrl.product.price\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"category\" translate>category</label>\n        <select ng-options=\"item as item.name for item in ctrl.categories track by item.id\"\n                ng-model=\"ctrl.product.category\" class=\"form-control\" ng-required></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.product.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
 /* 12 */
@@ -194,11 +194,18 @@ function controller($http, $scope, api, editorOptions) {
 
     this.tinymce_options = editorOptions;
     this.products = [];
+    this.images = [];
     var make_setter = function make_setter(variable) {
         return function (data) {
-            console.log(data);
             return _this[variable] = data;
         };
+    };
+    this.get_images = function () {
+        api.images.list().then(function (images) {
+            _this.images = images.map(function (name) {
+                return { name: name };
+            });
+        });
     };
     this.get_categories = function () {
         api.categories.list().then(make_setter('categories'));
@@ -211,7 +218,8 @@ function controller($http, $scope, api, editorOptions) {
             name: _this.product.name,
             price: _this.product.price || null,
             content: _this.product.content || null,
-            category: _this.product.category
+            image_name: _this.product.image_name || null,
+            category: _this.product.category ? _this.product.category.id : null
         }).then(function () {
             return _this.get_products();
         });
@@ -221,7 +229,8 @@ function controller($http, $scope, api, editorOptions) {
             name: _this.product.name,
             price: _this.product.price || null,
             content: _this.product.content || null,
-            category: _this.product.category,
+            image_name: _this.product.image_name || null,
+            category: _this.product.category ? _this.product.category.id : null,
             id: _this.product.id
         }).then(function () {
             return _this.get_products();
@@ -236,7 +245,7 @@ function controller($http, $scope, api, editorOptions) {
         });
     };
     this.save = function () {
-        if (!_this.product.id) {
+        if (_this.product.id) {
             update();
         } else {
             new_product();
@@ -244,10 +253,24 @@ function controller($http, $scope, api, editorOptions) {
     };
     this.view = function (product) {
         _this.product = product;
+        if (_this.product.category) {
+            for (var i = 0; i < _this.categories.length; ++i) {
+                var category = _this.categories[i];
+                if (category.id == _this.product.category) {
+                    _this.product.category = category;
+                    break;
+                }
+            }
+        }
+    };
+    this.upload = function (file) {
+        console.log(file);
+        api.images.upload(file);
     };
     var init = function init() {
         _this.get_products();
         _this.get_categories();
+        _this.get_images();
         delete _this.product;
     };
     init();
@@ -262,6 +285,52 @@ exports.default = controller;
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(14);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../node_modules/css-loader/index.js!./productPanel.css", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js!./productPanel.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(0)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "panel[name=\"products\"] .editor {\n    height: 400px;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 15 */,
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
@@ -269,11 +338,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _settingsPanelTemplate = __webpack_require__(14);
+var _settingsPanelTemplate = __webpack_require__(17);
 
 var _settingsPanelTemplate2 = _interopRequireDefault(_settingsPanelTemplate);
 
-var _settingsPanel = __webpack_require__(15);
+var _settingsPanel = __webpack_require__(18);
 
 var _settingsPanel2 = _interopRequireDefault(_settingsPanel);
 
@@ -286,13 +355,13 @@ exports.default = {
 };
 
 /***/ }),
-/* 14 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = "<panel name=\"settings\">\n  <div>\n    <header><h2 translate>password</h2></header>\n    <form id=\"password\" name=\"password\">\n      <div class=\"form-group\">\n        <label class=\"control-label\" for=\"old_password\" translate>old password</label>\n        <input class=\"form-control\" id=\"old_password\" type=\"password\" ng-model=\"ctrl.password.old\" />\n      </div>\n      <div class=\"form-group\">\n        <label class=\"control-label\" for=\"new_password\" translate>new password</label>\n        <input class=\"form-control\" id=\"new_password\" type=\"password\" name=\"new_password\"\n               ng-model=\"ctrl.password.new\" />\n      </div>\n      <div class=\"form-group\" ng-class=\"{'has-error': password.confirm_password.$error.notMatch}\">\n        <label class=\"control-label\" for=\"confirm_password\" type=\"password\" translate>confirm password</label>\n        <input class=\"form-control\" id=\"confirm_password\" name=\"confirm_password\" type=\"password\"\n               ng-model=\"ctrl.password.confirm\" validate-match=\"ctrl.password.new\" />\n        <p ng-show=\"password.confirm_password.$error.notMatch\" class=\"error\" translate>passwords do not match</span>\n      </div>\n    </form>\n  </div>\n  <button class=\"btn btn-default\" ng-click=\"ctrl.save()\" translate>save</button>\n</panel>\n";
 
 /***/ }),
-/* 15 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -319,7 +388,7 @@ controller.$inject = ['$http'];
 exports.default = controller;
 
 /***/ }),
-/* 16 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -329,15 +398,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _pagePanelTemplate = __webpack_require__(17);
+var _pagePanelTemplate = __webpack_require__(20);
 
 var _pagePanelTemplate2 = _interopRequireDefault(_pagePanelTemplate);
 
-var _pagePanel = __webpack_require__(18);
+var _pagePanel = __webpack_require__(21);
 
 var _pagePanel2 = _interopRequireDefault(_pagePanel);
 
-__webpack_require__(19);
+__webpack_require__(22);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -348,13 +417,13 @@ exports.default = {
 };
 
 /***/ }),
-/* 17 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = "<panel name=\"pages\" class=\"split\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_page()\" translate>new page</a></li>\n      <li ng-repeat=\"page in ctrl.pages track by $index\"\n          ng-class=\"{selected: page == ctrl.page}\">\n        <a ng-click=\"ctrl.view(page)\">{{page.title}}</a>\n        <a ng-click=\"ctrl.delete_page($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.page\">\n    <form name=\"page\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"title\" translate>title</label>\n        <input class=\"form-control\" id=\"title\" ng-model=\"ctrl.page.title\"/>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.page.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
-/* 18 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -483,13 +552,13 @@ controller.$inject = ['$http', 'notifications', 'gettextCatalog', 'editorOptions
 exports.default = controller;
 
 /***/ }),
-/* 19 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(20);
+var content = __webpack_require__(23);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -514,7 +583,7 @@ if(false) {
 }
 
 /***/ }),
-/* 20 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(undefined);
@@ -528,8 +597,7 @@ exports.push([module.i, "panel[name=\"pages\"] nav .selected a {\n    background
 
 
 /***/ }),
-/* 21 */,
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -539,15 +607,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _categoryPanelTemplate = __webpack_require__(23);
+var _categoryPanelTemplate = __webpack_require__(25);
 
 var _categoryPanelTemplate2 = _interopRequireDefault(_categoryPanelTemplate);
 
-var _categoryPanel = __webpack_require__(24);
+var _categoryPanel = __webpack_require__(26);
 
 var _categoryPanel2 = _interopRequireDefault(_categoryPanel);
 
-__webpack_require__(25);
+__webpack_require__(27);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -558,13 +626,13 @@ exports.default = {
 };
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = "<panel name=\"categories\" class=\"split\">\n  <nav>\n    <a ng-click=\"ctrl.new_category()\" translate>new category</a>\n    <tree-view ng-model=\"ctrl.tree\" click=\"ctrl.view(node)\" delete=\"ctrl.delete(node)\"></tree-view>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.category\">\n    <form name=\"category\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.category.data.name\"/>\n      </div>\n      <div class=\"input-group\" ng-if=\"ctrl.parents.length\" >\n        <label class=\"input-group-addon\" for=\"parent\" translate>parent category</label>\n        <select ng-options=\"item as item.name for item in ctrl.parents track by item.id\"\n                ng-model=\"ctrl.category.parent\" class=\"form-control\"></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.category.data.content\">\n        </textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -756,13 +824,13 @@ controller.$inject = ['$scope', '$http', 'notifications', 'gettextCatalog'];
 exports.default = controller;
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(26);
+var content = __webpack_require__(28);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -787,7 +855,7 @@ if(false) {
 }
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(undefined);
@@ -801,7 +869,7 @@ exports.push([module.i, "panel[name=\"categories\"] .panel .editor.input-group {
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -811,15 +879,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _panelTemplate = __webpack_require__(28);
+var _panelTemplate = __webpack_require__(30);
 
 var _panelTemplate2 = _interopRequireDefault(_panelTemplate);
 
-var _panel = __webpack_require__(29);
+var _panel = __webpack_require__(31);
 
 var _panel2 = _interopRequireDefault(_panel);
 
-__webpack_require__(30);
+__webpack_require__(32);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -838,13 +906,13 @@ exports.default = {
 };
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = "<div class=\"panel\" ng-if=\"ctrl.main.panel == ctrl.name\" ng-transclude></div>\n";
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -859,13 +927,13 @@ exports.default = function () {};
 ;
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(31);
+var content = __webpack_require__(33);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -890,7 +958,7 @@ if(false) {
 }
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(undefined);
@@ -904,7 +972,7 @@ exports.push([module.i, ".panel {\n    padding: 10px;\n}\npanel.split nav {\n   
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -914,7 +982,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _treeViewTemplate = __webpack_require__(33);
+var _treeViewTemplate = __webpack_require__(35);
 
 var _treeViewTemplate2 = _interopRequireDefault(_treeViewTemplate);
 
@@ -942,14 +1010,14 @@ exports.default = {
 };
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports) {
 
 module.exports = "<script type=\"text/ng-template\"  id=\"tree_partial.html\">\n  <i ng-click=\"node.collapsed = !node.collapsed\" ng-show=\"node.nodes.length\"\n     class=\"fa\" ng-class=\"{collapsed: node.collapsed}\"></i>\n  <span class=\"wrapper\">\n    <span ng-click=\"ctrl.click_item({node})\">{{node.data.name}}</span>\n    <a ng-click=\"ctrl.delete_item({node})\">x</a>\n  </span>\n  <ul>\n    <li ng-repeat=\"node in node.nodes\" ng-include=\"'tree_partial.html'\" ng-class=\"node.class\"></li>\n  </ul>\n</script>\n<ul>\n  <li ng-repeat=\"node in ctrl.tree\" ng-include=\"'tree_partial.html'\" ng-class=\"node.class\"></li>\n</ul>\n";
 
 /***/ }),
-/* 34 */,
-/* 35 */
+/* 36 */,
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -959,16 +1027,22 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _validateMatch = __webpack_require__(36);
+var _validateMatch = __webpack_require__(38);
 
 var _validateMatch2 = _interopRequireDefault(_validateMatch);
 
+var _imagePicker = __webpack_require__(39);
+
+var _imagePicker2 = _interopRequireDefault(_imagePicker);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = angular.module('directives', []).directive('validateMatch', _validateMatch2.default); /* global angular */
+/* global angular */
+
+exports.default = angular.module('directives', []).directive('validateMatch', _validateMatch2.default).directive('imagePicker', _imagePicker2.default);
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1007,7 +1081,225 @@ function validateMatch() {
 };
 
 /***/ }),
-/* 37 */
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _imagePickerTemplate = __webpack_require__(40);
+
+var _imagePickerTemplate2 = _interopRequireDefault(_imagePickerTemplate);
+
+var _imagePicker = __webpack_require__(41);
+
+var _imagePicker2 = _interopRequireDefault(_imagePicker);
+
+__webpack_require__(42);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function imagePickerDirective(fileDropHandler, scaleImage, root, api) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            images: '=',
+            path: '@',
+            upload: '&',
+            size: '@'
+        },
+        transclude: true,
+        require: '?ngModel',
+        template: _imagePickerTemplate2.default,
+        link: function link($scope, $element, $atts, ngModelController) {
+            $scope.root = root;
+            var newImage = function newImage(file, path) {
+                var same = $scope.images.filter(function (image) {
+                    return image.name == file.name;
+                });
+                if (file.name.match(/(jpe?g|gif|png)$/i) && !same.length) {
+                    var reader = new FileReader();
+                    var readImage = function readImage() {
+                        reader.onload = function (e) {
+                            var image = new Image();
+                            image.src = e.target.result;
+                            image.onload = function () {
+                                $scope.$apply(function () {
+                                    $scope.images.push({
+                                        src: scaleImage(image, $scope.size),
+                                        name: file.name
+                                    });
+                                });
+                            };
+                        };
+                        reader.readAsDataURL(file);
+                    };
+                    var ret = $scope.upload({ file: file, path: path });
+                    if (ret && ret.then) {
+                        ret.then(readImage);
+                    } else {
+                        readImage();
+                    }
+                }
+            };
+            $element.on('dragover', function (event) {
+                if (event.originalEvent) {
+                    event = event.originalEvent;
+                }
+                event.dataTransfer.dropEffect = "move";
+                return false;
+            }).on('drop', function (event) {
+                event.preventDefault();
+                fileDropHandler(event, $scope.path, newImage);
+            });
+            var $file = $element.find('.file input').on('change', function (e) {
+                newImage(e.target.files[0], $scope.path);
+            });
+            $scope.top = $element.find('[ng-transclude]').height();
+            $scope.$on('$destroy', function () {
+                $element.off('drop dragover');
+                $file.off('change');
+            });
+            $scope.select = function (image) {
+                $scope.selected = image;
+                $scope.expanded = false;
+                if (ngModelController) {
+                    ngModelController.$setViewValue(image.name);
+                }
+            };
+            function select(viewValue) {
+                $scope.images.forEach(function (image) {
+                    if (viewValue == image.name) {
+                        $scope.selected = image;
+                    }
+                });
+            }
+            ngModelController.$render = function () {
+                if (ngModelController.$viewValue) {
+                    select(ngModelController.$viewValue);
+                }
+            };
+        }
+    };
+} /* global Image, FileReader */
+
+imagePickerDirective.$inject = ['fileDropHandler', 'scaleImage', 'root', 'api'];
+
+exports.default = imagePickerDirective;
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"image-picker\">\n  <div ng-transclude ng-click=\"expanded=!expanded\"></div>\n  <ul ng-show=\"expanded\" ng-style=\"{top: top}\" >\n    <li ng-repeat=\"image in images\" ng-class=\"{selected: image == selected}\"\n        ng-click=\"select(image)\">\n      <span class=\"image\">\n        <img ng-src=\"{{image.src}}\" ng-if=\"image.src\" />\n        <img ng-src=\"{{root}}/image/{{size}}/{{image.name}}\" ng-if=\"!image.src\" />\n      </span>\n      <span class=\"image-label\">\n        {{image.name}}\n      </span>\n    </li>\n    <li class=\"file\">\n      <p translate>upload new</p>\n      <input type=\"file\" />\n    </li>\n  </ul>\n</div>\n";
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/* global FileReader, Image */
+
+var controller = function controller($scope, $element, fileDropHandler, scaleImage) {
+    var _this = this;
+
+    $element.on('dragover', function (event) {
+        if (event.originalEvent) {
+            event = event.originalEvent;
+        }
+        event.dataTransfer.dropEffect = "move";
+        return false;
+    }).on('drop', function (event) {
+        event.preventDefault();
+        fileDropHandler(event, _this.path, function (file, path) {
+            var same = _this.images.filter(function (image) {
+                return image.name == file.name;
+            });
+            if (file.name.match(/(jpe?g|gif|png)$/i) && !same.length) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var image = new Image();
+                    image.src = e.target.result;
+                    image.onload = function () {
+                        $scope.$apply(function () {
+                            _this.images.push({
+                                src: scaleImage(image, 100),
+                                name: file.name
+                            });
+                        });
+                    };
+                };
+                reader.readAsDataURL(file);
+                _this.upload(file, path);
+            }
+        });
+    });
+    $scope.$on('$destroy', function () {
+        $element.off('drop dragover dragstart');
+    });
+};
+
+controller.$inject = ['$scope', '$element', 'fileDropHandler', 'scaleImage'];
+
+exports.default = controller;
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(43);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../node_modules/css-loader/index.js!./imagePicker.css", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js!./imagePicker.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(0)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, ".image-picker {\n    position: relative;\n}\n.image-picker [ng-transclude] {\n    overflow: hidden;\n}\n.image-picker ul {\n    list-style: none;\n    position: absolute;\n    z-index: 1000;\n    padding: 0;\n    width: 100%;\n    background: white;\n    border: 1px solid #ccc;\n    border-top: none;\n}\n.image-picker li {\n    padding: 10px;\n}\n.image-picker li.selected {\n    background-color: #eee;\n    border: 1px solid #ccc;\n    border-left: none;\n    border-right: none;\n}\n.image-picker li:hover {\n    background-color: #eee;\n}\n.image-picker .file {\n    position: relative;\n    padding: 5px 10px;\n}\n.image-picker .file p {\n    margin: 0;\n}\n.image-picker .file input {\n    position: absolute;\n    left: 0;\n    top: 0;\n    font-size: 99em;\n    opacity: 0;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1021,16 +1313,24 @@ var _angular = __webpack_require__(2);
 
 var _angular2 = _interopRequireDefault(_angular);
 
-var _api = __webpack_require__(38);
+var _api = __webpack_require__(45);
 
 var _api2 = _interopRequireDefault(_api);
 
+var _fileDropHandler = __webpack_require__(46);
+
+var _fileDropHandler2 = _interopRequireDefault(_fileDropHandler);
+
+var _scaleImage = __webpack_require__(47);
+
+var _scaleImage2 = _interopRequireDefault(_scaleImage);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _angular2.default.module('services', []).factory('api', _api2.default);
+exports.default = _angular2.default.module('services', []).factory('api', _api2.default).factory('fileDropHandler', _fileDropHandler2.default).factory('scaleImage', _scaleImage2.default);
 
 /***/ }),
-/* 38 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1040,16 +1340,27 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _jquery = __webpack_require__(3);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function api($http, root) {
     var data = function data(response) {
         return response.data;
     };
-    function make_post_fn(url) {
+    function make_post_fn(url, type) {
+        var headers = {};
+        if (type != 'json') {
+            headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        }
         return function (data) {
             return $http({
                 method: 'POST',
                 url: root + url,
-                data: data
+                data: type == 'json' ? data : _jquery2.default.param(data),
+                headers: headers
             }).then(data);
         };
     }
@@ -1069,33 +1380,227 @@ function api($http, root) {
         categories: {
             post: make_post_fn('/api/category/'),
             list: make_get_fn('/api/category/list')
+        },
+        images: {
+            list: make_get_fn('/api/images'),
+            upload: function upload(file) {
+                var data = new FormData();
+                data.append('file', file);
+                return $http({
+                    method: 'POST',
+                    url: root + '/upload',
+                    data: data,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                });
+            }
         }
     };
-}
+} /* global FormData */
+
 
 api.$inject = ['$http', 'root'];
 
 exports.default = api;
 
 /***/ }),
-/* 39 */,
-/* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */,
-/* 44 */,
-/* 45 */,
-/* 46 */,
-/* 47 */,
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function fileDropHandler($q) {
+    function process(event, path, upload_file) {
+        var defered = $q.defer();
+        var self = this;
+        if (event.originalEvent) {
+            event = event.originalEvent;
+        }
+        var items;
+        if (event.dataTransfer.items) {
+            items = [].slice.call(event.dataTransfer.items);
+        }
+        var files = event.dataTransfer.files || event.target.files;
+        if (files) {
+            files = [].slice.call(files);
+        }
+        if (items && items.length) {
+            if (items[0].webkitGetAsEntry) {
+                var entries = [];
+                items.forEach(function (item) {
+                    var entry = item.webkitGetAsEntry();
+                    if (entry) {
+                        entries.push(entry);
+                    }
+                });
+                (function upload() {
+                    var entry = entries.shift();
+                    if (entry) {
+                        upload_tree(entry, path, upload_file).then(upload);
+                    } else {
+                        defered.resolve();
+                    }
+                })();
+            }
+        } else if (files && files.length) {
+            (function upload() {
+                var file = files.shift();
+                if (file) {
+                    upload_file(file, path).then(upload);
+                } else {
+                    defered.resolve();
+                }
+            })();
+        } else if (event.dataTransfer.getFilesAndDirectories) {
+            event.dataTransfer.getFilesAndDirectories().then(function (items) {
+                (function upload() {
+                    var item = items.shift();
+                    if (item) {
+                        upload_tree(item, path, upload_file).then(upload);
+                    } else {
+                        defered.resolve();
+                    }
+                })();
+            });
+        }
+        return defered.promise;
+    }
+    function upload_tree(tree, path, file_upload_callback) {
+        var defered = $q.defer();
+        var self = this;
+        function process(entries, callback) {
+            entries = entries.slice();
+            (function recur() {
+                var entry = entries.shift();
+                if (entry) {
+                    callback(entry).then(recur).fail(function () {
+                        defered.reject();
+                    });
+                } else {
+                    defered.resolve();
+                }
+            })();
+        }
+        function upload_files(entries) {
+            process(entries, function (entry) {
+                return upload_tree(entry, path + '/' + tree.name);
+            });
+        }
+        function upload_file(file) {
+            var ret = file_upload_callback(file, path);
+            if (ret && ret.then) {
+                ret.then(function () {
+                    defered.resolve();
+                }).fail(function () {
+                    defered.reject();
+                });
+            } else {
+                defered.resolve();
+            }
+        }
+        if (typeof Directory != 'undefined' && tree instanceof Directory) {
+            // firefox
+            tree.getFilesAndDirectories().then(function (entries) {
+                upload_files(entries);
+            });
+        } else if (typeof File != 'undefined' && tree instanceof File) {
+            // firefox
+            upload_file(tree);
+        } else if (tree.isFile) {
+            // chrome
+            tree.file(upload_file);
+        } else if (tree.isDirectory) {
+            // chrome
+            var dirReader = tree.createReader();
+            dirReader.readEntries(function (entries) {
+                upload_files(entries);
+            });
+        }
+        return defered.promise;
+    }
+    function is_file_drop(event) {
+        if (event.originalEvent) {
+            event = event.originalEvent;
+        }
+        if (event.dataTransfer.items && event.dataTransfer.items.length) {
+            return !![].filter.call(event.dataTransfer.items, function (item) {
+                return item.kind == 'file';
+            }).length;
+        } else {
+            return event.dataTransfer.files && event.dataTransfer.files.length;
+        }
+    }
+    return function (event, path, callback) {
+        if (is_file_drop(event)) {
+            return process(event, path, callback);
+        } else {
+            return $q.resolve();
+        }
+    };
+}
+
+fileDropHandler.$inject = ['$q'];
+
+exports.default = fileDropHandler;
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    return scaleImage;
+};
+
+function scaleImage(image, size) {
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var width, height;
+    if (image.width > image.height) {
+        width = size;
+        height = image.height * (size / image.width);
+    } else {
+        height = size;
+        width = image.width * (size / image.height);
+    }
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(image, 0, 0, width, height);
+    return canvas.toDataURL();
+}
+
+;
+
+/***/ }),
 /* 48 */,
 /* 49 */,
-/* 50 */
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */,
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(51);
+var content = __webpack_require__(60);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -1120,7 +1625,7 @@ if(false) {
 }
 
 /***/ }),
-/* 51 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(undefined);
@@ -1128,52 +1633,7 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 
 // module
-exports.push([module.i, "body {\n    margin: 0;\n    height: 100vh;\n}\n.error {\n    color: #a94442; /* same as boostrap */\n}\nheader.main, nav.left, footer {\n    font-family: sans-serif;\n}\nheader.main {\n    background-color: #3c8dbc;\n    color: #fff;\n}\nheader.main h1 {\n    height: 50px;\n    width: 100%;\n    display: table;\n    margin: 0;\n}\nheader.main .right {\n    display: table-cell;\n    width: calc(100% - 230px);\n    font-size: 14px;\n    font-weight: normal;\n    vertical-align: middle;\n}\nheader.main ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nheader.main li {\n    float: right;\n    margin: 10px;\n}\nheader.main li a, header li a:visited {\n    color: white;\n    text-decoration: none;\n}\nheader li a:hover {\n    text-decoration: underline;\n}\nheader .logo {\n    display: table-cell;\n    vertical-align: middle;\n    background-color: #367fa9;\n    text-align: center;\n    font-family: sans-serif;\n    font-weight: normal;\n    font-size: 20px;\n}\n.notifications .close-click {\n    position: relative;\n    top: -2px;\n}\nheader .logo, nav.left {\n    width: 230px;\n    color: white;\n}\nnav.left {\n    background-color: #222d32;\n    font-size: 14px;\n}\nnav.left, main {\n    height: calc(100% - 50px - 20px);\n}\nnav.left ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nnav.left li {\n    display: table;\n    height: 30px;\n    width: 100%;\n}\nnav.left a {\n    width: 100%;\n    height: 100%;\n    display: table-cell;\n    vertical-align: middle;\n    padding-left: 20px;\n}\nnav.left li a, nav.left li a:visited {\n    color: white;\n}\nnav.left li.selected a {\n    border-left: 4px solid #367fa9;\n}\nnav.left li.selected a {\n    padding-left: 16px;\n}\nfooter a, footer a:visited, nav.left li a, nav.left li a:visited {\n    text-decoration: none;\n    cursor: pointer;\n}\nnav.left li:hover a {\n    background: #1e282c;\n}\nmain {\n    position: absolute;\n    left: 230px;\n    width: calc(100% - 230px);\n    top: 50px;\n    overflow: auto;\n}\nmain .panel {\n    display: block;\n    height: calc(100vh - 50px - 20px);\n    margin: 0;\n}\n.mce-container-body .mce-edit-area {\n    top: 40px;\n}\nfooter {\n    height: 20px;\n    box-sizing: border-box;\n    margin: 0;\n    font-size: 12px;\n    background: black;\n    color: white;\n    text-align: center;\n    padding: 3px 0;\n}\nfooter p {\n    margin: 0;\n}\nfooter a, footer a:visited {\n    color: white;\n}\nfooter a:hover {\n    text-decoration: underline;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 52 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(53);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
-var transform;
-
-var options = {}
-options.transform = transform
-// add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../../../node_modules/css-loader/index.js!./productPanel.css", function() {
-			var newContent = require("!!../../../node_modules/css-loader/index.js!./productPanel.css");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 53 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(0)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "panel[name=\"products\"] .editor {\n    height: 400px;\n}\n", ""]);
+exports.push([module.i, "body {\n    margin: 0;\n    height: 100vh;\n}\n.error {\n    color: #a94442; /* same as boostrap */\n}\nheader.main, nav.left, footer {\n    font-family: sans-serif;\n}\nheader.main {\n    background-color: #3c8dbc;\n    color: #fff;\n}\nheader.main h1 {\n    height: 50px;\n    width: 100%;\n    display: table;\n    margin: 0;\n}\nheader.main .right {\n    display: table-cell;\n    width: calc(100% - 230px);\n    font-size: 14px;\n    font-weight: normal;\n    vertical-align: middle;\n}\nheader.main ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nheader.main li {\n    float: right;\n    margin: 10px;\n}\nheader.main li a, header li a:visited {\n    color: white;\n    text-decoration: none;\n}\nheader li a:hover {\n    text-decoration: underline;\n}\nheader .logo {\n    display: table-cell;\n    vertical-align: middle;\n    background-color: #367fa9;\n    text-align: center;\n    font-family: sans-serif;\n    font-weight: normal;\n    font-size: 20px;\n}\n.notifications .close-click {\n    position: relative;\n    top: -2px;\n}\nheader .logo, nav.left {\n    width: 230px;\n    color: white;\n}\nnav.left {\n    background-color: #222d32;\n    font-size: 14px;\n}\nnav.left, main {\n    height: calc(100% - 50px - 20px);\n}\nnav.left ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nnav.left li {\n    display: table;\n    height: 30px;\n    width: 100%;\n}\nnav.left a {\n    width: 100%;\n    height: 100%;\n    display: table-cell;\n    vertical-align: middle;\n    padding-left: 20px;\n}\nnav.left li a, nav.left li a:visited {\n    color: white;\n}\nnav.left li.selected a {\n    border-left: 4px solid #367fa9;\n}\nnav.left li.selected a {\n    padding-left: 16px;\n}\nfooter a, footer a:visited, nav.left li a, nav.left li a:visited {\n    text-decoration: none;\n    cursor: pointer;\n}\nnav.left li:hover a {\n    background: #1e282c;\n}\nmain {\n    position: absolute;\n    left: 230px;\n    width: calc(100% - 230px);\n    top: 50px;\n    overflow: auto;\n}\nmain .panel {\n    display: block;\n    height: calc(100vh - 50px - 20px);\n    overflow: auto;\n    margin: 0;\n}\n.mce-container-body .mce-edit-area {\n    top: 40px;\n}\nfooter {\n    height: 20px;\n    box-sizing: border-box;\n    margin: 0;\n    font-size: 12px;\n    background: black;\n    color: white;\n    text-align: center;\n    padding: 3px 0;\n}\nfooter p {\n    margin: 0;\n}\nfooter a, footer a:visited {\n    color: white;\n}\nfooter a:hover {\n    text-decoration: underline;\n}\n", ""]);
 
 // exports
 

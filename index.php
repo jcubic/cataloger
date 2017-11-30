@@ -491,12 +491,13 @@ $app->group('/api', function() {
                     $category = null;
                 }
                 $price = isset($_POST['price']) ? $_POST['price'] : null;
-                $data = array($name, $category, $content, $slug, $price);
+                $image_name = isset($_POST['image_name']) ? $_POST['image_name'] : null;
+                $data = array($name, $category, $content, $slug, $price, $image_name);
                 if (isset($_POST['id'])) {
                     $data[] = $_POST['id'];
-                    $query = "UPDATE products SET name = ?, category = ?, content = ?, slug = ?, price = ? WHERE id = ?";
+                    $query = "UPDATE products SET name = ?, category = ?, content = ?, slug = ?, price = ?, image_name = ? WHERE id = ?";
                 } else {
-                    $query = "INSERT INTO prodcuts(name, category, content, slug, price) VALUES (?, ?, ?, ?, ?)";
+                    $query = "INSERT INTO products(name, category, content, slug, price, image_name) VALUES (?, ?, ?, ?, ?, ?)";
                 }
                 $result = query($query, $data);
                 if ($result == 1) {
@@ -517,6 +518,11 @@ $app->group('/api', function() {
                         "data" => $result
                     )));
                 }
+            } else {
+                $body->write(json_encode(array(
+                    "result" => false,
+                    "error" => "Wrong request"
+                )));
             }
         });
         $this->delete('/{id}', make_delete_entry("products"));
@@ -633,7 +639,7 @@ $app->get('/image/{size}/{name}', function($request, $response) {
         throw new \Slim\Exception\NotFoundException($request, $response);
     }
     $tmp_fname = tempnam("/tmp", "image");
-    resize($fname, $size, $size, $tmp_fname);
+    resize($fname, $size, $tmp_fname);
     $body->write(file_get_contents($tmp_fname));
     unlink($tmp_fname);
     return $response;
@@ -642,15 +648,19 @@ $app->get('/image/{size}/{name}', function($request, $response) {
 $app->post('/upload', function($request, $response) use ($app) {
     if ($_SESSION['logged']) {
         $files = $request->getUploadedFiles();
-        $file = $files['file'];
-        $path = $app->root . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR;
-        $fname = $file->getClientFilename();
-        if (is_image($fname) && !preg_match("/\.\./", $fname)) {
-            $file->moveTo($path . $fname);
+        if (isset($files['file'])) {
+            $file = $files['file'];
+            $path = $app->root . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR;
+            $fname = $file->getClientFilename();
+            if (is_image($fname) && !preg_match("/\.\./", $fname)) {
+                $file->moveTo($path . $fname);
+            }
         }
     } else {
         return redirect($request, $response, '/login');
     }
 });
+
+
 
 $app->run();

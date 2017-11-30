@@ -108,6 +108,7 @@ main {
 main .panel {
     display: block;
     height: calc(100vh - 50px - 20px);
+    overflow: auto;
     margin: 0;
 }
 .mce-container-body .mce-edit-area {

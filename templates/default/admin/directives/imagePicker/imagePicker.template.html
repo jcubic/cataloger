@@ -1,0 +1,19 @@
+<div class="image-picker">
+  <div ng-transclude ng-click="expanded=!expanded"></div>
+  <ul ng-show="expanded" ng-style="{top: top}" >
+    <li ng-repeat="image in images" ng-class="{selected: image == selected}"
+        ng-click="select(image)">
+      <span class="image">
+        <img ng-src="{{image.src}}" ng-if="image.src" />
+        <img ng-src="{{root}}/image/{{size}}/{{image.name}}" ng-if="!image.src" />
+      </span>
+      <span class="image-label">
+        {{image.name}}
+      </span>
+    </li>
+    <li class="file">
+      <p translate>upload new</p>
+      <input type="file" />
+    </li>
+  </ul>
+</div>

@@ -170,8 +170,9 @@ function tidy($html) {
     return $tidy;
 }
 
-// source: http://www.akemapa.com/2008/07/10/php-gd-resize-transparent-image-png-gif/
-function resize($img, $w, $h, $newfilename) {
+// based on:
+// http://www.akemapa.com/2008/07/10/php-gd-resize-transparent-image-png-gif/
+function resize($img, $size, $newfilename) {
 
     //Check if GD extension is loaded
     if (!extension_loaded('gd') && !extension_loaded('gd2')) {
@@ -189,17 +190,17 @@ function resize($img, $w, $h, $newfilename) {
     }
 
     //If image dimension is smaller, do not resize
-    if ($imgInfo[0] <= $w && $imgInfo[1] <= $h) {
+    if ($imgInfo[0] <= $size && $imgInfo[1] <= $size) {
         $nHeight = $imgInfo[1];
         $nWidth = $imgInfo[0];
     } else {
         //yeah, resize it, but keep it proportional
-        if ($w/$imgInfo[0] > $h/$imgInfo[1]) {
-            $nWidth = $w;
-            $nHeight = $imgInfo[1]*($w/$imgInfo[0]);
-        }else{
-            $nWidth = $imgInfo[0]*($h/$imgInfo[1]);
-            $nHeight = $h;
+        if ($imgInfo[0] > $imgInfo[1]) {
+            $nWidth = $size;
+            $nHeight = $imgInfo[1]*($size/$imgInfo[0]);
+        } else {
+            $nWidth = $imgInfo[0]*($size/$imgInfo[1]);
+            $nHeight = $size;
         }
     }
     $nWidth = round($nWidth);

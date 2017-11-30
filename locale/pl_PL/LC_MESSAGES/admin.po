@@ -69,3 +69,10 @@ msgstr "kategoria"
 
 msgid "new product"
 msgstr "nowy przedmiot"
+
+msgid "image"
+msgstr "obrazek"
+
+msgid "upload new"
+msgstr "wgraj nowy"
+
