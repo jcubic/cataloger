@@ -1,6 +1,6 @@
 import $ from 'jquery';
 
-function translatedNotifications(notifications, gettextCatalog) {
+function popups(notifications, gettextCatalog) {
     var result = {};
     Object.keys(notifications).forEach(function(key) {
         if (key.match(/^show/)) {
@@ -17,6 +17,6 @@ function translatedNotifications(notifications, gettextCatalog) {
     return result;
 }
 
-translatedNotifications.$inject = ['notifications', 'gettextCatalog'];
+popups.$inject = ['notifications', 'gettextCatalog'];
 
-export default translatedNotifications;
+export default popups;

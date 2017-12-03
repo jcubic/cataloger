@@ -2,7 +2,7 @@
 
 import $ from 'jquery';
 
-function controller($http, translatedNotifications, editorOptions, api) {
+function controller($http, popups, editorOptions, api) {
     this.tinymce_options = editorOptions;
     this.products = [];
     let get = (url, variable) => {
@@ -23,7 +23,7 @@ function controller($http, translatedNotifications, editorOptions, api) {
                         page.id = data.result[0];
                     }
                 });
-                translatedNotifications.showSuccess({
+                popups.showSuccess({
                     message: 'Save successfull'
                 });
             }
@@ -36,7 +36,7 @@ function controller($http, translatedNotifications, editorOptions, api) {
             content: this.page.content
         }).then((data) => {
             if (data.result) {
-                translatedNotifications.showSuccess({
+                popups.showSuccess({
                     message: 'Save successfull'
                 });
             }
@@ -79,6 +79,6 @@ function controller($http, translatedNotifications, editorOptions, api) {
     this.get_pages();
 };
 
-controller.$inject = ['$http', 'translatedNotifications', 'editorOptions', 'api'];
+controller.$inject = ['$http', 'popups', 'editorOptions', 'api'];
 
 export default controller;

@@ -46,9 +46,15 @@ var _pagination = __webpack_require__(60);
 
 var _pagination2 = _interopRequireDefault(_pagination);
 
+var _modal = __webpack_require__(68);
+
+var _modal2 = _interopRequireDefault(_modal);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var app = _angular2.default.module('app', ['ngNotificationsBar', _pagination2.default, _angularGettext2.default, _components2.default.name, _directives2.default.name, _services2.default.name]); /* global location, $, root */
+/* global location, $, root */
+
+var app = _angular2.default.module('app', ['ngNotificationsBar', _pagination2.default, _modal2.default, _angularGettext2.default, _components2.default.name, _directives2.default.name, _services2.default.name]);
 
 app.factory('config', ['$http', '$location', function ($http, $location) {
     var lang = $location.search()['lang'];
@@ -461,7 +467,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function controller($http, translatedNotifications, editorOptions, api) {
+function controller($http, popups, editorOptions, api) {
     var _this = this;
 
     this.tinymce_options = editorOptions;
@@ -486,7 +492,7 @@ function controller($http, translatedNotifications, editorOptions, api) {
                         page.id = data.result[0];
                     }
                 });
-                translatedNotifications.showSuccess({
+                popups.showSuccess({
                     message: 'Save successfull'
                 });
             }
@@ -499,7 +505,7 @@ function controller($http, translatedNotifications, editorOptions, api) {
             content: _this.page.content
         }).then(function (data) {
             if (data.result) {
-                translatedNotifications.showSuccess({
+                popups.showSuccess({
                     message: 'Save successfull'
                 });
             }
@@ -548,7 +554,7 @@ function controller($http, translatedNotifications, editorOptions, api) {
 
 ;
 
-controller.$inject = ['$http', 'translatedNotifications', 'editorOptions', 'api'];
+controller.$inject = ['$http', 'popups', 'editorOptions', 'api'];
 
 exports.default = controller;
 
@@ -1300,13 +1306,13 @@ var _scaleImage = __webpack_require__(46);
 
 var _scaleImage2 = _interopRequireDefault(_scaleImage);
 
-var _translatedNotifications = __webpack_require__(67);
+var _popups = __webpack_require__(80);
 
-var _translatedNotifications2 = _interopRequireDefault(_translatedNotifications);
+var _popups2 = _interopRequireDefault(_popups);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _angular2.default.module('services', []).factory('api', _api2.default).factory('fileDropHandler', _fileDropHandler2.default).factory('scaleImage', _scaleImage2.default).factory('translatedNotifications', _translatedNotifications2.default);
+exports.default = _angular2.default.module('services', []).factory('api', _api2.default).factory('fileDropHandler', _fileDropHandler2.default).factory('scaleImage', _scaleImage2.default).factory('popups', _popups2.default);
 
 /***/ }),
 /* 44 */
@@ -1652,7 +1658,20 @@ exports.push([module.i, "body {\n    margin: 0;\n    height: 100vh;\n}\n.error {
 /* 64 */,
 /* 65 */,
 /* 66 */,
-/* 67 */
+/* 67 */,
+/* 68 */,
+/* 69 */,
+/* 70 */,
+/* 71 */,
+/* 72 */,
+/* 73 */,
+/* 74 */,
+/* 75 */,
+/* 76 */,
+/* 77 */,
+/* 78 */,
+/* 79 */,
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1668,7 +1687,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function translatedNotifications(notifications, gettextCatalog) {
+function popups(notifications, gettextCatalog) {
     var result = {};
     Object.keys(notifications).forEach(function (key) {
         if (key.match(/^show/)) {
@@ -1685,9 +1704,9 @@ function translatedNotifications(notifications, gettextCatalog) {
     return result;
 }
 
-translatedNotifications.$inject = ['notifications', 'gettextCatalog'];
+popups.$inject = ['notifications', 'gettextCatalog'];
 
-exports.default = translatedNotifications;
+exports.default = popups;
 
 /***/ })
 ],[5]);
