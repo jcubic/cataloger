@@ -1,25 +1,34 @@
 <div class="image-picker">
   <div ng-transclude ng-click="expanded=!expanded"></div>
-  <ul ng-show="expanded" ng-style="{top: top}" >
-    <li class="controls">
-      <div class="search">
-        <label for="searchTerm"><span translate>search</span>:</label>
-        <input id="searchTerm" ng-model="searchTerm" ng-keyup="search()"/>
+  <div class="dropdown" ng-show="expanded" ng-style="{top: top}">
+    <div class="controls">
+      <div class="search input-group">
+        <label class="input-group-addon" for="searchTerm" translate>filter</label>
+        <input class="form-control" id="searchTerm" ng-model="searchTerm"
+               ng-keyup="search()"/>
       </div>
-      <div class="file">
+      <div class="file btn btn-default">
         <p translate>upload new</p>
         <input type="file" />
       </div>
-    </li>
-    <li ng-repeat="image in images" ng-class="{selected: image == selected}"
-        ng-click="select(image)" ng-hide="image.excluded">
-      <span class="image">
-        <img ng-src="{{image.src}}" ng-if="image.src" />
-        <img ng-src="{{root}}/image/{{size}}/{{image.name}}" ng-if="!image.src" />
-      </span>
-      <span class="image-label">
-        {{image.name}}
-      </span>
-    </li>
-  </ul>
+      <div class="pages">
+        <ul uib-pagination total-items="filteredImages.length" ng-model="page"
+            max-size="5" items-per-page="pageSize" class="pagination-sm"
+            previous-text="&lsaquo;" next-text="&rsaquo;"
+            ng-show="filteredImages.length > pageSize"></ul>
+      </div>
+    </div>
+    <ul class="images" >
+      <li ng-repeat="image in pageImages" ng-class="{selected: image == selected}"
+          ng-click="select(image)" ng-hide="image.excluded">
+        <span class="image">
+          <img ng-src="{{image.src}}" ng-if="image.src" />
+          <img ng-src="{{root}}/image/{{size}}/{{image.name}}" ng-if="!image.src" />
+        </span>
+        <span class="image-label">
+          {{image.name}}
+        </span>
+      </li>
+    </ul>
+  </div>
 </div>

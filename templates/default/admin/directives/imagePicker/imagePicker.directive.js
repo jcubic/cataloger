@@ -1,7 +1,6 @@
 /* global Image, FileReader */
 
 import template from './imagePicker.template.html';
-import controller from './imagePicker.controller';
 import './imagePicker.css';
 
 function imagePickerDirective(fileDropHandler, scaleImage, root, api) {
@@ -12,7 +11,8 @@ function imagePickerDirective(fileDropHandler, scaleImage, root, api) {
             images: '=',
             path: '@',
             upload: '&',
-            size: '@'
+            size: '@',
+            pageSize: '@'
         },
         transclude: true,
         require: '?ngModel',
@@ -31,7 +31,7 @@ function imagePickerDirective(fileDropHandler, scaleImage, root, api) {
                                 image.src = e.target.result;
                                 image.onload = () => {
                                     $scope.$apply(() => {
-                                        $scope.images.push({
+                                        $scope.images.unshift({
                                             src: scaleImage(image, $scope.size),
                                             name: file.name
                                         });
@@ -74,14 +74,14 @@ function imagePickerDirective(fileDropHandler, scaleImage, root, api) {
                 }
             };
             $scope.search = () => {
-                var re = new RegExp($scope.searchTerm, 'i');
-                $scope.images.forEach(function(image) {
-                    if ($scope.searchTerm) {
-                        image.excluded = !image.name.match(re);
-                    } else {
-                        delete image.excluded;
-                    }
-                });
+                if ($scope.searchTerm) {
+                    var re = new RegExp($scope.searchTerm, 'i');
+                    $scope.filteredImages = $scope.images.filter(function(image) {
+                        return image.name.match(re);
+                    });
+                } else {
+                    $scope.filteredImages = $scope.images;
+                }
             };
             function select(viewValue) {
                 $scope.images.forEach((image) => {
@@ -90,6 +90,28 @@ function imagePickerDirective(fileDropHandler, scaleImage, root, api) {
                     }
                 });
             }
+            $scope.pageSize = $scope.pageSize || 4;
+            $scope.page = 1;
+            $scope.filteredImages = $scope.images;
+            $scope.$watch(
+                () => [$scope.filteredImages, $scope.page],
+                function(newValue, oldValue) {
+                    var start = ($scope.page-1) * $scope.pageSize;
+                    var end = $scope.page * $scope.pageSize;
+                    $scope.pageImages = $scope.filteredImages.slice(start, end);
+                },
+                true
+            );
+            /*
+            $scope.$watch(
+                () => [$scope.filteredImages, $scope.pageSize],
+                function(newValue) {
+                    var len = $scope.filteredImages.length;
+                    $scope.pages = Math.ceil(len / $scope.pageSize);
+                },
+                true
+            );
+             */
             ngModelController.$render = () => {
                 if (ngModelController.$viewValue) {
                     select(ngModelController.$viewValue);

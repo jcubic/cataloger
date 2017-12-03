@@ -10,10 +10,11 @@ import gettext from 'angular-gettext';
 import 'ng-notifications-bar';
 import 'ng-notifications-bar/dist/ngNotificationsBar.min.css';
 import './app.css';
+import pagination from 'angular-ui-bootstrap/src/pagination';
 
 let app = angular.module('app', [
-    'ui.bootstrap',
     'ngNotificationsBar',
+    pagination,
     gettext,
     components.name,
     directives.name,

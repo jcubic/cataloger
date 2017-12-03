@@ -78,3 +78,6 @@ msgstr "wgraj nowy"
 
 msgid "search"
 msgstr "wyszukaj"
+
+msgid "filter"
+msgstr "filtruj"
