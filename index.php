@@ -359,7 +359,7 @@ function new_page($request, $response) {
     $body = $response->getBody();
     if (isset($_POST['title']) && isset($_POST['content'])) {
         $slug = slug($_POST['title']);
-        if (page_id($slug) != null) {
+        if (id('pages', $slug) != null) {
             $body->write(json_encode(array("result" => false, "error" => "slug exists")));
         } else {
             $result = query("INSERT INTO pages(slug, title, content) VALUES(?, ?, ?)", array(

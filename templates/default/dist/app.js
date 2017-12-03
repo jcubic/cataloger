@@ -191,7 +191,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /* global root */
 
-function controller($http, $scope, api, editorOptions) {
+function controller($http, $scope, translatedNotifications, api, editorOptions) {
     var _this = this;
 
     this.tinymce_options = editorOptions;
@@ -215,6 +215,12 @@ function controller($http, $scope, api, editorOptions) {
     this.get_products = function () {
         api.products.list().then(make_setter('products'));
     };
+    function product_saved() {
+        translatedNotifications.showSuccess({
+            message: 'Save successfull'
+        });
+        this.get_products();
+    }
     var new_product = function new_product() {
         api.products.post({
             name: _this.product.name,
@@ -222,9 +228,7 @@ function controller($http, $scope, api, editorOptions) {
             content: _this.product.content || null,
             image_name: _this.product.image_name || null,
             category: _this.product.category ? _this.product.category.id : null
-        }).then(function () {
-            return _this.get_products();
-        });
+        }).then(product_saved);
     };
     var update = function update() {
         api.products.post({
@@ -234,9 +238,7 @@ function controller($http, $scope, api, editorOptions) {
             image_name: _this.product.image_name || null,
             category: _this.product.category ? _this.product.category.id : null,
             id: _this.product.id
-        }).then(function () {
-            return _this.get_products();
-        });
+        }).then(product_saved);
     };
     this.new_product = function () {
         var untitled = _this.products.filter(function (product) {
@@ -265,6 +267,24 @@ function controller($http, $scope, api, editorOptions) {
             }
         }
     };
+    this.delete_product = function (index) {
+        var product = _this.products[index];
+        var id = product.id;
+        if (typeof id === 'undefined') {
+            var name = product.name;
+            _this.products = _this.products.filter(function (page) {
+                return page.name != name;
+            });
+        } else {
+            api.products.delete(id).then(function (data) {
+                if (data.result) {
+                    _this.products = _this.products.filter(function (product) {
+                        return product.id != id;
+                    });
+                }
+            });
+        }
+    };
     this.upload = function (file) {
         console.log(file);
         api.images.upload(file);
@@ -279,7 +299,7 @@ function controller($http, $scope, api, editorOptions) {
     $scope.$on('view:products', init);
 };
 
-controller.$inject = ['$http', '$scope', 'api', 'editorOptions'];
+controller.$inject = ['$http', '$scope', 'translatedNotifications', 'api', 'editorOptions'];
 
 exports.default = controller;
 
@@ -441,26 +461,14 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function controller($http, notifications, gettextCatalog, editorOptions) {
+function controller($http, translatedNotifications, editorOptions, api) {
     var _this = this;
 
     this.tinymce_options = editorOptions;
     this.products = [];
     var get = function get(url, variable) {
-        $http({ method: 'GET', url: root + url }).then(function (response) {
-            _this[variable] = response.data;
-        });
-    };
-    var post = function post(options) {
-        return $http({
-            method: 'POST',
-            url: root + options.url,
-            data: _jquery2.default.param(options.data),
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            }
-        }).then(function (response) {
-            return response.data;
+        api.pages.list().then(function (data) {
+            return _this[variable] = data;
         });
     };
     this.get_pages = function () {
@@ -468,12 +476,9 @@ function controller($http, notifications, gettextCatalog, editorOptions) {
     };
     var new_page = function new_page() {
         var title = _this.page.title;
-        post({
-            url: '/api/page/',
-            data: {
-                title: title,
-                content: _this.page.content
-            }
+        api.pages.post({
+            title: title,
+            content: _this.page.content
         }).then(function (data) {
             if (data.result !== false) {
                 _this.pages.forEach(function (page) {
@@ -481,24 +486,21 @@ function controller($http, notifications, gettextCatalog, editorOptions) {
                         page.id = data.result[0];
                     }
                 });
-                notifications.showSuccess({
-                    message: gettextCatalog.getString('Save successfull')
+                translatedNotifications.showSuccess({
+                    message: 'Save successfull'
                 });
             }
         });
     };
     var update = function update() {
-        post({
-            url: '/api/page/',
-            data: {
-                id: _this.page.id,
-                title: _this.page.title,
-                content: _this.page.content
-            }
+        api.pages.post({
+            id: _this.page.id,
+            title: _this.page.title,
+            content: _this.page.content
         }).then(function (data) {
             if (data.result) {
-                notifications.showSuccess({
-                    message: gettextCatalog.getString('Save successfull')
+                translatedNotifications.showSuccess({
+                    message: 'Save successfull'
                 });
             }
         });
@@ -512,11 +514,8 @@ function controller($http, notifications, gettextCatalog, editorOptions) {
                 return page.title != title;
             });
         } else {
-            $http({
-                method: 'DELETE',
-                url: root + '/api/page/' + id
-            }).then(function (response) {
-                if (response.data.result) {
+            api.pages.delete(id).then(function (data) {
+                if (data.result) {
                     _this.pages = _this.pages.filter(function (page) {
                         return page.id != id;
                     });
@@ -549,7 +548,7 @@ function controller($http, notifications, gettextCatalog, editorOptions) {
 
 ;
 
-controller.$inject = ['$http', 'notifications', 'gettextCatalog', 'editorOptions'];
+controller.$inject = ['$http', 'translatedNotifications', 'editorOptions', 'api'];
 
 exports.default = controller;
 
@@ -1301,9 +1300,13 @@ var _scaleImage = __webpack_require__(46);
 
 var _scaleImage2 = _interopRequireDefault(_scaleImage);
 
+var _translatedNotifications = __webpack_require__(67);
+
+var _translatedNotifications2 = _interopRequireDefault(_translatedNotifications);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _angular2.default.module('services', []).factory('api', _api2.default).factory('fileDropHandler', _fileDropHandler2.default).factory('scaleImage', _scaleImage2.default);
+exports.default = _angular2.default.module('services', []).factory('api', _api2.default).factory('fileDropHandler', _fileDropHandler2.default).factory('scaleImage', _scaleImage2.default).factory('translatedNotifications', _translatedNotifications2.default);
 
 /***/ }),
 /* 44 */
@@ -1326,17 +1329,38 @@ function api($http, root) {
     var data = function data(response) {
         return response.data;
     };
+    function update_url(url, args) {
+        if (args.length) {
+            var i = 0;
+            return url.replace(/\{([^}]+)\}/g, function (_, name) {
+                return args[i++];
+            });
+        }
+        return url;
+    }
     function make_post_fn(url, type) {
         var headers = {};
         if (type != 'json') {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
-        return function (data) {
+        return function (post_data) {
             return $http({
                 method: 'POST',
                 url: root + url,
-                data: type == 'json' ? data : _jquery2.default.param(data),
+                data: type == 'json' ? post_data : _jquery2.default.param(post_data),
                 headers: headers
+            }).then(data);
+        };
+    }
+    function make_delete_fn(url) {
+        return function () {
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
+            }
+
+            return $http({
+                method: 'DELETE',
+                url: root + update_url(url, args)
             }).then(data);
         };
     }
@@ -1351,7 +1375,13 @@ function api($http, root) {
     return {
         products: {
             post: make_post_fn('/api/product/'),
-            list: make_get_fn('/api/product/list')
+            list: make_get_fn('/api/product/list'),
+            delete: make_delete_fn('/api/product/{id}')
+        },
+        pages: {
+            post: make_post_fn('/api/page/'),
+            list: make_get_fn('/api/page/list'),
+            delete: make_delete_fn('/api/page/{id}')
         },
         categories: {
             post: make_post_fn('/api/category/'),
@@ -1613,6 +1643,51 @@ exports.push([module.i, "body {\n    margin: 0;\n    height: 100vh;\n}\n.error {
 
 // exports
 
+
+/***/ }),
+/* 60 */,
+/* 61 */,
+/* 62 */,
+/* 63 */,
+/* 64 */,
+/* 65 */,
+/* 66 */,
+/* 67 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function translatedNotifications(notifications, gettextCatalog) {
+    var result = {};
+    Object.keys(notifications).forEach(function (key) {
+        if (key.match(/^show/)) {
+            result[key] = function (options) {
+                options = _jquery2.default.extend({}, options, {
+                    message: gettextCatalog.getString(options.message)
+                });
+                return notifications[key](options);
+            };
+        } else {
+            result[key] = notifications[key].bind(notifications);
+        }
+    });
+    return result;
+}
+
+translatedNotifications.$inject = ['notifications', 'gettextCatalog'];
+
+exports.default = translatedNotifications;
 
 /***/ })
 ],[5]);

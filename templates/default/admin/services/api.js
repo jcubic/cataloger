@@ -3,17 +3,34 @@ import $ from 'jquery';
 
 function api($http, root) {
     var data = response => response.data;
+    function update_url(url, args) {
+        if (args.length) {
+            var i = 0;
+            return url.replace(/\{([^}]+)\}/g, function(_, name) {
+                return args[i++];
+            });
+        }
+        return url;
+    }
     function make_post_fn(url, type) {
         var headers = {};
         if (type != 'json') {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
-        return function(data) {
+        return function(post_data) {
             return $http({
                 method: 'POST',
                 url: root + url,
-                data: type == 'json' ? data : $.param(data),
+                data: type == 'json' ? post_data : $.param(post_data),
                 headers: headers
+            }).then(data);
+        };
+    }
+    function make_delete_fn(url) {
+        return function(...args) {
+            return $http({
+                method: 'DELETE',
+                url: root + update_url(url, args)
             }).then(data);
         };
     }
@@ -28,7 +45,13 @@ function api($http, root) {
     return {
         products: {
             post: make_post_fn('/api/product/'),
-            list: make_get_fn('/api/product/list')
+            list: make_get_fn('/api/product/list'),
+            delete: make_delete_fn('/api/product/{id}')
+        },
+        pages: {
+            post: make_post_fn('/api/page/'),
+            list: make_get_fn('/api/page/list'),
+            delete: make_delete_fn('/api/page/{id}')
         },
         categories: {
             post: make_post_fn('/api/category/'),

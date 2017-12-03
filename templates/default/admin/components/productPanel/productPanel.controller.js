@@ -1,6 +1,6 @@
 /* global root */
 
-function controller($http, $scope, api, editorOptions) {
+function controller($http, $scope, translatedNotifications, api, editorOptions) {
     this.tinymce_options = editorOptions;
     this.products = [];
     this.images = [];
@@ -20,6 +20,12 @@ function controller($http, $scope, api, editorOptions) {
     this.get_products = () => {
         api.products.list().then(make_setter('products'));
     };
+    function product_saved() {
+        translatedNotifications.showSuccess({
+            message: 'Save successfull'
+        });
+        this.get_products();
+    }
     let new_product = () => {
         api.products.post({
             name: this.product.name,
@@ -27,7 +33,7 @@ function controller($http, $scope, api, editorOptions) {
             content: this.product.content || null,
             image_name: this.product.image_name || null,
             category: this.product.category ? this.product.category.id : null
-        }).then(() => this.get_products());
+        }).then(product_saved);
     };
     let update = () => {
         api.products.post({
@@ -37,7 +43,7 @@ function controller($http, $scope, api, editorOptions) {
             image_name: this.product.image_name || null,
             category: this.product.category ? this.product.category.id : null,
             id: this.product.id
-        }).then(() => this.get_products());
+        }).then(product_saved);
     };
     this.new_product = () => {
         var untitled = this.products.filter((product) => {
@@ -66,6 +72,22 @@ function controller($http, $scope, api, editorOptions) {
             }
         }
     };
+    this.delete_product = (index) => {
+        var product = this.products[index];
+        var id = product.id;
+        if (typeof id === 'undefined') {
+            var name = product.name;
+            this.products = this.products.filter((page) => page.name != name);
+        } else {
+            api.products.delete(id).then((data) => {
+                if (data.result) {
+                    this.products = this.products.filter((product) => {
+                        return product.id != id;
+                    });
+                }
+            });
+        }
+    };
     this.upload = (file) => {
         console.log(file);
         api.images.upload(file);
@@ -80,6 +102,6 @@ function controller($http, $scope, api, editorOptions) {
     $scope.$on('view:products', init);
 };
 
-controller.$inject = ['$http', '$scope', 'api', 'editorOptions'];
+controller.$inject = ['$http', '$scope', 'translatedNotifications', 'api', 'editorOptions'];
 
 export default controller;
