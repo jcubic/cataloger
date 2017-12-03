@@ -10,11 +10,11 @@ webpackJsonp([0],[
 "use strict";
 
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _angular = __webpack_require__(2);
+var _angular = __webpack_require__(3);
 
 var _angular2 = _interopRequireDefault(_angular);
 
@@ -46,7 +46,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /* global location, $, root */
 
-var app = _angular2.default.module('app', ['ngNotificationsBar', _angularGettext2.default, _components2.default.name, _directives2.default.name, _services2.default.name]);
+var app = _angular2.default.module('app', ['ui.bootstrap', 'ngNotificationsBar', _angularGettext2.default, _components2.default.name, _directives2.default.name, _services2.default.name]);
 
 app.factory('config', ['$http', '$location', function ($http, $location) {
     var lang = $location.search()['lang'];
@@ -108,7 +108,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _angular = __webpack_require__(2);
+var _angular = __webpack_require__(3);
 
 var _angular2 = _interopRequireDefault(_angular);
 
@@ -433,7 +433,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -642,7 +642,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -1172,6 +1172,16 @@ function imagePickerDirective(fileDropHandler, scaleImage, root, api) {
                     ngModelController.$setViewValue(image.name);
                 }
             };
+            $scope.search = function () {
+                var re = new RegExp($scope.searchTerm, 'i');
+                $scope.images.forEach(function (image) {
+                    if ($scope.searchTerm) {
+                        image.excluded = !image.name.match(re);
+                    } else {
+                        delete image.excluded;
+                    }
+                });
+            };
             function select(viewValue) {
                 $scope.images.forEach(function (image) {
                     if (viewValue == image.name) {
@@ -1196,62 +1206,14 @@ exports.default = imagePickerDirective;
 /* 40 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"image-picker\">\n  <div ng-transclude ng-click=\"expanded=!expanded\"></div>\n  <ul ng-show=\"expanded\" ng-style=\"{top: top}\" >\n    <li ng-repeat=\"image in images\" ng-class=\"{selected: image == selected}\"\n        ng-click=\"select(image)\">\n      <span class=\"image\">\n        <img ng-src=\"{{image.src}}\" ng-if=\"image.src\" />\n        <img ng-src=\"{{root}}/image/{{size}}/{{image.name}}\" ng-if=\"!image.src\" />\n      </span>\n      <span class=\"image-label\">\n        {{image.name}}\n      </span>\n    </li>\n    <li class=\"file\">\n      <p translate>upload new</p>\n      <input type=\"file\" />\n    </li>\n  </ul>\n</div>\n";
+module.exports = "<div class=\"image-picker\">\n  <div ng-transclude ng-click=\"expanded=!expanded\"></div>\n  <ul ng-show=\"expanded\" ng-style=\"{top: top}\" >\n    <li class=\"controls\">\n      <div class=\"search\">\n        <label for=\"searchTerm\"><span translate>search</span>:</label>\n        <input id=\"searchTerm\" ng-model=\"searchTerm\" ng-keyup=\"search()\"/>\n      </div>\n      <div class=\"file\">\n        <p translate>upload new</p>\n        <input type=\"file\" />\n      </div>\n    </li>\n    <li ng-repeat=\"image in images\" ng-class=\"{selected: image == selected}\"\n        ng-click=\"select(image)\" ng-hide=\"image.excluded\">\n      <span class=\"image\">\n        <img ng-src=\"{{image.src}}\" ng-if=\"image.src\" />\n        <img ng-src=\"{{root}}/image/{{size}}/{{image.name}}\" ng-if=\"!image.src\" />\n      </span>\n      <span class=\"image-label\">\n        {{image.name}}\n      </span>\n    </li>\n  </ul>\n</div>\n";
 
 /***/ }),
 /* 41 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 "use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-/* global FileReader, Image */
-
-var controller = function controller($scope, $element, fileDropHandler, scaleImage) {
-    var _this = this;
-
-    $element.on('dragover', function (event) {
-        if (event.originalEvent) {
-            event = event.originalEvent;
-        }
-        event.dataTransfer.dropEffect = "move";
-        return false;
-    }).on('drop', function (event) {
-        event.preventDefault();
-        fileDropHandler(event, _this.path, function (file, path) {
-            var same = _this.images.filter(function (image) {
-                return image.name == file.name;
-            });
-            if (file.name.match(/(jpe?g|gif|png)$/i) && !same.length) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var image = new Image();
-                    image.src = e.target.result;
-                    image.onload = function () {
-                        $scope.$apply(function () {
-                            _this.images.push({
-                                src: scaleImage(image, 100),
-                                name: file.name
-                            });
-                        });
-                    };
-                };
-                reader.readAsDataURL(file);
-                _this.upload(file, path);
-            }
-        });
-    });
-    $scope.$on('$destroy', function () {
-        $element.off('drop dragover dragstart');
-    });
-};
-
-controller.$inject = ['$scope', '$element', 'fileDropHandler', 'scaleImage'];
-
-exports.default = controller;
+throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/home/kuba/projects/jcubic/cataloger/templates/default/admin/directives/imagePicker/imagePicker.controller.js'");
 
 /***/ }),
 /* 42 */
@@ -1293,7 +1255,7 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 
 // module
-exports.push([module.i, ".image-picker {\n    position: relative;\n}\n.image-picker [ng-transclude] {\n    overflow: hidden;\n}\n.image-picker ul {\n    list-style: none;\n    position: absolute;\n    z-index: 1000;\n    padding: 0;\n    width: 100%;\n    background: white;\n    border: 1px solid #ccc;\n    border-top: none;\n}\n.image-picker li {\n    padding: 10px;\n}\n.image-picker li.selected {\n    background-color: #eee;\n    border: 1px solid #ccc;\n    border-left: none;\n    border-right: none;\n}\n.image-picker li:hover {\n    background-color: #eee;\n}\n.image-picker .file {\n    position: relative;\n    padding: 5px 10px;\n}\n.image-picker .file p {\n    margin: 0;\n}\n.image-picker .file input {\n    position: absolute;\n    left: 0;\n    top: 0;\n    font-size: 99em;\n    opacity: 0;\n}\n", ""]);
+exports.push([module.i, ".image-picker {\n    position: relative;\n}\n.image-picker [ng-transclude] {\n    overflow: hidden;\n}\n.image-picker ul {\n    list-style: none;\n    position: absolute;\n    z-index: 1000;\n    padding: 0;\n    width: 100%;\n    background: white;\n    border: 1px solid #ccc;\n    border-top: none;\n    max-height: calc(5 * 70px);\n    overflow-y: scroll;\n}\n.image-picker li {\n    padding: 10px;\n    clear: both;\n    float: left;\n    width: 100%;\n}\n.image-picker li.selected {\n    background-color: #eee;\n    border: 1px solid #ccc;\n    border-left: none;\n    border-right: none;\n}\n.image-picker li:hover {\n    background-color: #eee;\n}\n.image-picker .controls .search {\n    float: left;\n    width: 60%;\n}\n.image-picker .controls .file {\n    float: left;\n    width: 40%;\n}\n.image-picker .controls .search input {\n    width: calc(100% - 2px - 100px);\n    border-radius: 4px;\n    border: 1px solid gray;\n    margin-top: 4px;\n}\n.image-picker .controls .search label {\n    width: 100px;\n    float: left;\n    text-align: right;\n    padding: 5px;\n    box-sizing: border-box;\n}\n.image-picker .file {\n    position: relative;\n    padding: 5px 10px;\n    overflow: hidden;\n}\n.image-picker .file p {\n    margin: 0;\n}\n.image-picker .file input {\n    position: absolute;\n    left: 0;\n    top: 0;\n    font-size: 99em;\n    opacity: 0;\n}\n", ""]);
 
 // exports
 
@@ -1309,7 +1271,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _angular = __webpack_require__(2);
+var _angular = __webpack_require__(3);
 
 var _angular2 = _interopRequireDefault(_angular);
 
@@ -1340,7 +1302,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 

@@ -76,3 +76,5 @@ msgstr "obrazek"
 msgid "upload new"
 msgstr "wgraj nowy"
 
+msgid "search"
+msgstr "wyszukaj"

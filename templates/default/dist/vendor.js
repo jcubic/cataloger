@@ -592,16 +592,16 @@ function updateLink (link, options, obj) {
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(8);
-module.exports = angular;
-
+/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["jQuery"] = __webpack_require__(7);
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["jQuery"] = __webpack_require__(7);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+__webpack_require__(8);
+module.exports = angular;
+
 
 /***/ }),
 /* 4 */
@@ -46020,7 +46020,7 @@ angular.module('gettext').factory('gettextUtil', function gettextUtil() {
 
 (function (root, factory) {
 	if (true) {
-		module.exports = factory(root, __webpack_require__(2));
+		module.exports = factory(root, __webpack_require__(3));
 	} else if (typeof define === 'function' && define.amd) {
 		define(['angular'], function (angular) {
 			return (root.ngNotificationsBar = factory(root, angular));

@@ -1,8 +1,18 @@
 <div class="image-picker">
   <div ng-transclude ng-click="expanded=!expanded"></div>
   <ul ng-show="expanded" ng-style="{top: top}" >
+    <li class="controls">
+      <div class="search">
+        <label for="searchTerm"><span translate>search</span>:</label>
+        <input id="searchTerm" ng-model="searchTerm" ng-keyup="search()"/>
+      </div>
+      <div class="file">
+        <p translate>upload new</p>
+        <input type="file" />
+      </div>
+    </li>
     <li ng-repeat="image in images" ng-class="{selected: image == selected}"
-        ng-click="select(image)">
+        ng-click="select(image)" ng-hide="image.excluded">
       <span class="image">
         <img ng-src="{{image.src}}" ng-if="image.src" />
         <img ng-src="{{root}}/image/{{size}}/{{image.name}}" ng-if="!image.src" />
@@ -10,10 +20,6 @@
       <span class="image-label">
         {{image.name}}
       </span>
-    </li>
-    <li class="file">
-      <p translate>upload new</p>
-      <input type="file" />
     </li>
   </ul>
 </div>

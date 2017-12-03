@@ -12,6 +12,7 @@ import 'ng-notifications-bar/dist/ngNotificationsBar.min.css';
 import './app.css';
 
 let app = angular.module('app', [
+    'ui.bootstrap',
     'ngNotificationsBar',
     gettext,
     components.name,

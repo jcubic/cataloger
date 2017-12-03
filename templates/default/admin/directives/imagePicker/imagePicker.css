@@ -13,9 +13,14 @@
     background: white;
     border: 1px solid #ccc;
     border-top: none;
+    max-height: calc(5 * 70px);
+    overflow-y: scroll;
 }
 .image-picker li {
     padding: 10px;
+    clear: both;
+    float: left;
+    width: 100%;
 }
 .image-picker li.selected {
     background-color: #eee;
@@ -26,9 +31,31 @@
 .image-picker li:hover {
     background-color: #eee;
 }
+.image-picker .controls .search {
+    float: left;
+    width: 60%;
+}
+.image-picker .controls .file {
+    float: left;
+    width: 40%;
+}
+.image-picker .controls .search input {
+    width: calc(100% - 2px - 100px);
+    border-radius: 4px;
+    border: 1px solid gray;
+    margin-top: 4px;
+}
+.image-picker .controls .search label {
+    width: 100px;
+    float: left;
+    text-align: right;
+    padding: 5px;
+    box-sizing: border-box;
+}
 .image-picker .file {
     position: relative;
     padding: 5px 10px;
+    overflow: hidden;
 }
 .image-picker .file p {
     margin: 0;

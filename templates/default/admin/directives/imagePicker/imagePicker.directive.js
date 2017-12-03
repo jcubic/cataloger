@@ -73,6 +73,16 @@ function imagePickerDirective(fileDropHandler, scaleImage, root, api) {
                     ngModelController.$setViewValue(image.name);
                 }
             };
+            $scope.search = () => {
+                var re = new RegExp($scope.searchTerm, 'i');
+                $scope.images.forEach(function(image) {
+                    if ($scope.searchTerm) {
+                        image.excluded = !image.name.match(re);
+                    } else {
+                        delete image.excluded;
+                    }
+                });
+            };
             function select(viewValue) {
                 $scope.images.forEach((image) => {
                     if (viewValue == image.name) {
