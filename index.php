@@ -274,7 +274,7 @@ function register_admin_plugin($name, $component) {
     );
 }
 
-register_admin_plugin('sitemap', 'panelSitemap');
+load_plugins();
 
 $app->get('/products', function($request, $response) {
 

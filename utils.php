@@ -255,4 +255,19 @@ function missing_image_path() {
     }
 }
 
+function load_plugins() {
+    $plugin_path = "plugins";
+
+    $dir = opendir($plugin_path);
+    if ($dir) {
+        while (($file = readdir($dir)) !== false) {
+            $path = $plugin_path . DIRECTORY_SEPARATOR . $file . DIRECTORY_SEPARATOR;
+            $fname = $path . $file . ".php";
+            if (!preg_match("/^\.{1,2}$/", $file) && is_dir($path) && is_file($fname)) {
+                require_once($fname);
+            }
+        }
+    }
+}
+
 ?>

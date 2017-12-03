@@ -16,6 +16,25 @@ panel.split nav ul {
 panel.split nav li {
     position: relative;
 }
+nav.selectable-list .selected a {
+    background-color: #222d32;
+    color: white;
+}
+nav.selectable-list a:first-child {
+    display: block;
+}
+nav.selectable-list a {
+    padding: 2px 6px;
+    cursor: pointer;
+}
+nav.selectable-list a:nth-child(2) {
+    position: absolute;
+    right: 6px;
+    top: 0;
+}
+nav.selectable-list .selected a:nth-child(2) {
+    color: white;
+}
 panel.split .right, panel.split .right.input-group > input {
     float: right;
 }

@@ -1,3 +1,7 @@
 panel[name="products"] .editor {
     height: 400px;
 }
+panel[name="products"] nav .selected a {
+    background-color: #222d32;
+    color: white;
+}

@@ -56,7 +56,7 @@ function controller($http, $scope, api, editorOptions) {
     };
     this.view = (product) => {
         this.product = product;
-        if (this.product.category) {
+        if (this.product.category && !this.product.category.id) {
             for (var i = 0; i < this.categories.length; ++i) {
                 var category = this.categories[i];
                 if (category.id == this.product.category) {

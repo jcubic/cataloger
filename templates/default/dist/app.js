@@ -26,23 +26,23 @@ var _directives = __webpack_require__(37);
 
 var _directives2 = _interopRequireDefault(_directives);
 
-var _services = __webpack_require__(44);
+var _services = __webpack_require__(43);
 
 var _services2 = _interopRequireDefault(_services);
 
-__webpack_require__(48);
+__webpack_require__(47);
 
-var _angularGettext = __webpack_require__(54);
+var _angularGettext = __webpack_require__(53);
 
 var _angularGettext2 = _interopRequireDefault(_angularGettext);
 
+__webpack_require__(55);
+
 __webpack_require__(56);
 
-__webpack_require__(57);
+__webpack_require__(58);
 
-__webpack_require__(59);
-
-var _pagination = __webpack_require__(61);
+var _pagination = __webpack_require__(60);
 
 var _pagination2 = _interopRequireDefault(_pagination);
 
@@ -177,7 +177,7 @@ exports.default = {
 /* 11 */
 /***/ (function(module, exports) {
 
-module.exports = "<panel name=\"products\" class=\"split\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_product()\" translate>new product</a></li>\n      <li ng-repeat=\"product in ctrl.products track by $index\"\n          ng-click=\"ctrl.view(product)\">{{product.name}}</li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.product\">\n    <form name=\"product\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.product.name\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"image\" translate>image</label>\n        <image-picker images=\"ctrl.images\" path=\"uploads\"\n                      upload=\"ctrl.upload(file, path)\"\n                      ng-model=\"ctrl.product.image_name\" size=\"50\">\n          <input class=\"form-control\" ng-model=\"ctrl.product.image_name\" readonly/>\n        </image-picker>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"price\" translate>price</label>\n        <input class=\"form-control\" id=\"price\" ng-model=\"ctrl.product.price\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"category\" translate>category</label>\n        <select ng-options=\"item as item.name for item in ctrl.categories track by item.id\"\n                ng-model=\"ctrl.product.category\" class=\"form-control\" ng-required></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.product.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
+module.exports = "<panel name=\"products\" class=\"split\">\n  <nav class=\"selectable-list\">\n    <ul>\n      <li><a ng-click=\"ctrl.new_product()\" translate>new product</a></li>\n      <li ng-repeat=\"product in ctrl.products track by $index\"\n          ng-class=\"{selected: ctrl.product == product}\">\n        <a ng-click=\"ctrl.view(product)\">{{product.name}}</a>\n        <a ng-click=\"ctrl.delete_product($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.product\">\n    <form name=\"product\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.product.name\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"image\" translate>image</label>\n        <image-picker images=\"ctrl.images\" path=\"uploads\"\n                      upload=\"ctrl.upload(file, path)\"\n                      ng-model=\"ctrl.product.image_name\" size=\"50\">\n          <input class=\"form-control\" ng-model=\"ctrl.product.image_name\" readonly/>\n        </image-picker>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"price\" translate>price</label>\n        <input class=\"form-control\" id=\"price\" ng-model=\"ctrl.product.price\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"category\" translate>category</label>\n        <select ng-options=\"item as item.name for item in ctrl.categories track by item.id\"\n                ng-model=\"ctrl.product.category\" class=\"form-control\" ng-required></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.product.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
 /* 12 */
@@ -255,7 +255,7 @@ function controller($http, $scope, api, editorOptions) {
     };
     this.view = function (product) {
         _this.product = product;
-        if (_this.product.category) {
+        if (_this.product.category && !_this.product.category.id) {
             for (var i = 0; i < _this.categories.length; ++i) {
                 var category = _this.categories[i];
                 if (category.id == _this.product.category) {
@@ -323,7 +323,7 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 
 // module
-exports.push([module.i, "panel[name=\"products\"] .editor {\n    height: 400px;\n}\n", ""]);
+exports.push([module.i, "panel[name=\"products\"] .editor {\n    height: 400px;\n}\npanel[name=\"products\"] nav .selected a {\n    background-color: #222d32;\n    color: white;\n}\n", ""]);
 
 // exports
 
@@ -422,7 +422,7 @@ exports.default = {
 /* 20 */
 /***/ (function(module, exports) {
 
-module.exports = "<panel name=\"pages\" class=\"split\">\n  <nav>\n    <ul>\n      <li><a ng-click=\"ctrl.new_page()\" translate>new page</a></li>\n      <li ng-repeat=\"page in ctrl.pages track by $index\"\n          ng-class=\"{selected: page == ctrl.page}\">\n        <a ng-click=\"ctrl.view(page)\">{{page.title}}</a>\n        <a ng-click=\"ctrl.delete_page($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.page\">\n    <form name=\"page\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"title\" translate>title</label>\n        <input class=\"form-control\" id=\"title\" ng-model=\"ctrl.page.title\"/>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.page.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
+module.exports = "<panel name=\"pages\" class=\"split\">\n  <nav class=\"selectable-list\">\n    <ul>\n      <li><a ng-click=\"ctrl.new_page()\" translate>new page</a></li>\n      <li ng-repeat=\"page in ctrl.pages track by $index\"\n          ng-class=\"{selected: page == ctrl.page}\">\n        <a ng-click=\"ctrl.view(page)\">{{page.title}}</a>\n        <a ng-click=\"ctrl.delete_page($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.page\">\n    <form name=\"page\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"title\" translate>title</label>\n        <input class=\"form-control\" id=\"title\" ng-model=\"ctrl.page.title\"/>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.page.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
 /* 21 */
@@ -593,7 +593,7 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 
 // module
-exports.push([module.i, "panel[name=\"pages\"] nav .selected a {\n    background-color: #222d32;\n    color: white;\n}\npanel[name=\"pages\"] nav a:first-child {\n    display: block;\n}\npanel[name=\"pages\"] nav a {\n    padding: 2px 6px;\n    cursor: pointer;\n}\npanel[name=\"pages\"] nav a:nth-child(2) {\n    position: absolute;\n    right: 6px;\n    top: 0;\n}\npanel[name=\"pages\"] nav .selected a:nth-child(2) {\n    color: white;\n}\npanel[name=\"pages\"] .panel .editor.input-group {\n    height: calc(100% - 54px - 54px);\n}\n", ""]);
+exports.push([module.i, "panel[name=\"pages\"] .panel .editor.input-group {\n    height: calc(100% - 54px - 54px);\n}\n", ""]);
 
 // exports
 
@@ -968,7 +968,7 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 
 // module
-exports.push([module.i, ".panel {\n    padding: 10px;\n}\npanel.split nav {\n    float: left;\n    width: 200px;\n    height: 100%;\n    overflow: auto;\n    marin-right: 10px;\n}\npanel.split nav ul {\n    list-style: none;\n    padding: 0;\n    margin: 0;\n}\npanel.split nav li {\n    position: relative;\n}\npanel.split .right, panel.split .right.input-group > input {\n    float: right;\n}\npanel.split .panel > .right {\n    width: calc(100% - 200px);\n}\npanel.split .panel > .right, panel.split .panel form, panel.split .mce-tinymce {\n    height: 100%;\n}\npanel.split .input-group {\n    padding: 10px;\n    width: 100%;\n}\n/*Container, container body, iframe*/\n.mce-tinymce, .mce-container-body, #code_ifr {\n    min-height: 100% !important;\n}\n/*Container body*/\n.mce-container-body {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n/*Editing area*/\n.mce-container-body .mce-edit-area {\n    position: absolute;\n    top: 69px;\n    bottom: 37px;\n    left: 0;\n    right: 0;\n}\n/*Footer*/\n.mce-tinymce .mce-statusbar {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n", ""]);
+exports.push([module.i, ".panel {\n    padding: 10px;\n}\npanel.split nav {\n    float: left;\n    width: 200px;\n    height: 100%;\n    overflow: auto;\n    marin-right: 10px;\n}\npanel.split nav ul {\n    list-style: none;\n    padding: 0;\n    margin: 0;\n}\npanel.split nav li {\n    position: relative;\n}\nnav.selectable-list .selected a {\n    background-color: #222d32;\n    color: white;\n}\nnav.selectable-list a:first-child {\n    display: block;\n}\nnav.selectable-list a {\n    padding: 2px 6px;\n    cursor: pointer;\n}\nnav.selectable-list a:nth-child(2) {\n    position: absolute;\n    right: 6px;\n    top: 0;\n}\nnav.selectable-list .selected a:nth-child(2) {\n    color: white;\n}\npanel.split .right, panel.split .right.input-group > input {\n    float: right;\n}\npanel.split .panel > .right {\n    width: calc(100% - 200px);\n}\npanel.split .panel > .right, panel.split .panel form, panel.split .mce-tinymce {\n    height: 100%;\n}\npanel.split .input-group {\n    padding: 10px;\n    width: 100%;\n}\n/*Container, container body, iframe*/\n.mce-tinymce, .mce-container-body, #code_ifr {\n    min-height: 100% !important;\n}\n/*Container body*/\n.mce-container-body {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n/*Editing area*/\n.mce-container-body .mce-edit-area {\n    position: absolute;\n    top: 69px;\n    bottom: 37px;\n    left: 0;\n    right: 0;\n}\n/*Footer*/\n.mce-tinymce .mce-statusbar {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n", ""]);
 
 // exports
 
@@ -1097,7 +1097,7 @@ var _imagePickerTemplate = __webpack_require__(40);
 
 var _imagePickerTemplate2 = _interopRequireDefault(_imagePickerTemplate);
 
-__webpack_require__(42);
+__webpack_require__(41);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1230,14 +1230,13 @@ exports.default = imagePickerDirective;
 module.exports = "<div class=\"image-picker\">\n  <div ng-transclude ng-click=\"expanded=!expanded\"></div>\n  <div class=\"dropdown\" ng-show=\"expanded\" ng-style=\"{top: top}\">\n    <div class=\"controls\">\n      <div class=\"search input-group\">\n        <label class=\"input-group-addon\" for=\"searchTerm\" translate>filter</label>\n        <input class=\"form-control\" id=\"searchTerm\" ng-model=\"searchTerm\"\n               ng-keyup=\"search()\"/>\n      </div>\n      <div class=\"file btn btn-default\">\n        <p translate>upload new</p>\n        <input type=\"file\" />\n      </div>\n      <div class=\"pages\">\n        <ul uib-pagination total-items=\"filteredImages.length\" ng-model=\"page\"\n            max-size=\"5\" items-per-page=\"pageSize\" class=\"pagination-sm\"\n            previous-text=\"&lsaquo;\" next-text=\"&rsaquo;\"\n            ng-show=\"filteredImages.length > pageSize\"></ul>\n      </div>\n    </div>\n    <ul class=\"images\" >\n      <li ng-repeat=\"image in pageImages\" ng-class=\"{selected: image == selected}\"\n          ng-click=\"select(image)\" ng-hide=\"image.excluded\">\n        <span class=\"image\">\n          <img ng-src=\"{{image.src}}\" ng-if=\"image.src\" />\n          <img ng-src=\"{{root}}/image/{{size}}/{{image.name}}\" ng-if=\"!image.src\" />\n        </span>\n        <span class=\"image-label\">\n          {{image.name}}\n        </span>\n      </li>\n    </ul>\n  </div>\n</div>\n";
 
 /***/ }),
-/* 41 */,
-/* 42 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(43);
+var content = __webpack_require__(42);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -1262,7 +1261,7 @@ if(false) {
 }
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(undefined);
@@ -1276,7 +1275,7 @@ exports.push([module.i, ".image-picker {\n    position: relative;\n}\n.image-pic
 
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1290,15 +1289,15 @@ var _angular = __webpack_require__(3);
 
 var _angular2 = _interopRequireDefault(_angular);
 
-var _api = __webpack_require__(45);
+var _api = __webpack_require__(44);
 
 var _api2 = _interopRequireDefault(_api);
 
-var _fileDropHandler = __webpack_require__(46);
+var _fileDropHandler = __webpack_require__(45);
 
 var _fileDropHandler2 = _interopRequireDefault(_fileDropHandler);
 
-var _scaleImage = __webpack_require__(47);
+var _scaleImage = __webpack_require__(46);
 
 var _scaleImage2 = _interopRequireDefault(_scaleImage);
 
@@ -1307,7 +1306,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _angular2.default.module('services', []).factory('api', _api2.default).factory('fileDropHandler', _fileDropHandler2.default).factory('scaleImage', _scaleImage2.default);
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1382,7 +1381,7 @@ api.$inject = ['$http', 'root'];
 exports.default = api;
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1526,7 +1525,7 @@ fileDropHandler.$inject = ['$q'];
 exports.default = fileDropHandler;
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1560,6 +1559,7 @@ function scaleImage(image, size) {
 ;
 
 /***/ }),
+/* 47 */,
 /* 48 */,
 /* 49 */,
 /* 50 */,
@@ -1570,14 +1570,13 @@ function scaleImage(image, size) {
 /* 55 */,
 /* 56 */,
 /* 57 */,
-/* 58 */,
-/* 59 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(60);
+var content = __webpack_require__(59);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -1602,7 +1601,7 @@ if(false) {
 }
 
 /***/ }),
-/* 60 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(undefined);

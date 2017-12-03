@@ -1,9 +1,12 @@
 <panel name="products" class="split">
-  <nav>
+  <nav class="selectable-list">
     <ul>
       <li><a ng-click="ctrl.new_product()" translate>new product</a></li>
       <li ng-repeat="product in ctrl.products track by $index"
-          ng-click="ctrl.view(product)">{{product.name}}</li>
+          ng-class="{selected: ctrl.product == product}">
+        <a ng-click="ctrl.view(product)">{{product.name}}</a>
+        <a ng-click="ctrl.delete_product($index)">x</a>
+      </li>
     </ul>
   </nav>
   <div class="right" ng-if="ctrl.product">
