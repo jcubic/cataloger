@@ -45,18 +45,22 @@ function controller($http, popups, editorOptions, api) {
     this.delete_page = (index) => {
         var page = this.pages[index];
         var id = page.id;
-        if (typeof id === 'undefined') {
-            var title = page.title;
-            this.pages = this.pages.filter((page) => page.title != title);
-        } else {
-            api.pages.delete(id).then((data) => {
-                if (data.result) {
-                    this.pages = this.pages.filter((page) => {
-                        return page.id != id;
-                    });
-                }
-            });
-        }
+        popups.prompt({
+            message: 'Are you sure you want to delete this page?'
+        }).then(() => {
+            if (typeof id === 'undefined') {
+                var title = page.title;
+                this.pages = this.pages.filter((page) => page.title != title);
+            } else {
+                api.pages.delete(id).then((data) => {
+                    if (data.result) {
+                        this.pages = this.pages.filter((page) => {
+                            return page.id != id;
+                        });
+                    }
+                });
+            }
+        });
     };
     this.save = () => {
         if (!this.page.id) {

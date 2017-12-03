@@ -183,7 +183,7 @@ exports.default = {
 /* 11 */
 /***/ (function(module, exports) {
 
-module.exports = "<panel name=\"products\" class=\"split\">\n  <nav class=\"selectable-list\">\n    <ul>\n      <li><a ng-click=\"ctrl.new_product()\" translate>new product</a></li>\n      <li ng-repeat=\"product in ctrl.products track by $index\"\n          ng-class=\"{selected: ctrl.product == product}\">\n        <a ng-click=\"ctrl.view(product)\">{{product.name}}</a>\n        <a ng-click=\"ctrl.delete_product($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.product\">\n    <form name=\"product\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.product.name\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"image\" translate>image</label>\n        <image-picker images=\"ctrl.images\" path=\"uploads\"\n                      upload=\"ctrl.upload(file, path)\"\n                      ng-model=\"ctrl.product.image_name\" size=\"50\">\n          <input class=\"form-control\" ng-model=\"ctrl.product.image_name\" readonly/>\n        </image-picker>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"price\" translate>price</label>\n        <input class=\"form-control\" id=\"price\" ng-model=\"ctrl.product.price\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"category\" translate>category</label>\n        <select ng-options=\"item as item.name for item in ctrl.categories track by item.id\"\n                ng-model=\"ctrl.product.category\" class=\"form-control\" ng-required></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.product.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
+module.exports = "<panel name=\"products\" class=\"split\">\n  <nav class=\"selectable-list\">\n    <ul>\n      <li><a ng-click=\"ctrl.new_product()\" translate>new product</a></li>\n      <li ng-repeat=\"product in ctrl.products track by $index\"\n          ng-class=\"{selected: ctrl.product == product}\">\n        <a ng-click=\"ctrl.view(product)\">{{product.name}}</a>\n        <a ng-click=\"ctrl.delete_product($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.product\">\n    <button ng-click=\"test()\">prompt</button>\n    <form name=\"product\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.product.name\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"image\" translate>image</label>\n        <image-picker images=\"ctrl.images\" path=\"uploads\"\n                      upload=\"ctrl.upload(file, path)\"\n                      ng-model=\"ctrl.product.image_name\" size=\"50\">\n          <input class=\"form-control\" ng-model=\"ctrl.product.image_name\" readonly/>\n        </image-picker>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"price\" translate>price</label>\n        <input class=\"form-control\" id=\"price\" ng-model=\"ctrl.product.price\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"category\" translate>category</label>\n        <select ng-options=\"item as item.name for item in ctrl.categories track by item.id\"\n                ng-model=\"ctrl.product.category\" class=\"form-control\" ng-required></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.product.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
 /* 12 */
@@ -197,7 +197,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /* global root */
 
-function controller($http, $scope, translatedNotifications, api, editorOptions) {
+function controller($http, $scope, popups, api, editorOptions) {
     var _this = this;
 
     this.tinymce_options = editorOptions;
@@ -222,7 +222,7 @@ function controller($http, $scope, translatedNotifications, api, editorOptions) 
         api.products.list().then(make_setter('products'));
     };
     function product_saved() {
-        translatedNotifications.showSuccess({
+        popups.showSuccess({
             message: 'Save successfull'
         });
         this.get_products();
@@ -276,20 +276,24 @@ function controller($http, $scope, translatedNotifications, api, editorOptions) 
     this.delete_product = function (index) {
         var product = _this.products[index];
         var id = product.id;
-        if (typeof id === 'undefined') {
-            var name = product.name;
-            _this.products = _this.products.filter(function (page) {
-                return page.name != name;
-            });
-        } else {
-            api.products.delete(id).then(function (data) {
-                if (data.result) {
-                    _this.products = _this.products.filter(function (product) {
-                        return product.id != id;
-                    });
-                }
-            });
-        }
+        popups.prompt({
+            message: 'Are you sure you want to delete this product?'
+        }).then(function () {
+            if (typeof id === 'undefined') {
+                var name = product.name;
+                _this.products = _this.products.filter(function (page) {
+                    return page.name != name;
+                });
+            } else {
+                api.products.delete(id).then(function (data) {
+                    if (data.result) {
+                        _this.products = _this.products.filter(function (product) {
+                            return product.id != id;
+                        });
+                    }
+                });
+            }
+        });
     };
     this.upload = function (file) {
         console.log(file);
@@ -301,11 +305,21 @@ function controller($http, $scope, translatedNotifications, api, editorOptions) 
         _this.get_images();
         delete _this.product;
     };
+    $scope.test = function () {
+        popups.prompt({
+            title: 'Hey',
+            message: 'Foo bar'
+        }).then(function () {
+            return console.log('ok');
+        }).catch(function () {
+            return console.log('cancel');
+        });
+    };
     init();
     $scope.$on('view:products', init);
 };
 
-controller.$inject = ['$http', '$scope', 'translatedNotifications', 'api', 'editorOptions'];
+controller.$inject = ['$http', '$scope', 'popups', 'api', 'editorOptions'];
 
 exports.default = controller;
 
@@ -514,20 +528,24 @@ function controller($http, popups, editorOptions, api) {
     this.delete_page = function (index) {
         var page = _this.pages[index];
         var id = page.id;
-        if (typeof id === 'undefined') {
-            var title = page.title;
-            _this.pages = _this.pages.filter(function (page) {
-                return page.title != title;
-            });
-        } else {
-            api.pages.delete(id).then(function (data) {
-                if (data.result) {
-                    _this.pages = _this.pages.filter(function (page) {
-                        return page.id != id;
-                    });
-                }
-            });
-        }
+        popups.prompt({
+            message: 'Are you sure you want to delete this page?'
+        }).then(function () {
+            if (typeof id === 'undefined') {
+                var title = page.title;
+                _this.pages = _this.pages.filter(function (page) {
+                    return page.title != title;
+                });
+            } else {
+                api.pages.delete(id).then(function (data) {
+                    if (data.result) {
+                        _this.pages = _this.pages.filter(function (page) {
+                            return page.id != id;
+                        });
+                    }
+                });
+            }
+        });
     };
     this.save = function () {
         if (!_this.page.id) {
@@ -1687,7 +1705,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function popups(notifications, gettextCatalog) {
+function popups($uibModal, $q, notifications, gettextCatalog) {
     var result = {};
     Object.keys(notifications).forEach(function (key) {
         if (key.match(/^show/)) {
@@ -1701,10 +1719,36 @@ function popups(notifications, gettextCatalog) {
             result[key] = notifications[key].bind(notifications);
         }
     });
+    result['prompt'] = function (options) {
+        options = _jquery2.default.extend({}, {
+            title: 'Are you sure?'
+        }, options || {});
+        var defer = $q.defer();
+        var modalInstance = $uibModal.open({
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            template: '<div class="modal-header">\n               <h3 class="modal-title" id="modal-title">{{$ctrl.title}}</h3>\n            </div>\n            <div class="modal-body" id="modal-body">\n               {{$ctrl.message}}\n            </div>\n            <div class="modal-footer">\n               <button class="btn btn-primary" type="button"\n                       ng-click="$ctrl.ok()">OK</button>\n               <button class="btn btn-warning" type="button"\n                       ng-click="$ctrl.cancel()">Cancel</button>\n            </div>',
+            controller: function controller() {
+                this.title = gettextCatalog.getString(options.title);
+                this.message = gettextCatalog.getString(options.message);
+                this.ok = function () {
+                    modalInstance.close();
+                    defer.resolve();
+                };
+                this.cancel = function () {
+                    modalInstance.close();
+                };
+            },
+            controllerAs: '$ctrl',
+            size: 'md',
+            resolve: {}
+        });
+        return defer.promise;
+    };
     return result;
 }
 
-popups.$inject = ['notifications', 'gettextCatalog'];
+popups.$inject = ['$uibModal', '$q', 'notifications', 'gettextCatalog'];
 
 exports.default = popups;
 

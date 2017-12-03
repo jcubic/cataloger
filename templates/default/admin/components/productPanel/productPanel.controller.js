@@ -1,6 +1,6 @@
 /* global root */
 
-function controller($http, $scope, translatedNotifications, api, editorOptions) {
+function controller($http, $scope, popups, api, editorOptions) {
     this.tinymce_options = editorOptions;
     this.products = [];
     this.images = [];
@@ -21,7 +21,7 @@ function controller($http, $scope, translatedNotifications, api, editorOptions) 
         api.products.list().then(make_setter('products'));
     };
     function product_saved() {
-        translatedNotifications.showSuccess({
+        popups.showSuccess({
             message: 'Save successfull'
         });
         this.get_products();
@@ -75,18 +75,22 @@ function controller($http, $scope, translatedNotifications, api, editorOptions) 
     this.delete_product = (index) => {
         var product = this.products[index];
         var id = product.id;
-        if (typeof id === 'undefined') {
-            var name = product.name;
-            this.products = this.products.filter((page) => page.name != name);
-        } else {
-            api.products.delete(id).then((data) => {
-                if (data.result) {
-                    this.products = this.products.filter((product) => {
-                        return product.id != id;
-                    });
-                }
-            });
-        }
+        popups.prompt({
+            message: 'Are you sure you want to delete this product?'
+        }).then(() => {
+            if (typeof id === 'undefined') {
+                var name = product.name;
+                this.products = this.products.filter((page) => page.name != name);
+            } else {
+                api.products.delete(id).then((data) => {
+                    if (data.result) {
+                        this.products = this.products.filter((product) => {
+                            return product.id != id;
+                        });
+                    }
+                });
+            }
+        });
     };
     this.upload = (file) => {
         console.log(file);
@@ -98,10 +102,16 @@ function controller($http, $scope, translatedNotifications, api, editorOptions) 
         this.get_images();
         delete this.product;
     };
+    $scope.test = function() {
+        popups.prompt({
+            title: 'Hey',
+            message: 'Foo bar'
+        }).then(() => console.log('ok')).catch(() => console.log('cancel'));
+    };
     init();
     $scope.$on('view:products', init);
 };
 
-controller.$inject = ['$http', '$scope', 'translatedNotifications', 'api', 'editorOptions'];
+controller.$inject = ['$http', '$scope', 'popups', 'api', 'editorOptions'];
 
 export default controller;

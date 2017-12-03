@@ -81,3 +81,16 @@ msgstr "wyszukaj"
 
 msgid "filter"
 msgstr "filtruj"
+
+msgid "Are you sure you want to delete this page?"
+msgstr "Czy na pewno chcesz usunąć tą stronę?"
+
+msgid "Are you sure you want to delete this category?"
+msgstr "Czy na pewno chcesz usunąć tą kategorię?"
+
+msgid "Are you sure you want to delete this product?"
+msgstr "Czy na pewno chcesz usunąć ten produkt?"
+
+msgid "Are you sure?"
+msgstr "Czy jesteś pewien?"
+
