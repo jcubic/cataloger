@@ -103,12 +103,6 @@ function controller($http, $scope, popups, api, editorOptions) {
         this.get_images();
         delete this.product;
     };
-    $scope.test = function() {
-        popups.prompt({
-            title: 'Hey',
-            message: 'Foo bar'
-        }).then(() => console.log('ok')).catch(() => console.log('cancel'));
-    };
     init();
     $scope.$on('view:products', init);
 };

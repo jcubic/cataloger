@@ -183,7 +183,7 @@ exports.default = {
 /* 11 */
 /***/ (function(module, exports) {
 
-module.exports = "<panel name=\"products\" class=\"split\">\n  <nav class=\"selectable-list\">\n    <ul>\n      <li><a ng-click=\"ctrl.new_product()\" translate>new product</a></li>\n      <li ng-repeat=\"product in ctrl.products track by $index\"\n          ng-class=\"{selected: ctrl.product == product}\">\n        <a ng-click=\"ctrl.view(product)\">{{product.name}}</a>\n        <a ng-click=\"ctrl.delete_product($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.product\">\n    <button ng-click=\"test()\">prompt</button>\n    <form name=\"product\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.product.name\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"image\" translate>image</label>\n        <image-picker images=\"ctrl.images\" path=\"uploads\"\n                      upload=\"ctrl.upload(file, path)\"\n                      ng-model=\"ctrl.product.image_name\" size=\"50\">\n          <input class=\"form-control\" ng-model=\"ctrl.product.image_name\" readonly/>\n        </image-picker>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"price\" translate>price</label>\n        <input class=\"form-control\" id=\"price\" ng-model=\"ctrl.product.price\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"category\" translate>category</label>\n        <select ng-options=\"item as item.name for item in ctrl.categories track by item.id\"\n                ng-model=\"ctrl.product.category\" class=\"form-control\" ng-required></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.product.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
+module.exports = "<panel name=\"products\" class=\"split\">\n  <nav class=\"selectable-list\">\n    <ul>\n      <li><a ng-click=\"ctrl.new_product()\" translate>new product</a></li>\n      <li ng-repeat=\"product in ctrl.products track by $index\"\n          ng-class=\"{selected: ctrl.product == product}\">\n        <a ng-click=\"ctrl.view(product)\">{{product.name}}</a>\n        <a ng-click=\"ctrl.delete_product($index)\">x</a>\n      </li>\n    </ul>\n  </nav>\n  <div class=\"right\" ng-if=\"ctrl.product\">\n    <form name=\"product\">\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"name\" translate>name</label>\n        <input class=\"form-control\" id=\"name\" ng-model=\"ctrl.product.name\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"image\" translate>image</label>\n        <image-picker images=\"ctrl.images\" path=\"uploads\"\n                      upload=\"ctrl.upload(file, path)\"\n                      ng-model=\"ctrl.product.image_name\" size=\"50\">\n          <input class=\"form-control\" ng-model=\"ctrl.product.image_name\" readonly/>\n        </image-picker>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"price\" translate>price</label>\n        <input class=\"form-control\" id=\"price\" ng-model=\"ctrl.product.price\"/>\n      </div>\n      <div class=\"input-group\">\n        <label class=\"input-group-addon\" for=\"category\" translate>category</label>\n        <select ng-options=\"item as item.name for item in ctrl.categories track by item.id\"\n                ng-model=\"ctrl.product.category\" class=\"form-control\" ng-required></select>\n      </div>\n      <div class=\"input-group editor\">\n        <textarea ui-tinymce=\"ctrl.tinymce_options\" class=\"form-control\" ng-model=\"ctrl.product.content\"></textarea>\n      </div>\n      <div class=\"right input-group\">\n        <input class=\"btn btn-default\" type=\"button\" ng-value=\"'save' | translate\" ng-click=\"ctrl.save()\" />\n      </div>\n    </form>\n  </div>\n</panel>\n";
 
 /***/ }),
 /* 12 */
@@ -305,16 +305,6 @@ function controller($http, $scope, popups, api, editorOptions) {
         _this.get_categories();
         _this.get_images();
         delete _this.product;
-    };
-    $scope.test = function () {
-        popups.prompt({
-            title: 'Hey',
-            message: 'Foo bar'
-        }).then(function () {
-            return console.log('ok');
-        }).catch(function () {
-            return console.log('cancel');
-        });
     };
     init();
     $scope.$on('view:products', init);
