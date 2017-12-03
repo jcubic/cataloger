@@ -277,7 +277,8 @@ function controller($http, $scope, popups, api, editorOptions) {
         var product = _this.products[index];
         var id = product.id;
         popups.prompt({
-            message: 'Are you sure you want to delete this product?'
+            message: 'Are you sure you want to delete this product?',
+            type: 'delete'
         }).then(function () {
             if (typeof id === 'undefined') {
                 var name = product.name;
@@ -529,7 +530,8 @@ function controller($http, popups, editorOptions, api) {
         var page = _this.pages[index];
         var id = page.id;
         popups.prompt({
-            message: 'Are you sure you want to delete this page?'
+            message: 'Are you sure you want to delete this page?',
+            type: 'delete'
         }).then(function () {
             if (typeof id === 'undefined') {
                 var title = page.title;
@@ -1720,15 +1722,35 @@ function popups($uibModal, $q, notifications, gettextCatalog) {
         }
     });
     result['prompt'] = function (options) {
-        options = _jquery2.default.extend({}, {
-            title: 'Are you sure?'
+        options = Object.assign({}, {
+            title: 'Are you sure?',
+            buttons: options.type == 'delete' ? {
+                ok: {
+                    text: 'Yes',
+                    class: 'btn-danger'
+                },
+                cancel: {
+                    text: 'No',
+                    class: 'btn-default'
+                }
+            } : {
+                ok: {
+                    text: 'OK',
+                    'class': 'btn-primary'
+                },
+                cancel: {
+                    text: 'Cancel',
+                    'class': 'btn-warning'
+                }
+            }
         }, options || {});
         var defer = $q.defer();
         var modalInstance = $uibModal.open({
             ariaLabelledBy: 'modal-title',
             ariaDescribedBy: 'modal-body',
-            template: '<div class="modal-header">\n               <h3 class="modal-title" id="modal-title">{{$ctrl.title}}</h3>\n            </div>\n            <div class="modal-body" id="modal-body">\n               {{$ctrl.message}}\n            </div>\n            <div class="modal-footer">\n               <button class="btn btn-primary" type="button"\n                       ng-click="$ctrl.ok()">OK</button>\n               <button class="btn btn-warning" type="button"\n                       ng-click="$ctrl.cancel()">Cancel</button>\n            </div>',
+            template: '<div class="modal-header">\n               <h3 class="modal-title" id="modal-title">{{$ctrl.title}}</h3>\n            </div>\n            <div class="modal-body" id="modal-body">\n               {{$ctrl.message}}\n            </div>\n            <div class="modal-footer">\n               <button class="btn {{$ctrl.options.buttons.ok.class}}" type="button"\n                       ng-click="$ctrl.ok()">\n                 {{$ctrl.options.buttons.ok.text | translate}}\n               </button>\n               <button class="btn {{$ctrl.options.buttons.cancel.class}}" type="button"\n                       ng-click="$ctrl.cancel()">\n                 {{$ctrl.options.buttons.cancel.text | translate}}\n               </button>\n            </div>',
             controller: function controller() {
+                this.options = options;
                 this.title = gettextCatalog.getString(options.title);
                 this.message = gettextCatalog.getString(options.message);
                 this.ok = function () {

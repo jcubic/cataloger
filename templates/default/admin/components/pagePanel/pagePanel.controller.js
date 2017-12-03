@@ -46,7 +46,8 @@ function controller($http, popups, editorOptions, api) {
         var page = this.pages[index];
         var id = page.id;
         popups.prompt({
-            message: 'Are you sure you want to delete this page?'
+            message: 'Are you sure you want to delete this page?',
+            type: 'delete'
         }).then(() => {
             if (typeof id === 'undefined') {
                 var title = page.title;

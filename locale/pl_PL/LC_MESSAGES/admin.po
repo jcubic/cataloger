@@ -94,3 +94,19 @@ msgstr "Czy na pewno chcesz usunąć ten produkt?"
 msgid "Are you sure?"
 msgstr "Czy jesteś pewien?"
 
+msgid "OK"
+msgstr "OK"
+
+msgid "Cancel"
+msgstr "Anuluj"
+
+msgid "Yes"
+msgstr "Tak"
+
+msgid "No"
+msgstr "Nie"
+
+
+
+
+

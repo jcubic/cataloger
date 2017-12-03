@@ -76,7 +76,8 @@ function controller($http, $scope, popups, api, editorOptions) {
         var product = this.products[index];
         var id = product.id;
         popups.prompt({
-            message: 'Are you sure you want to delete this product?'
+            message: 'Are you sure you want to delete this product?',
+            type: 'delete'
         }).then(() => {
             if (typeof id === 'undefined') {
                 var name = product.name;
