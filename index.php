@@ -643,6 +643,35 @@ $app->get('/category/{slug}', function($request, $response, $args) {
     return $response;
 });
 
+$app->get('/product/{slug}', function($request, $response, $args) {
+    $body = $response->getBody();
+    $data = query("SELECT * FROM products WHERE slug = ?", array($args['slug']));
+    if (count($data) == 1) {
+        $data = $data[0];
+        if ($data['category'] != 0) {
+            $category = query("SELECT * FROM categories WHERE id = ?", array($data['id']));
+            if (count($category) == 1) {
+                $category = $category[0];
+            } else {
+                $category = array();
+            }
+        } else {
+            $category = array();
+        }
+        $body->write(render($request, 'product.html', array(
+            'description' => $data['content'],
+            'image' => $data['image_name'],
+            'price' => $data['price'],
+            'slug' => $data['slug'],
+            'title' => $data['name'],
+            'category' => $category
+        )));
+    } else {
+        throw new \Slim\Exception\NotFoundException($request, $response);
+    }
+    return $response;
+});
+
 $app->get('/image/{size}/{name}', function($request, $response) {
     $body = $response->getBody();
 
