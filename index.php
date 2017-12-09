@@ -51,6 +51,25 @@ class Cataloger {
         // slim
         $container = new \Slim\Container;
         $app = $this;
+        $this->twig->addFilter(new Twig_Filter('price', function($price) use ($app) {
+            return new Twig_Markup(sprintf($app->config->price, $price), 'UTF-8');
+        }));
+        function menu($base, $items, $parent = "0") {
+            $html = '';
+            foreach ($items as $item) {
+                if ($item['parent'] == $parent) {
+                    $html .= '<li><a href="' . $base . '/category/' . $item['slug'] . '">' . $item['name'] . '</a>';
+                    if ($item['children'] != 0) {
+                        $html .= '<ul>' . menu($base, $items, $item['id']) . "</ul>";
+                    }
+                    $html .= "</li>";
+                }
+            }
+            return $html;
+        }
+        $this->twig->addFunction(new Twig_Function('menu', function($base, $items) {
+            return new Twig_Markup(menu($base, $items), 'UTF-8');
+        }));
         $container['notFoundHandler'] = function ($c) use ($app) {
             return function ($request, $response) use ($c, $app) {
                 return $app->error_page($request, $response, 404);
@@ -106,7 +125,12 @@ class Cataloger {
                 'username' => $_POST['username'],
                 'password' => $_POST['password'],
                 'template' => 'default',
-                'display_error_detail' => false
+                'display_error_detail' => false,
+                'tidy' => true,
+                'display_error_detail' => true,
+                'default_locale' => 'en',
+                'price' => '$%s',
+                'session_timeout' => 86400
             )));
             fclose($file);
         }

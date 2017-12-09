@@ -95,14 +95,6 @@ app.controller('main', function ($scope, $element, $rootScope) {
             $rootScope.$broadcast('view:' + hash);
         }
     };
-    /*
-    plugins.forEach(function(plugin) {
-        var directive = plugin.replace(/([A-Z])/g, (_, chr) => '-' + chr.toLowerCase());
-        var node = $('<' + directive + '></' + directive + '>');
-        $element.find('main').append(node);
-        $compile(node)($scope);
-    });
-    */
     (0, _jquery2.default)(window).on('hashchange', function () {
         $scope.$apply(set);
     });

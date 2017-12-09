@@ -63,14 +63,6 @@ app.controller('main', function($scope, $element, $rootScope) {
             $rootScope.$broadcast('view:' + hash);
         }
     };
-    /*
-    plugins.forEach(function(plugin) {
-        var directive = plugin.replace(/([A-Z])/g, (_, chr) => '-' + chr.toLowerCase());
-        var node = $('<' + directive + '></' + directive + '>');
-        $element.find('main').append(node);
-        $compile(node)($scope);
-    });
-    */
     $(window).on('hashchange', () => {
         $scope.$apply(set);
     });
