@@ -20,12 +20,12 @@ function controller($http, $scope, popups, api, editorOptions) {
     this.get_products = () => {
         api.products.list().then(make_setter('products'));
     };
-    function product_saved() {
+    var product_saved = () => {
         popups.showSuccess({
             message: 'Save successfull'
         });
         this.get_products();
-    }
+    };
     let new_product = () => {
         api.products.post({
             name: this.product.name,

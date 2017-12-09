@@ -55,7 +55,7 @@ app.config([
     gettextCatalog.debug = true;
 }]);
 
-app.controller('main', function($scope, $rootScope) {
+app.controller('main', function($scope, $element, $rootScope) {
     let set = () => {
         var hash = location.hash.replace(/^#/, '');
         if (hash.match(/^[a-z]+$/)) {
@@ -63,7 +63,14 @@ app.controller('main', function($scope, $rootScope) {
             $rootScope.$broadcast('view:' + hash);
         }
     };
-
+    /*
+    plugins.forEach(function(plugin) {
+        var directive = plugin.replace(/([A-Z])/g, (_, chr) => '-' + chr.toLowerCase());
+        var node = $('<' + directive + '></' + directive + '>');
+        $element.find('main').append(node);
+        $compile(node)($scope);
+    });
+    */
     $(window).on('hashchange', () => {
         $scope.$apply(set);
     });

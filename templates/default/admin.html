@@ -33,35 +33,6 @@
     <script src="{{path}}/lib/tinymce/tinymce.min.js"></script>
     <script src="{{path}}/lib/tinymce/jquery.tinymce.min.js"></script>
     <!-- <script src="{{path}}/admin.js"></script> -->
-    <!--
-    <script>
-     $(function() {
-         $("textarea.edit").tinymce({
-             baseURL: '{{path}}/lib/tinymce',
-             theme: "modern",
-             plugins: [
-                 "advlist code"
-             ],
-             skin: 'lightgray',
-             menubar:false,
-             statusbar: false,
-             toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | preview fullpage | forecolor backcolor table | code"
-         });
-     });
-     $(window).on('hashchange', function() {
-         view(location.hash.replace(/^#/, ''));
-     });
-     function view(page) {
-         $('.panel').removeClass('selected');
-         $('.panel.' + page).addClass('selected');
-         $('nav.left [href="#' + page + '"]').parent().addClass('selected')
-                                             .siblings().removeClass('selected');
-     }
-     $(function() {
-         view($('nav.left li:eq(0) a').attr('href').replace(/^#/, ''));
-     });
-    </script>
-    -->
   </head>
   <body ng-app="app" ng-controller="main as main">
     <header class="main">
@@ -78,11 +49,11 @@
     </header>
     <nav class="left">
       <ul>
-        <li><a href="#categories">{{ _("categories") }}</a></li>
-        <li><a href="#pages">{{ _("pages") }}</a></li>
-        <li><a href="#products">{{ _("products") }}</a></li>
+        <li ng-class="{selected: main.panel == 'categories'}"><a href="#categories">{{ _("categories") }}</a></li>
+        <li ng-class="{selected: main.panel == 'pages'}"><a href="#pages">{{ _("pages") }}</a></li>
+        <li ng-class="{selected: main.panel == 'products'}"><a href="#products">{{ _("products") }}</a></li>
         {% for item in components %}
-        <li><a href="#{{item.name}}">{{item.name}}</a></li>
+        <li ng-class="{selected: main.panel == item.name}"><a href="#{{item.name}}">{{item.name}}</a></li>
         {% endfor %}
       </ul>
     </nav>

@@ -30,19 +30,19 @@ var _services = __webpack_require__(43);
 
 var _services2 = _interopRequireDefault(_services);
 
-__webpack_require__(47);
+__webpack_require__(48);
 
-var _angularGettext = __webpack_require__(53);
+var _angularGettext = __webpack_require__(54);
 
 var _angularGettext2 = _interopRequireDefault(_angularGettext);
 
-__webpack_require__(55);
-
 __webpack_require__(56);
 
-__webpack_require__(58);
+__webpack_require__(57);
 
-var _pagination = __webpack_require__(60);
+__webpack_require__(59);
+
+var _pagination = __webpack_require__(61);
 
 var _pagination2 = _interopRequireDefault(_pagination);
 
@@ -85,7 +85,7 @@ app.config(['$locationProvider', 'notificationsConfigProvider', function ($locat
     gettextCatalog.debug = true;
 }]);
 
-app.controller('main', function ($scope, $rootScope) {
+app.controller('main', function ($scope, $element, $rootScope) {
     var _this = this;
 
     var set = function set() {
@@ -95,7 +95,14 @@ app.controller('main', function ($scope, $rootScope) {
             $rootScope.$broadcast('view:' + hash);
         }
     };
-
+    /*
+    plugins.forEach(function(plugin) {
+        var directive = plugin.replace(/([A-Z])/g, (_, chr) => '-' + chr.toLowerCase());
+        var node = $('<' + directive + '></' + directive + '>');
+        $element.find('main').append(node);
+        $compile(node)($scope);
+    });
+    */
     (0, _jquery2.default)(window).on('hashchange', function () {
         $scope.$apply(set);
     });
@@ -221,12 +228,12 @@ function controller($http, $scope, popups, api, editorOptions) {
     this.get_products = function () {
         api.products.list().then(make_setter('products'));
     };
-    function product_saved() {
+    var product_saved = function product_saved() {
         popups.showSuccess({
             message: 'Save successfull'
         });
-        this.get_products();
-    }
+        _this.get_products();
+    };
     var new_product = function new_product() {
         api.products.post({
             name: _this.product.name,
@@ -1316,7 +1323,7 @@ var _scaleImage = __webpack_require__(46);
 
 var _scaleImage2 = _interopRequireDefault(_scaleImage);
 
-var _popups = __webpack_require__(80);
+var _popups = __webpack_require__(47);
 
 var _popups2 = _interopRequireDefault(_popups);
 
@@ -1605,83 +1612,7 @@ function scaleImage(image, size) {
 ;
 
 /***/ }),
-/* 47 */,
-/* 48 */,
-/* 49 */,
-/* 50 */,
-/* 51 */,
-/* 52 */,
-/* 53 */,
-/* 54 */,
-/* 55 */,
-/* 56 */,
-/* 57 */,
-/* 58 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(59);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
-var transform;
-
-var options = {}
-options.transform = transform
-// add the styles to the DOM
-var update = __webpack_require__(1)(content, options);
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../node_modules/css-loader/index.js!./app.css", function() {
-			var newContent = require("!!../node_modules/css-loader/index.js!./app.css");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 59 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(0)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "body {\n    margin: 0;\n    height: 100vh;\n}\n.error {\n    color: #a94442; /* same as boostrap */\n}\nheader.main, nav.left, footer {\n    font-family: sans-serif;\n}\nheader.main {\n    background-color: #3c8dbc;\n    color: #fff;\n}\nheader.main h1 {\n    height: 50px;\n    width: 100%;\n    display: table;\n    margin: 0;\n}\nheader.main .right {\n    display: table-cell;\n    width: calc(100% - 230px);\n    font-size: 14px;\n    font-weight: normal;\n    vertical-align: middle;\n}\nheader.main ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nheader.main li {\n    float: right;\n    margin: 10px;\n}\nheader.main li a, header li a:visited {\n    color: white;\n    text-decoration: none;\n}\nheader li a:hover {\n    text-decoration: underline;\n}\nheader .logo {\n    display: table-cell;\n    vertical-align: middle;\n    background-color: #367fa9;\n    text-align: center;\n    font-family: sans-serif;\n    font-weight: normal;\n    font-size: 20px;\n}\n.notifications .close-click {\n    position: relative;\n    top: -2px;\n}\nheader .logo, nav.left {\n    width: 230px;\n    color: white;\n}\nnav.left {\n    background-color: #222d32;\n    font-size: 14px;\n}\nnav.left, main {\n    height: calc(100% - 50px - 20px);\n}\nnav.left ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nnav.left li {\n    display: table;\n    height: 30px;\n    width: 100%;\n}\nnav.left a {\n    width: 100%;\n    height: 100%;\n    display: table-cell;\n    vertical-align: middle;\n    padding-left: 20px;\n}\nnav.left li a, nav.left li a:visited {\n    color: white;\n}\nnav.left li.selected a {\n    border-left: 4px solid #367fa9;\n}\nnav.left li.selected a {\n    padding-left: 16px;\n}\nfooter a, footer a:visited, nav.left li a, nav.left li a:visited {\n    text-decoration: none;\n    cursor: pointer;\n}\nnav.left li:hover a {\n    background: #1e282c;\n}\nmain {\n    position: absolute;\n    left: 230px;\n    width: calc(100% - 230px);\n    top: 50px;\n    overflow: auto;\n}\nmain .panel {\n    display: block;\n    height: calc(100vh - 50px - 20px);\n    overflow: auto;\n    margin: 0;\n}\n.mce-container-body .mce-edit-area {\n    top: 40px;\n}\nfooter {\n    height: 20px;\n    box-sizing: border-box;\n    margin: 0;\n    font-size: 12px;\n    background: black;\n    color: white;\n    text-align: center;\n    padding: 3px 0;\n}\nfooter p {\n    margin: 0;\n}\nfooter a, footer a:visited {\n    color: white;\n}\nfooter a:hover {\n    text-decoration: underline;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 60 */,
-/* 61 */,
-/* 62 */,
-/* 63 */,
-/* 64 */,
-/* 65 */,
-/* 66 */,
-/* 67 */,
-/* 68 */,
-/* 69 */,
-/* 70 */,
-/* 71 */,
-/* 72 */,
-/* 73 */,
-/* 74 */,
-/* 75 */,
-/* 76 */,
-/* 77 */,
-/* 78 */,
-/* 79 */,
-/* 80 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1763,6 +1694,62 @@ function popups($uibModal, $q, notifications, gettextCatalog) {
 popups.$inject = ['$uibModal', '$q', 'notifications', 'gettextCatalog'];
 
 exports.default = popups;
+
+/***/ }),
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */,
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(60);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(1)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../node_modules/css-loader/index.js!./app.css", function() {
+			var newContent = require("!!../node_modules/css-loader/index.js!./app.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(0)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "body {\n    margin: 0;\n    height: 100vh;\n}\n.error {\n    color: #a94442; /* same as boostrap */\n}\nheader.main, nav.left, footer {\n    font-family: sans-serif;\n}\nheader.main {\n    background-color: #3c8dbc;\n    color: #fff;\n}\nheader.main h1 {\n    height: 50px;\n    width: 100%;\n    display: table;\n    margin: 0;\n}\nheader.main .right {\n    display: table-cell;\n    width: calc(100% - 230px);\n    font-size: 14px;\n    font-weight: normal;\n    vertical-align: middle;\n}\nheader.main ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nheader.main li {\n    float: right;\n    margin: 10px;\n}\nheader.main li a, header li a:visited {\n    color: white;\n    text-decoration: none;\n}\nheader li a:hover {\n    text-decoration: underline;\n}\nheader .logo {\n    display: table-cell;\n    vertical-align: middle;\n    background-color: #367fa9;\n    text-align: center;\n    font-family: sans-serif;\n    font-weight: normal;\n    font-size: 20px;\n}\n.notifications .close-click {\n    position: relative;\n    top: -2px;\n}\nheader .logo, nav.left {\n    width: 230px;\n    color: white;\n}\nnav.left {\n    background-color: #222d32;\n    font-size: 14px;\n}\nnav.left, main {\n    height: calc(100% - 50px - 20px);\n}\nnav.left ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n}\nnav.left li {\n    display: table;\n    height: 30px;\n    width: 100%;\n}\nnav.left a {\n    width: 100%;\n    height: 100%;\n    display: table-cell;\n    vertical-align: middle;\n    padding-left: 20px;\n}\nnav.left li a, nav.left li a:visited {\n    color: white;\n}\nnav.left li.selected a {\n    border-left: 4px solid #367fa9;\n}\nnav.left li.selected a {\n    padding-left: 16px;\n}\nfooter a, footer a:visited, nav.left li a, nav.left li a:visited {\n    text-decoration: none;\n    cursor: pointer;\n}\nnav.left li:hover a {\n    background: #1e282c;\n}\nmain {\n    position: absolute;\n    left: 230px;\n    width: calc(100% - 230px);\n    top: 50px;\n    overflow: auto;\n}\nmain .panel {\n    display: block;\n    height: calc(100vh - 50px - 20px);\n    overflow: auto;\n    margin: 0;\n}\n.mce-container-body .mce-edit-area {\n    top: 40px;\n}\nfooter {\n    height: 20px;\n    box-sizing: border-box;\n    margin: 0;\n    font-size: 12px;\n    background: black;\n    color: white;\n    text-align: center;\n    padding: 3px 0;\n}\nfooter p {\n    margin: 0;\n}\nfooter a, footer a:visited {\n    color: white;\n}\nfooter a:hover {\n    text-decoration: underline;\n}\n", ""]);
+
+// exports
+
 
 /***/ })
 ],[5]);
