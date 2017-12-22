@@ -24,6 +24,9 @@ class Cataloger {
         if (!$lang) {
             $lang = $this->config->default_locale;
         }
+        if (!isset($this->config->session_name)) {
+            $this->config->session_name= 'SID';
+        }
         $this->config->locale = $lang;
         if (!preg_match("/utf-?8$/", $lang)) {
             $lang .= ".utf8";
@@ -234,11 +237,14 @@ $app->add(function($request, $response, $next) use ($app) {
     if (!installed() && !preg_match("/install/", $path)) {
         return redirect($request, $response, "/install");
     }
+    $login = preg_match("/^login/", $path);
     if (preg_match("/^(admin|api|login|logout|upload)/", $path)) {
-        session_timeout($app->config->session_timeout);
-        session_name('SID');
-        ini_set('session.cookie_httponly', 1);
-        session_start();
+        if ($login && !isset($_GET['logout']) || !$login) {
+            session_timeout($app->config->session_timeout);
+            session_name($app->config->session_name);
+            ini_set('session.cookie_httponly', 1);
+            session_start();
+        }
     }
     if (preg_match("/api/", $path)) {
         $response = $response->withAddedHeader('Content-Type', 'application/json');
@@ -282,10 +288,10 @@ $app->any('/login', function($request, $response, $args) use ($app) {
     return $response;
 });
 
-$app->get('/logout', function($request, $response) {
+$app->get('/logout', function($request, $response) use ($app) {
     unset($_SESSION['logged']);
-    session_destroy();
-    return redirect($request, $response, '/login');
+    kill_session();
+    return redirect($request, $response, '/login?logout=true');
 });
 
 
