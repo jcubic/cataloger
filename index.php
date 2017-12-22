@@ -235,6 +235,8 @@ $app->add(function($request, $response, $next) use ($app) {
     }
     if (preg_match("/^(admin|api|login|logout|upload)/", $path)) {
         session_timeout($app->config->session_timeout);
+        session_name('SID');
+        ini_set('session.cookie_httponly', 1);
         session_start();
     }
     if (preg_match("/api/", $path)) {
