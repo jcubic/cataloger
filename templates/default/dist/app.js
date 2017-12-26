@@ -1340,6 +1340,8 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// TODO: modify all requests to send JSON and require application/json Content-type
+// to prevent CSRF
 function api($http, root) {
     var data = function data(response) {
         return response.data;

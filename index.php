@@ -8,6 +8,7 @@ require_once('vendor/autoload.php');
 class Cataloger {
     function __construct($lang = NULL) {
         header_remove("X-Powered-By");
+        header("X-Frame-Options: Deny");
         $this->db = new PDO('sqlite:cataloger.sqlite');
         $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->config_name = 'config.json';
@@ -25,7 +26,7 @@ class Cataloger {
             $lang = $this->config->default_locale;
         }
         if (!isset($this->config->session_name)) {
-            $this->config->session_name= 'SID';
+            $this->config->session_name= 'CSID';
         }
         $this->config->locale = $lang;
         if (!preg_match("/utf-?8$/", $lang)) {
@@ -243,15 +244,35 @@ $app->add(function($request, $response, $next) use ($app) {
             session_timeout($app->config->session_timeout);
             session_name($app->config->session_name);
             ini_set('session.cookie_httponly', 1);
+            if ($app->config->secure) {
+                $timeout = $app->config->session_timeout;
+                header('Strict-Transport-Security: max-age=' . $timeout);
+                if ($uri->getScheme() != "https") {
+                    return redirect($request, $response, $uri->withScheme('https'));
+                }
+                ini_set('session.cookie_secure', 1);
+            }
             session_start();
         }
     }
     if (preg_match("/api/", $path)) {
         $response = $response->withAddedHeader('Content-Type', 'application/json');
-        if (!$request->isGet() && !isset($_SESSION['logged'])) {
-            $response = $response->withJson(array(
-                "error" => "You need to be logged in to use this method"
-            ), 403);
+        if (!$request->isGet()) {
+            if (!isset($_SESSION['logged'])) {
+                $response = $response->withJson(array(
+                    "error" => "You need to be logged in to use this method"
+                ), 403);
+            } else {
+                /* TODO: update api to use json to prevent CSRF
+                $headers = $request->getHeaders();
+                $type = $request->getHeader('Content-type');
+                if ($type != "application/json") {
+                    $response = $response->withJson(array(
+                        "error" => "Wrong Content-Type only application/json accepted"
+                    ), 403);
+                }
+                */
+            }
         }
     }
     return $next($request, $response);
@@ -631,6 +652,12 @@ $app->get('/page/{slug}', function($request, $response, $args) {
     }
     return $response;
 });
+
+function get_all_subcategories($category_id) {
+    global $app;
+    $data = query("SELECT id FROM categories WHERE parent = ?");
+}
+
 
 $app->get('/category/{slug}', function($request, $response, $args) {
     $body = $response->getBody();

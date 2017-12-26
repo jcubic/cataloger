@@ -17,8 +17,38 @@ function baseURI($request) {
     return $uri->getBasePath();
 }
 
-function redirect($request, $response, $url) {
-    return $response->withStatus(302)->withHeader('Location', baseURI($request) . $url);
+function url($uri) {
+    $scheme = $uri->getScheme();
+    $port = $uri->getPort();
+    if ($port == 80 || $port == 443) {
+        $host = $uri->getHost();
+        $userInfo = $uri->getUserInfo();
+        $authority = ($userInfo ? $userInfo . '@' : '') . $host;
+    } else {
+        $authority = $uri->getAuthority();
+    }
+    $basePath = $uri->getBasePath();
+    $path = $uri->getPath();
+    $query = $uri->getQuery();
+    $fragment = $uri->getFragment();
+
+    $path = $basePath . '/' . ltrim($path, '/');
+
+    return ($scheme ? $scheme . ':' : '')
+         . ($authority ? '//' . $authority : '')
+         . $path
+         . ($query ? '?' . $query : '')
+         . ($fragment ? '#' . $fragment : '');
+}
+
+
+function redirect($request, $response, $uri) {
+    if (get_class($uri) == "Slim\Http\Uri") {
+        $url = url($uri);
+    } else {
+        $url = baseURI($request) . $uri;
+    }
+    return $response->withStatus(302)->withHeader('Location', $url);
 }
 
 function now() {

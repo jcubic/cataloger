@@ -1,6 +1,7 @@
 /* global FormData */
 import $ from 'jquery';
-
+// TODO: modify all requests to send JSON and require application/json Content-type
+// to prevent CSRF
 function api($http, root) {
     var data = response => response.data;
     function update_url(url, args) {
