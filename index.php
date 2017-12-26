@@ -134,6 +134,7 @@ class Cataloger {
                 'tidy' => true,
                 'display_error_detail' => true,
                 'default_locale' => 'en',
+                'secure' => false,
                 'price' => '$%s',
                 'session_timeout' => 86400
             )));
