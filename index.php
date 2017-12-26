@@ -96,13 +96,15 @@ class Cataloger {
                 log_error("error 500 " . request_url($request));
                 log_error($type . ": " . $message . " at " . $file . " in line " . $line);
                 log_error($stack);
-                if ($this->config->display_error_detail) {
+                if ($this->config->debug) {
                     $data = array(
-                        'type' => $type,
-                        'line' => $line,
-                        'file' => $file,
-                        'stack' => $stack,
-                        'message' => $message
+                        'error' => array(
+                            'type' => $type,
+                            'line' => $line,
+                            'file' => $file,
+                            'stack' => $stack,
+                            'message' => $message
+                        )
                     );
                 } else {
                     $data = array();
@@ -130,9 +132,9 @@ class Cataloger {
                 'username' => $_POST['username'],
                 'password' => $_POST['password'],
                 'template' => 'default',
-                'display_error_detail' => false,
+                'debug' => false,
                 'tidy' => true,
-                'display_error_detail' => true,
+                'display_error_detail' => false,
                 'default_locale' => 'en',
                 'secure' => false,
                 'price' => '$%s',
@@ -249,6 +251,9 @@ $app->add(function($request, $response, $next) use ($app) {
             if ($app->config->secure) {
                 $timeout = $app->config->session_timeout;
                 header('Strict-Transport-Security: max-age=' . $timeout);
+                if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') ||
+                    preg_match("/rv:[0-9.]+\)/", $_SERVER['HTTP_USER_AGENT'])) {
+                }
                 if ($uri->getScheme() != "https") {
                     return redirect($request, $response, $uri->withScheme('https'));
                 }
