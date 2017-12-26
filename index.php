@@ -244,6 +244,7 @@ $app->add(function($request, $response, $next) use ($app) {
             session_timeout($app->config->session_timeout);
             session_name($app->config->session_name);
             ini_set('session.cookie_httponly', 1);
+            ini_set('session.use_only_cookies', 1);
             if ($app->config->secure) {
                 $timeout = $app->config->session_timeout;
                 header('Strict-Transport-Security: max-age=' . $timeout);
