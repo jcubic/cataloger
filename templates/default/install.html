@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <base href="/"/>
-    <title>Cataloger - Admin panel</title>
+    <title>Cataloger - Install/Update page</title>
     <link rel="apple-touch-icon" sizes="180x180" href="{{path}}/admin/favicon/apple-touch-icon.png"/>
     <link rel="icon" type="image/png" sizes="32x32" href="{{path}}/admin/favicon/favicon-32x32.png"/>
     <link rel="icon" type="image/png" sizes="16x16" href="{{path}}/admin/favicon/favicon-16x16.png"/>
@@ -49,7 +49,7 @@
       </h1>
     </header>
     {% if completed %}
-    <p>{% if update %}Updating{% else %}Installation{% endif %} complete <a href="{{root}}/login">login</a></p>
+    <h2>{% if update %}Updating{% else %}Installation{% endif %} complete <a href="{{root}}/login">login</a></h2>
     {% else %}
     {% if update %}
     <h2>Your Database need update</h2>
