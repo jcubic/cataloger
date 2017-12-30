@@ -318,11 +318,11 @@ $app->any('/login', function($request, $response, $args) use ($app) {
     if (isset($_POST['username']) && isset($_POST['password'])) {
         if ($_POST['username'] != $app->config->username) {
             $page = render($request, 'login.html', array(
-                'error' => 'Wrong username'
+                'error' => 'Wrong username or password'
             ));
         } elseif ($_POST['password'] != $app->config->password) {
             $page = render($request, 'login.html', array(
-                'error' => 'Wrong password'
+                'error' => 'Wrong username or password'
             ));
         } else {
             $_SESSION['logged'] = true;
@@ -765,13 +765,19 @@ $app->post('/upload', function($request, $response) use ($app) {
     if ($_SESSION['logged']) {
         $files = $request->getUploadedFiles();
         if (isset($files['file'])) {
+            $body = $response->getBody();
             $file = $files['file'];
             $path = $app->root . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR;
             $fname = $file->getClientFilename();
             if (is_image($fname) && !preg_match("/\.\./", $fname)) {
-                $file->moveTo($path . $fname);
+                // just in case if someone try to upload php file with embeded php code
+                if (!preg_match("/<\?.*?(?!\?" . ">)>/", file_get_conents($fname))) {
+                    $file->moveTo($path . $fname);
+                    $body->write(json_encode(array("result" => true)));
+                }
             }
         }
+        $body->write(json_encode(array("result" => false)));
     } else {
         return redirect($request, $response, '/login');
     }
