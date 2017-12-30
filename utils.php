@@ -101,16 +101,6 @@ function get_required_sql() {
     return explode(";", preg_replace("/;\s+$/", "", file_get_contents("sql/create-tables.sql")));
 }
 
-function get_sql() {
-    global $app;
-    $query = "SELECT sql FROM sqlite_master WHERE type='table' and name != " .
-             "'sqlite_sequence'";
-    return array_map(function($assoc) {
-        return $assoc['sql'];
-    }, $app->query($query));
-}
-
-
 function get_table_sql($name) {
     global $app;
     $data = $app->query("SELECT sql FROM sqlite_master WHERE type = 'table' and name = ?", array($name));
@@ -123,12 +113,14 @@ function get_table_sql($name) {
  * https://stackoverflow.com/a/8442173/387194
  */
 function get_alter_queries() {
-    $tables = array_map('split_sql', get_sql());
+    $required = array_map('split_sql', get_required_sql());
     $result = array();
-    foreach ($tables as $table) {
+    foreach ($required as $table) {
         $given = split_sql(get_table_sql($table['name']));
-        foreach (array_diff($table['fields'], $given['fields']) as $field) {
-            $result[] = "ALTER TABLE " . $table['name'] . " ADD COLUMN " . $field;
+        if (count($given) > 0) {
+            foreach (array_diff($table['fields'], $given['fields']) as $field) {
+                $result[] = "ALTER TABLE " . $table['name'] . " ADD COLUMN " . $field;
+            }
         }
     }
     return $result;

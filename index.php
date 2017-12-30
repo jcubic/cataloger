@@ -310,6 +310,9 @@ $app->get('/', function($request, $response) {
 });
 
 $app->any('/login', function($request, $response, $args) use ($app) {
+    if (isset($_SESSION['logged'])) {
+        return redirect($request, $response, '/admin');
+    }
     textdomain("admin");
     $body = $response->getBody();
     if (isset($_POST['username']) && isset($_POST['password'])) {
