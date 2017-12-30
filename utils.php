@@ -187,17 +187,68 @@ function write($fname, $text) {
     return $ret;
 }
 
-function tidy($html) {
-    $config = array(
+function tidy($html, $options = array()) {
+    $config = array_merge(array(
         'indent' => true,
         'input-xml' => true,
         'output-xhtml' => true,
         'wrap' => 200,
         'merge-spans' => false
-    );
+    ), $options);
     $tidy = tidy_parse_string($html, $config, 'utf8');
     $tidy->cleanRepair();
     return $tidy;
+}
+
+function repair_html($html, $options = array()) {
+    $tidy = new tidy();
+    $tidy->parseString($html, $options, 'utf8');
+    $tidy->cleanRepair();
+    $html = array();
+    foreach($tidy->body()->child as $child) {
+        $html[] = (string)$child;
+    }
+    return implode("", $html);
+}
+
+
+// function that clean html to prevent potential xss from user input
+function clean_html($html) {
+    $html = repair_html($html);
+    $arg_re = '([^=]+="[^"]+")';
+    $tag_list = array('a', 'p', 'b', 'i', 'img', 'strong', 'strike', 'ul', 'ol', 'li', 'iframe');
+    $arg_list = array('src', 'href');
+    $array = array_map(function($string) use ($arg_re, $tag_list, $arg_list) {
+        if (preg_match('%<([^\s]+)((?:\s*' . $arg_re . '+)?)' . '>%', $string, $match)) {
+            if (in_array(preg_replace("%^[/\s]+%", "", $match[1]), $tag_list)) {
+                if ($match[2] == '') {
+                    return "<" . $match[1] . ">";
+                } else {
+                    if (preg_match_all("/$arg_re/", $match[2], $args_match)) {
+                        $args = array_filter($args_match[1], function($pair) use ($arg_list) {
+                            if (preg_match("/javascript/i", $pair)) {
+                                return false;
+                            } else {
+                                if (preg_match("/\s*([^=]+)\s*=/", $pair, $match)) {
+                                    return in_array(strtolower($match[1]), $arg_list);
+                                } else {
+                                    return false;
+                                }
+                            }
+                        });
+                        return "<" . $match[1] . (count($args) ? " " . implode(" ", $args) : "") . ">";
+                    } else {
+                        return "<" . $match[1] . ">";
+                    }
+                }
+            } else {
+                return "";
+            }
+        } else {
+            return $string;
+        }
+    }, preg_split("/(<[^>]+>)/", $html, -1, PREG_SPLIT_DELIM_CAPTURE));
+    return implode("", $array);
 }
 
 // based on:

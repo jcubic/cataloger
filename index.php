@@ -1,8 +1,5 @@
 <?php
 
-error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
-ini_set('display_errors', 'On');
-
 require_once('vendor/autoload.php');
 
 class Cataloger {
@@ -59,6 +56,11 @@ class Cataloger {
         $this->twig->addFilter(new Twig_Filter('price', function($price) use ($app) {
             return new Twig_Markup(sprintf($app->config->price, $price), 'UTF-8');
         }));
+        $this->twig->addFilter(new Twig_Filter('html', function($input) {
+            return clean_html($input);
+        }, array('is_safe' => array('html'))));
+        require_once('Text.php');
+        $this->twig->addExtension(new Twig_Extensions_Extension_Text());
         function menu($base, $items, $parent = "0") {
             $html = '';
             foreach ($items as $item) {
@@ -234,6 +236,11 @@ if (isset($_GET['lang'])) {
 }
 
 $app = new Cataloger($lang);
+
+if ($app->config->debug) {
+    error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+    ini_set('display_errors', 'On');
+}
 
 $app->add(function($request, $response, $next) use ($app) {
     $uri = $request->getUri();
