@@ -36,6 +36,7 @@
      form .right {
          float: right;
      }
+     h2 { text-align: center; }
     </style>
     <script src="{{path}}/dist/vendor.js"></script>
     <script src="{{path}}/dist/app.js"></script>
@@ -48,9 +49,13 @@
       </h1>
     </header>
     {% if completed %}
-    <p>Installation complete <a href="{{root}}/login">login</a></p>
+    <p>{% if update %}Updating{% else %}Installation{% endif %} complete <a href="{{root}}/login">login</a></p>
     {% else %}
+    {% if update %}
+    <h2>Your Database need update</h2>
+    {% endif %}
     <form method="POST" name="install" >
+      {% if not update %}
       <div class="input-group">
         <label class="input-group-addon" for="username">{{ _("username") }}</label>
         <input class="form-control" id="username" name="username"/>
@@ -59,8 +64,10 @@
         <label class="input-group-addon" for="password">{{ _("password") }}</label>
         <input type="password" class="form-control" id="password" name="password"/>
       </div>
+      {% endif %}
       <div class="right">
-        <input class="btn btn-default" type="submit" value="{{ _("configure") }}"/>
+        <input class="btn btn-default" type="submit"
+               value="{% if update %}{{ _("update") }}{% else %}{{ _("configure") }}{% endif %}"/>
       </div>
     </form>
     {% endif %}

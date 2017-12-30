@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS products(
        image_name VARCHAR(255),
        name VARCHAR(255),
        price VARCHAR(20),
+       brand VARCHAR(40),
        category INTEGER NOT NULL,
        FOREIGN KEY(category) REFERENCES categories(id)
 );
@@ -21,4 +22,16 @@ CREATE TABLE IF NOT EXISTS pages (
        title VARCHAR(255),
        menu_order INTEGER DEFAULT NULL,
        content TEXT
+);
+CREATE TABLE IF NOT EXISTS users (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       username VARCHAR(255),
+       email VARCHAR(255)
+);
+CREATE TABLE IF NOT EXISTS reviews (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       rating INTEGER,
+       user INTEGER,
+       content TEXT,
+       FOREIGN KEY(user) REFERENCES users(id)
 );
