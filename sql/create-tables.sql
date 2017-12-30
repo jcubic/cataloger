@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS products(
        name VARCHAR(255),
        price VARCHAR(20),
        brand VARCHAR(40),
+       avaible INTEGER,
        category INTEGER NOT NULL,
        FOREIGN KEY(category) REFERENCES categories(id)
 );

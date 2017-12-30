@@ -372,4 +372,54 @@ function kill_session() {
     session_write_close();
 }
 
+function parent_categories($id) {
+    if (!$id) {
+        return array();
+    }
+    $category = query("SELECT * from categories WHERE id = ?", array($id));
+    if (count($category) != 1) {
+        return array();
+    }
+    $category = $category[0];
+    if ($category['parent'] != 0) {
+        return array_merge(
+            parent_categories($category['parent']),
+            array(
+                $category
+            )
+        );
+    } else {
+        return array(
+            $category
+        );
+    }
+}
+
+function bread_crumbs($category = null) {
+    if ($category != null && count($category) > 0) {
+        $category['uri'] = '/category/' . $category['slug'];
+        $parents = parent_categories($category['parent']);
+        if (count($parents) > 0) {
+            return array_merge(
+                array(array('name' => 'Home')),
+                array_map(function($category) {
+                    return array_merge($category, array(
+                        'uri' => '/category/' . $category['slug']
+                    ));
+                }, $parents),
+                array($category)
+            );
+        } else {
+            return array_merge(
+                array(array('name' => 'Home')),
+                array($category)
+            );
+        }
+    } else {
+        return array(
+            array('name' => 'Home')
+        );
+    }
+}
+
 ?>

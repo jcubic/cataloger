@@ -355,11 +355,6 @@ function register_admin_plugin($name, $component) {
 
 load_plugins();
 
-$app->get('/products', function($request, $response) {
-
-});
-
-
 $app->get('/admin', function($request, $response) {
     global $components;
     textdomain("admin");
@@ -698,7 +693,8 @@ $app->get('/category/{slug}', function($request, $response, $args) {
             'description' => $data['content'],
             'sub_categories' => $sub,
             'products' => $products,
-            'title' => $data['name']
+            'title' => $data['name'],
+            'bread_crumbs' =>  bread_crumbs($data)
         )));
     } else {
         throw new \Slim\Exception\NotFoundException($request, $response);
@@ -727,7 +723,8 @@ $app->get('/product/{slug}', function($request, $response, $args) {
             'price' => $data['price'],
             'slug' => $data['slug'],
             'title' => $data['name'],
-            'category' => $category
+            'category' => $category,
+            'bread_crumbs' => bread_crumbs($category)
         )));
     } else {
         throw new \Slim\Exception\NotFoundException($request, $response);
