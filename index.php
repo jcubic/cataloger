@@ -126,9 +126,9 @@ class Cataloger {
         }
         write($this->config_name, json_encode($this->config));
     }
-    function install() {
-        $filename = 'config.json';
-        if (!file_exists($filename)) {
+    function install($request, $response) {
+        $update = file_exists($this->config_name);
+        if (!$update) {
             $file = fopen($filename, 'w+');
             fwrite($file, json_encode(array(
                 'username' => $_POST['username'],
@@ -145,6 +145,7 @@ class Cataloger {
             fclose($file);
         }
         $tables_to_create = array_diff(required_tables(), tables());
+        $alter_queries = get_alter_queries();
         if (count($tables_to_create)) {
             $re = "/CREATE TABLE IF NOT EXISTS (" . implode("|", $tables_to_create) . ")/";
             $queries = clean(explode(";", file_get_contents("sql/create-tables.sql")));
@@ -153,10 +154,19 @@ class Cataloger {
                     $this->query($query);
                 }
             }
-            $body->write(render($request, 'install.html', array(
-                'completed' => true
+        }
+        if (count($alter_queries)) {
+            foreach ($alter_queries as $query) {
+                $this->query($query);
+            }
+        }
+        if (count($tables_to_create) || count($alter_queries)) {
+            $response->getBody()->write(render($request, 'install.html', array(
+                'completed' => true,
+                'update' => $update
             )));
         }
+        return $response;
     }
     function render($request, $page, $data = array()) {
         $base = baseURI($request);
@@ -236,6 +246,7 @@ if (isset($_GET['lang'])) {
 }
 
 $app = new Cataloger($lang);
+
 
 if ($app->config->debug) {
     error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
@@ -366,14 +377,16 @@ $app->get('/admin', function($request, $response) {
 
 $app->any('/install', function($request, $response) use($app) {
     $body = $response->getBody();
-    if (isset($_POST['username']) && isset($_POST['password'])) {
-        $app->install();
+    if ($request->isPost()) {
+        return $app->install($request, $response);
     } elseif (installed()) {
         $body->write(render($request, 'install.html', array(
             'completed' => true
         )));
     } else {
-        $body->write(render($request, 'install.html'));
+        $body->write(render($request, 'install.html', array(
+            'update' => file_exists($app->config_name)
+        )));
     }
     return $response;
 });

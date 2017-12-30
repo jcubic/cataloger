@@ -43,10 +43,10 @@ function url($uri) {
 
 
 function redirect($request, $response, $uri) {
-    if (get_class($uri) == "Slim\Http\Uri") {
-        $url = url($uri);
-    } else {
+    if (is_string($uri)) {
         $url = baseURI($request) . $uri;
+    } else if (get_class($uri) == "Slim\Http\Uri") {
+        $url = url($uri);
     }
     return $response->withStatus(302)->withHeader('Location', $url);
 }
@@ -87,7 +87,7 @@ function required_tables() {
 
 function split_sql($sql) {
     $sql = preg_replace("/\s+/", " ", $sql);
-    if (preg_match("/CREATE TABLE(?: IF NOT\ EXISTS)? ([^(\s]+)\s*\((.+)\)/", $sql, $match)) {
+    if (preg_match("/CREATE TABLE(?: IF NOT\ EXISTS)? ([^(\s]+)\s*\((.+)\)/i", $sql, $match)) {
         return array(
             'fields' => array_map(function($sql) {
                 return trim(strtolower($sql));
@@ -101,6 +101,16 @@ function get_required_sql() {
     return explode(";", preg_replace("/;\s+$/", "", file_get_contents("sql/create-tables.sql")));
 }
 
+function get_sql() {
+    global $app;
+    $query = "SELECT sql FROM sqlite_master WHERE type='table' and name != " .
+             "'sqlite_sequence'";
+    return array_map(function($assoc) {
+        return $assoc['sql'];
+    }, $app->query($query));
+}
+
+
 function get_table_sql($name) {
     global $app;
     $data = $app->query("SELECT sql FROM sqlite_master WHERE type = 'table' and name = ?", array($name));
@@ -113,13 +123,12 @@ function get_table_sql($name) {
  * https://stackoverflow.com/a/8442173/387194
  */
 function get_alter_queries() {
-    $required = array_map('split_sql', get_required_sql());
+    $tables = array_map('split_sql', get_sql());
     $result = array();
-    foreach ($required as $table) {
-        $table['name'];
+    foreach ($tables as $table) {
         $given = split_sql(get_table_sql($table['name']));
         foreach (array_diff($table['fields'], $given['fields']) as $field) {
-            $result[] = "ALTER " . $table['name'] . " ADD COLUMN " . $field;
+            $result[] = "ALTER TABLE " . $table['name'] . " ADD COLUMN " . $field;
         }
     }
     return $result;
@@ -147,7 +156,7 @@ function clean($array) {
 }
 
 function installed() {
-    return file_exists('config.json') && match(required_tables(), tables());
+    return file_exists('config.json') && match(required_tables(), tables()) && count(get_alter_queries()) == 0;
 }
 
 function render($request, $page, $data = array()) {
@@ -210,7 +219,6 @@ function repair_html($html, $options = array()) {
     }
     return implode("", $html);
 }
-
 
 // function that clean html to prevent potential xss from user input
 function clean_html($html) {
@@ -314,8 +322,6 @@ function resize($img, $size, $newfilename) {
 function is_image($name) {
     return preg_match("/^[^.]+\.(jpe?g|gif|png)$/i", $name);
 }
-
-
 
 function missing_image_path() {
     global $app;
