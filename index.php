@@ -323,8 +323,9 @@ $app->any('/login', function($request, $response, $args) use ($app) {
                 $power = $attempts[0]['attempts'] - 3;
                 $time = pow($app->config->login_timeout, $power);
                 if (time() - $attempts[0]['time'] < $time) {
+                    log_login_attempt($attempts[0]['attempts']);
                     $body->write(render($request, 'login.html', array(
-                        'error' => $attempts[0]['attempts'] . ' attempts, you need to wait ' . $time . ' seconds'
+                        'error' => sprintf(_('%d attempts, you need to wait %d seconds'), $attempts[0]['attempts'], $time)
                     )));
                     return $response;
                 }
@@ -334,12 +335,14 @@ $app->any('/login', function($request, $response, $args) use ($app) {
                 if (count($attempts) > 0) {
                     $query = "UPDATE login_attempts SET attempts = ?, time = ? WHERE ip = ?";
                     query($query, array($attempts[0]['attempts'] + 1, time(), $ip));
+                    log_login_attempt($attempts[0]['attempts']);
                 } else {
                     $query = "INSERT INTO login_attempts(ip, attempts, time) VALUES(?, ?, ?)";
                     query($query, array($ip, 1, time()));
+                    log_login_attempt(1);
                 }
                 $page = render($request, 'login.html', array(
-                    'error' => 'Wrong username or password'
+                    'error' => _('Wrong username or password')
                 ));
             } else {
                 $_SESSION['logged'] = true;
@@ -352,7 +355,7 @@ $app->any('/login', function($request, $response, $args) use ($app) {
             if ($_POST['username'] != $app->config->username ||
                 $_POST['password'] != $app->config->password) {
                 $page = render($request, 'login.html', array(
-                    'error' => 'Wrong username or password'
+                    'error' => _('Wrong username or password')
                 ));
             } else {
                 $_SESSION['logged'] = true;

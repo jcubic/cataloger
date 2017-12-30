@@ -106,6 +106,12 @@ msgstr "Tak"
 msgid "No"
 msgstr "Nie"
 
+msgid "%d attempts, you need to wait %d seconds"
+msgstr "%d prób, musisz zaczekać %d sekund(y)"
+
+msgid "Wrong username or password"
+msgstr "Zły login lub hasło"
+
 
 
 

