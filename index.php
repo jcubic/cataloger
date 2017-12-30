@@ -316,17 +316,45 @@ $app->any('/login', function($request, $response, $args) use ($app) {
     textdomain("admin");
     $body = $response->getBody();
     if (isset($_POST['username']) && isset($_POST['password'])) {
-        if ($_POST['username'] != $app->config->username) {
-            $page = render($request, 'login.html', array(
-                'error' => 'Wrong username or password'
-            ));
-        } elseif ($_POST['password'] != $app->config->password) {
-            $page = render($request, 'login.html', array(
-                'error' => 'Wrong username or password'
-            ));
+        if ($app->config->login_timeout > 0) {
+            $ip = ip2long($_SERVER['REMOTE_ADDR']);
+            $attempts = query("SELECT * FROM login_attempts WHERE ip = ?", array($ip));
+            if (count($attempts) > 0 && $attempts[0]['attempts'] > 3) {
+                $power = $attempts[0]['attempts'] - 3;
+                $time = pow($app->config->login_timeout, $power);
+                if (time() - $attempts[0]['time'] < $time) {
+                    $body->write(render($request, 'login.html', array(
+                        'error' => $attempts[0]['attempts'] . ' attempts, you need to wait ' . $time . ' seconds'
+                    )));
+                    return $response;
+                }
+            }
+            if ($_POST['username'] != $app->config->username ||
+                $_POST['password'] != $app->config->password) {
+                if (count($attempts) > 0) {
+                    $query = "UPDATE login_attempts SET attempts = ?, time = ? WHERE ip = ?";
+                    query($query, array($attempts[0]['attempts'] + 1, time(), $ip));
+                } else {
+                    $query = "INSERT INTO login_attempts(ip, attempts, time) VALUES(?, ?, ?)";
+                    query($query, array($ip, 1, time()));
+                }
+                $page = render($request, 'login.html', array(
+                    'error' => 'Wrong username or password'
+                ));
+            } else {
+                $_SESSION['logged'] = true;
+                return redirect($request, $response, '/admin');
+            }
         } else {
-            $_SESSION['logged'] = true;
-            return redirect($request, $response, '/admin');
+            if ($_POST['username'] != $app->config->username ||
+                $_POST['password'] != $app->config->password) {
+                $page = render($request, 'login.html', array(
+                    'error' => 'Wrong username or password'
+                ));
+            } else {
+                $_SESSION['logged'] = true;
+                return redirect($request, $response, '/admin');
+            }
         }
     } else {
         $page = render($request, 'login.html');

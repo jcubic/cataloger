@@ -35,6 +35,7 @@
      }
      form .right {
          float: right;
+         clear: both;
      }
     </style>
     <script src="{{path}}/dist/vendor.js"></script>
@@ -57,10 +58,10 @@
         <label class="input-group-addon" for="password">{{ _("password") }}</label>
         <input id="password" class="form-control" name="password" type="password" />
       </div>
+      <p class="error">{{ error }}</p>
       <div class="right">
         <input class="btn btn-default" type="submit" value="{{ _("login") }}"/>
       </div>
-      <p class="error">{{ error }}</p>
     </form>
 
   </body>

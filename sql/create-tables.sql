@@ -37,3 +37,8 @@ CREATE TABLE IF NOT EXISTS reviews (
        content TEXT,
        FOREIGN KEY(user) REFERENCES users(id)
 );
+CREATE TABLE IF NOT EXISTS login_attempts(
+       ip INTEGER,
+       attempts INTEGER,
+       time INTEGER
+);
