@@ -1,8 +1,14 @@
 RewriteEngine on
 
-RewriteRule ^/?config\.json$ - [F,L]
-RewriteRule ^/?cataloger.sqlite$ - [F,L]
-RewriteRule ^/?logs/$ - [F,L]
+#RewriteRule ^/?config\.json$ - [R=404,L]
+#RewriteRule ^/?cataloger.sqlite$ - [R=404,L]
+#RewriteRule ^/?logs/$ - [R=404,L]
+
+RewriteCond %{REQUEST_URI} config.json [OR]
+RewriteCond %{REQUEST_URI} sqlite [OR]
+RewriteCond %{REQUEST_URI} logs
+RewriteRule . index.php [L]
+
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS categories (
+CREATE TABLE IF NOT EXISTS categories(
        id INTEGER PRIMARY KEY AUTOINCREMENT,
        name VARCHAR(255),
        content TEXT,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS products(
        category INTEGER NOT NULL,
        FOREIGN KEY(category) REFERENCES categories(id)
 );
-CREATE TABLE IF NOT EXISTS pages (
+CREATE TABLE IF NOT EXISTS pages(
        id INTEGER PRIMARY KEY AUTOINCREMENT,
        slug VARCHAR(255),
        title VARCHAR(255),
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
        username VARCHAR(255),
        email VARCHAR(255)
 );
-CREATE TABLE IF NOT EXISTS reviews (
+CREATE TABLE IF NOT EXISTS reviews(
        id INTEGER PRIMARY KEY AUTOINCREMENT,
        rating INTEGER,
        user INTEGER,
