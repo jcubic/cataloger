@@ -138,6 +138,7 @@ class Cataloger {
                 'tidy' => true,
                 'display_error_detail' => false,
                 'default_locale' => 'en',
+                'compress_html' => false,
                 'secure' => false,
                 'price' => '$%s',
                 'session_timeout' => 86400
@@ -195,8 +196,13 @@ class Cataloger {
             "pages" => $pages,
             "categories" => $categories
         ), $data));
-        if ($this->config->tidy) {
-            return tidy($html);
+        if ($this->config->compress_html) {
+            if ($this->config->tidy) {
+                $html = tidy($html, array('wrap' => -1, 'indent' => false));
+            }
+            $html = compress($html);
+        } elseif ($this->config->tidy) {
+            $html = tidy($html, (array)$this->config->tidy_options);
         }
         return $html;
     }

@@ -196,6 +196,35 @@ function write($fname, $text) {
     fclose($file);
     return $ret;
 }
+// based on http://jeromejaglale.com/doc/php/codeigniter_compress_html
+function compress($html) {
+    $search = array(
+        '/\n/',            // replace end of line by a space
+        '/\>[^\S ]+/s',        // strip whitespaces after tags, except space
+        '/[^\S ]+\</s',        // strip whitespaces before tags, except space
+        '/(\s)+/s'        // shorten multiple whitespace sequences
+    );
+    $replace = array(
+        '',
+        '>',
+        '<',
+        '\\1'
+    );
+    $in_script = false;
+    $array = preg_split("/(<\/?\s*script[^>]*>)/i", $html, -1, PREG_SPLIT_DELIM_CAPTURE);
+    $outout = array();
+    foreach ($array as $html) {
+        if (preg_match("/^<\/?\s*script/i", $html)) {
+            $in_script = !$in_script;
+            $output[] = $html;
+        } else if (!$in_script) {
+            $output[] = preg_replace($search, $replace, $html);
+        } else {
+            $output[] = $html;
+        }
+    }
+    return preg_replace('/(<!\s*DOCTYPE[^>]+>)/', "\\1\n", implode("", $output));
+}
 
 function tidy($html, $options = array()) {
     $config = array_merge(array(
@@ -203,7 +232,8 @@ function tidy($html, $options = array()) {
         'input-xml' => true,
         'output-xhtml' => true,
         'wrap' => 200,
-        'merge-spans' => false
+        'merge-spans' => false,
+        'merge-divs' => false
     ), $options);
     $tidy = tidy_parse_string($html, $config, 'utf8');
     $tidy->cleanRepair();
