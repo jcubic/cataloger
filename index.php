@@ -347,7 +347,7 @@ $app->any('/login', function($request, $response, $args) use ($app) {
             } else {
                 $_SESSION['logged'] = true;
                 if (count($attempts) > 0) {
-                    query("DELETE FROM login_attempts WHERE ip = ?", data($ip));
+                    query("DELETE FROM login_attempts WHERE ip = ?", array($ip));
                 }
                 return redirect($request, $response, '/admin');
             }

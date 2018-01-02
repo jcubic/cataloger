@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS products(
        name VARCHAR(255),
        price VARCHAR(20),
        promo VARCHAR(20),
+       featured INTEGER,
        brand VARCHAR(40),
        available INTEGER,
        category INTEGER NOT NULL,
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS pages(
        menu_order INTEGER DEFAULT NULL,
        content TEXT
 );
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS users(
        id INTEGER PRIMARY KEY AUTOINCREMENT,
        username VARCHAR(255),
        email VARCHAR(255)
