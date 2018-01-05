@@ -6,6 +6,7 @@ class Cataloger {
     function __construct($lang = NULL) {
         header_remove("X-Powered-By");
         header("X-Frame-Options: Deny");
+        header('X-Content-Type-Options: nosniff');
         $this->db = new PDO('sqlite:cataloger.sqlite');
         $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->config_name = 'config.json';
