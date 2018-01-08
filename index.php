@@ -260,6 +260,10 @@ if ($app->config->debug) {
     ini_set('display_errors', 'On');
 }
 
+function token() {
+    return bin2hex(random_bytes(16));
+}
+
 $app->add(function($request, $response, $next) use ($app) {
     $uri = $request->getUri();
     $path = $uri->getPath();
@@ -291,19 +295,17 @@ $app->add(function($request, $response, $next) use ($app) {
         $response = $response->withAddedHeader('Content-Type', 'application/json');
         if (!$request->isGet()) {
             if (!isset($_SESSION['logged'])) {
-                $response = $response->withJson(array(
+                return $response->withJson(array(
                     "error" => "You need to be logged in to use this method"
                 ), 403);
-            } else {
-                /* TODO: update api to use json to prevent CSRF
-                $headers = $request->getHeaders();
-                $type = $request->getHeader('Content-type');
-                if ($type != "application/json") {
-                    $response = $response->withJson(array(
-                        "error" => "Wrong Content-Type only application/json accepted"
+            } elseif (isset($_SESSION['token'])) {
+                $header = $request->getHeader('X-CSRF-TOKEN');
+                if (count($header) != 1 || $header[0] != $_SESSION['token']) {
+                    return $response->withJson(array(
+                        "error" => "Wrong CSRF Token " .
+                                 json_encode($request->getHeader('X-CSRF-TOKEN'))
                     ), 403);
                 }
-                */
             }
         }
     }
@@ -403,8 +405,11 @@ $app->get('/admin', function($request, $response) {
     global $components;
     textdomain("admin");
     if (isset($_SESSION['logged']) && $_SESSION['logged']) {
+        $token = token();
+        $_SESSION['token'] = $token;
         $response->getBody()->write(render($request, 'admin.html', array(
-            'components' => $components
+            'components' => $components,
+            'csrf_token' => $token
         )));
     } else {
         return redirect($request, $response, '/login');

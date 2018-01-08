@@ -1340,9 +1340,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// TODO: modify all requests to send JSON and require application/json Content-type
-// to prevent CSRF
-function api($http, root) {
+function api($http, root, popups, csrf_token) {
     var data = function data(response) {
         return response.data;
     };
@@ -1360,16 +1358,25 @@ function api($http, root) {
         if (type != 'json') {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
+        headers['X-CSRF-TOKEN'] = csrf_token;
         return function (post_data) {
             return $http({
                 method: 'POST',
                 url: root + url,
                 data: type == 'json' ? post_data : _jquery2.default.param(post_data),
                 headers: headers
-            }).then(data);
+            }).then(data).catch(function (response) {
+                popups.showError({
+                    message: response.data.error
+                });
+                throw new Error(response.data.error);
+            });
         };
     }
     function make_delete_fn(url) {
+        var headers = {
+            'X-CSRF-TOKEN': csrf_token
+        };
         return function () {
             for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
                 args[_key] = arguments[_key];
@@ -1377,15 +1384,20 @@ function api($http, root) {
 
             return $http({
                 method: 'DELETE',
-                url: root + update_url(url, args)
+                url: root + update_url(url, args),
+                headers: headers
             }).then(data);
         };
     }
     function make_get_fn(url) {
+        var headers = {
+            'X-CSRF-TOKEN': csrf_token
+        };
         return function () {
             return $http({
                 method: 'GET',
-                url: root + url
+                url: root + url,
+                headers: headers
             }).then(data);
         };
     }
@@ -1423,7 +1435,7 @@ function api($http, root) {
 } /* global FormData */
 
 
-api.$inject = ['$http', 'root'];
+api.$inject = ['$http', 'root', 'popups', 'csrf_token'];
 
 exports.default = api;
 

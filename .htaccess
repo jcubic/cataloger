@@ -6,13 +6,17 @@ RewriteEngine on
 
 RewriteCond %{REQUEST_URI} config.json [OR]
 RewriteCond %{REQUEST_URI} sqlite [OR]
-RewriteCond %{REQUEST_URI} logs
+RewriteCond %{REQUEST_URI} logs [OR]
+RewriteCond %{REQUEST_URI} sql
 RewriteRule . index.php [L]
 
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule . index.php [L]
+
+
+#ServerSignature Off
 
 <filesMatch "\.(html|htm|js|css)$">
   FileETag None

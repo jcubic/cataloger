@@ -1,8 +1,7 @@
 /* global FormData */
 import $ from 'jquery';
-// TODO: modify all requests to send JSON and require application/json Content-type
-// to prevent CSRF
-function api($http, root) {
+
+function api($http, root, popups, csrf_token) {
     var data = response => response.data;
     function update_url(url, args) {
         if (args.length) {
@@ -18,28 +17,42 @@ function api($http, root) {
         if (type != 'json') {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
+        headers['X-CSRF-TOKEN'] = csrf_token;
         return function(post_data) {
             return $http({
                 method: 'POST',
                 url: root + url,
                 data: type == 'json' ? post_data : $.param(post_data),
                 headers: headers
-            }).then(data);
+            }).then(data).catch((response) => {
+                popups.showError({
+                    message: response.data.error
+                });
+                throw new Error(response.data.error);
+            });
         };
     }
     function make_delete_fn(url) {
+        var headers = {
+            'X-CSRF-TOKEN':  csrf_token
+        };
         return function(...args) {
             return $http({
                 method: 'DELETE',
-                url: root + update_url(url, args)
+                url: root + update_url(url, args),
+                headers: headers
             }).then(data);
         };
     }
     function make_get_fn(url) {
+        var headers = {
+            'X-CSRF-TOKEN':  csrf_token
+        };
         return function() {
             return $http({
                 method: 'GET',
-                url: root + url
+                url: root + url,
+                headers: headers
             }).then(data);
         };
     }
@@ -76,7 +89,7 @@ function api($http, root) {
     };
 }
 
-api.$inject = ['$http', 'root'];
+api.$inject = ['$http', 'root', 'popups', 'csrf_token'];
 
 
 export default api;

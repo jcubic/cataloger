@@ -27,7 +27,8 @@
 
     <script src="{{path}}/lib/route.js"></script>
     <script type="text/javascript">
-     angular.module('app').constant('root', '{{root}}');
+     angular.module('app').constant('root', '{{root}}')
+            .constant('csrf_token', '{{csrf_token}}');
      var root = '{{root}}';
     </script>
     <script src="{{path}}/lib/tinymce/tinymce.min.js"></script>
