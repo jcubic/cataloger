@@ -724,12 +724,6 @@ $app->get('/page/{slug}', function($request, $response, $args) {
     return $response;
 });
 
-function get_all_subcategories($category_id) {
-    global $app;
-    $data = query("SELECT id FROM categories WHERE parent = ?");
-}
-
-
 $app->get('/category/{slug}', function($request, $response, $args) {
     $body = $response->getBody();
     $data = query("SELECT * FROM categories WHERE slug = ?", array($args['slug']));
@@ -737,11 +731,10 @@ $app->get('/category/{slug}', function($request, $response, $args) {
         $data = $data[0];
         $id = $data['id'];
         $sub = query("select * from categories a where parent == ?", array($id));
-        $products = query("select * from products WHERE category = ?", array($id));
         $body->write(render($request, 'category.html', array(
             'description' => $data['content'],
             'sub_categories' => $sub,
-            'products' => $products,
+            'products' => get_products($data),
             'title' => $data['name'],
             'bread_crumbs' =>  bread_crumbs($data)
         )));

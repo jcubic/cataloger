@@ -426,6 +426,32 @@ function parent_categories($id) {
     }
 }
 
+function sub_categories($id) {
+    if (!$id) {
+        return array();
+    }
+    $sub = query("SELECT * from categories WHERE parent = ?", array($id));
+    if (count($sub)) {
+        return array_merge(array_merge(...array_map(function($category) {
+            return sub_categories($category['id']);
+        }, $sub)), $sub);
+    } else {
+        return array();
+    }
+}
+
+function get_products($category) {
+    $categories = sub_categories($category['id']);
+    array_unshift($categories, $category);
+    return array_merge(...array_map(function($category) {
+        print_r($category);
+        echo $category['id']. "\n";
+        return query("select * from products WHERE category = ?", array(
+            $category['id']
+        ));
+    }, $categories));
+}
+
 function bread_crumbs($category = null) {
     if ($category != null && count($category) > 0) {
         $category['uri'] = '/category/' . $category['slug'];
