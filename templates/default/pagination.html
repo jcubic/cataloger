@@ -3,7 +3,6 @@
 
   Parameters:
     * currentPage (int) : the current page you are in
-    * paginationPath (string) : the route name to use for links
     * showAlwaysFirstAndLast (bool) : Always show first and last link (just disabled)
     * totalPages (int) : represents the total number of existing pages
     * prev (string) : label for prevoius page link
@@ -11,10 +10,12 @@
 #}
 {%if totalPages > 1 %}
     {# the number of first and last pages to be displayed #}
-    {% set extremePagesLimit = 3 %}
+    {% if extremePagesLimit is not defined %}{% set extremePagesLimit = 3 %}{% endif %}
+
+    {% if showAlwaysFirstAndLast is not defined %}{% set showAlwaysFirstAndLast = true %}{% endif %}
 
     {# the number of pages that are displayed around the active page #}
-    {% set nearbyPagesLimit = 2 %}
+    {% if nearbyPagesLimit is not defined %}{% set nearbyPagesLimit = 2 %}{% endif %}
 
     <div class="pagination pagination-centered">
         <ul>
