@@ -724,7 +724,7 @@ $app->get('/page/{slug}', function($request, $response, $args) {
     return $response;
 });
 
-$app->get('/category/{slug}', function($request, $response, $args) {
+$app->get('/category/{slug}[?page={page}]', function($request, $response, $args) {
     $body = $response->getBody();
     $data = query("SELECT * FROM categories WHERE slug = ?", array($args['slug']));
     if (count($data) == 1) {
@@ -732,10 +732,12 @@ $app->get('/category/{slug}', function($request, $response, $args) {
         $id = $data['id'];
         $sub = query("select * from categories a where parent == ?", array($id));
         $body->write(render($request, 'category.html', array(
+            'slug' => $args['slug'],
             'description' => $data['content'],
             'sub_categories' => $sub,
             'products' => get_products($data),
             'title' => $data['name'],
+            'page' => isset($args['page']) ? $args['page'] : 1,
             'bread_crumbs' =>  bread_crumbs($data)
         )));
     } else {

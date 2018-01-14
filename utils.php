@@ -444,8 +444,6 @@ function get_products($category) {
     $categories = sub_categories($category['id']);
     array_unshift($categories, $category);
     return array_merge(...array_map(function($category) {
-        print_r($category);
-        echo $category['id']. "\n";
         return query("select * from products WHERE category = ?", array(
             $category['id']
         ));
