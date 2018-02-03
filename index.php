@@ -270,6 +270,9 @@ $app->add(function($request, $response, $next) use ($app) {
     if (!installed() && !preg_match("/\/?install/", $path)) {
         return redirect($request, $response, "/install");
     }
+    if ($app->config->secure && $uri->getScheme() != "https") {
+        return redirect($request, $response, $uri->withScheme('https'));
+    }
     $login = preg_match("/^\/?login/", $path);
     if (preg_match("/^\/?(admin|api|login|logout|upload)/", $path)) {
         if ($login && !isset($_GET['logout']) || !$login) {
@@ -283,9 +286,7 @@ $app->add(function($request, $response, $next) use ($app) {
                 if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') ||
                     preg_match("/rv:[0-9.]+\)/", $_SERVER['HTTP_USER_AGENT'])) {
                 }
-                if ($uri->getScheme() != "https") {
-                    return redirect($request, $response, $uri->withScheme('https'));
-                }
+                
                 ini_set('session.cookie_secure', 1);
             }
             session_start();
