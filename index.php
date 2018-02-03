@@ -267,11 +267,11 @@ function token() {
 $app->add(function($request, $response, $next) use ($app) {
     $uri = $request->getUri();
     $path = $uri->getPath();
-    if (!installed() && !preg_match("/install/", $path)) {
+    if (!installed() && !preg_match("/\/?install/", $path)) {
         return redirect($request, $response, "/install");
     }
-    $login = preg_match("/^login/", $path);
-    if (preg_match("/^(admin|api|login|logout|upload)/", $path)) {
+    $login = preg_match("/^\/?login/", $path);
+    if (preg_match("/^\/?(admin|api|login|logout|upload)/", $path)) {
         if ($login && !isset($_GET['logout']) || !$login) {
             session_timeout($app->config->session_timeout);
             session_name($app->config->session_name);
@@ -737,7 +737,7 @@ $app->get('/category/{slug}[?page={page}]', function($request, $response, $args)
             'sub_categories' => $sub,
             'products' => get_products($data),
             'title' => $data['name'],
-            'page' => isset($args['page']) ? $args['page'] : 1,
+            'page' => isset($_GET['page']) ? $_GET['page'] : 1,
             'bread_crumbs' =>  bread_crumbs($data)
         )));
     } else {

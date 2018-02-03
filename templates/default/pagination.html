@@ -17,7 +17,7 @@
     {# the number of pages that are displayed around the active page #}
     {% if nearbyPagesLimit is not defined %}{% set nearbyPagesLimit = 2 %}{% endif %}
 
-    <div class="pagination pagination-centered">
+    <div class="pagination">
         <ul>
         {% if currentPage > 1 %}
             <li><a href="{{ paginationPath }}{{ currentPage-1 }}">{{ prev }}</a></li>
@@ -27,7 +27,7 @@
             {% endfor %}
 
             {% if extremePagesLimit + 1 < currentPage - nearbyPagesLimit %}
-                <li class="disabled"><a href="#">...</a></li>
+                <li class="disabled"><span>...</span></li>
             {% endif %}
 
             {% for i in range(currentPage-nearbyPagesLimit, currentPage-1) if ( i > 0 ) %}
@@ -37,7 +37,7 @@
             <li><a href="#">{{ prev }}</a></li>
         {% endif %}
 
-        <li class="active">{{ currentPage }}</li>
+        <li class="active"><span>{{ currentPage }}</span></li>
 
         {% if currentPage < totalPages %}
             {% for i in range(currentPage+1, currentPage + nearbyPagesLimit) if ( i <= totalPages ) %}
@@ -45,7 +45,7 @@
             {% endfor %}
 
             {% if  (totalPages - extremePagesLimit) > (currentPage + nearbyPagesLimit) %}
-               <li class="disabled"><a href="#">...</a></li>
+               <li class="disabled"><span>...</span></li>
             {% endif %}
 
                {% for i in range(totalPages - extremePagesLimit+1, totalPages) if ( i > currentPage + nearbyPagesLimit ) %}
